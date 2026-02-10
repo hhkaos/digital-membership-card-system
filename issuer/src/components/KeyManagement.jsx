@@ -4,6 +4,7 @@ import {
     exportPrivateKey,
     exportPublicKey,
     importPrivateKey,
+    derivePublicKey,
     isValidPEMFormat,
     getKeyFingerprint,
 } from "../utils/crypto";
@@ -150,12 +151,12 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
         try {
             const privKey = await importPrivateKey(pem);
-            const { publicKey: pubKey } = await generateKeypair(); // Generate temp to get public
-            // Note: In production, derive public key from private key properly
-            // For now, user will need to paste public key or regenerate
+            const pubKey = await derivePublicKey(privKey);
+            const pubPEM = await exportPublicKey(pubKey);
 
             setImportError("");
-            onKeysChange(privKey, null, pem, "");
+            setPublicKeyPEM(pubPEM);
+            onKeysChange(privKey, pubKey, pem, pubPEM);
         } catch (error) {
             setImportError("Failed to import private key: " + error.message);
         }
