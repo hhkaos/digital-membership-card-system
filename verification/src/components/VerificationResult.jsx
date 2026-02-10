@@ -3,23 +3,25 @@ import config from '../config.json';
 
 const styles = {
   container: {
-    minHeight: '100vh',
+    minHeight: '100dvh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
+    boxSizing: 'border-box',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     backgroundColor: '#f5f5f5'
   },
   card: {
     backgroundColor: 'white',
     borderRadius: '12px',
-    padding: '40px',
+    padding: 'clamp(20px, 5vw, 40px)',
     maxWidth: '500px',
     width: '100%',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center'
+    textAlign: 'center',
+    boxSizing: 'border-box'
   },
   logo: {
     maxWidth: '150px',
