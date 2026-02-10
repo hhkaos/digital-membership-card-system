@@ -110,12 +110,27 @@ export async function derivePublicKey(privateKey) {
 }
 
 /**
+ * Convert a Uint8Array to a binary string without using argument spreading,
+ * to avoid "too many arguments" errors for large inputs.
+ * @param {Uint8Array} bytes
+ * @returns {string}
+ */
+function uint8ToBinaryString(bytes) {
+  const len = bytes.length;
+  const chars = new Array(len);
+  for (let i = 0; i < len; i++) {
+    chars[i] = String.fromCharCode(bytes[i]);
+  }
+  return chars.join('');
+}
+
+/**
  * Base64URL encode (RFC 4648)
  * @param {Uint8Array} data
  * @returns {string}
  */
 function base64urlEncode(data) {
-  const base64 = btoa(String.fromCharCode(...data));
+  const base64 = btoa(uint8ToBinaryString(data));
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
