@@ -176,11 +176,17 @@ socios-ampa/
 - Expired tokens show as invalid
 - All verification happens client-side (no server required)
 
+### Browser Compatibility
+
+- Verification uses Web Crypto API (Ed25519) on modern browsers for best performance
+- Automatically falls back to pure JS Ed25519 (`@noble/ed25519`) on browsers that don't support Ed25519 in Web Crypto (e.g. Safari/iOS < 17)
+
 ## Technology Stack
 
 - **React 19** - UI framework
 - **Vite** - Build tool
 - **jose** - JWT signing/verification (EdDSA Ed25519)
+- **@noble/ed25519** - Pure JS Ed25519 fallback for Safari/iOS compatibility
 - **qrcode.react** - QR code generation
 - **papaparse** - CSV parsing
 - **jszip** - ZIP file generation
