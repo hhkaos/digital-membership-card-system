@@ -1,0 +1,11 @@
+{
+    "issuer": "ampa:ampa-nova-school-almeria",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA+kXulzxrPY1/sQooKmuHjhjXPmTIeKNGdrzOybkP7jQ=\n-----END PUBLIC KEY-----",
+    "clockSkewSeconds": 120,
+    "branding": {
+        "primaryColor": "#30414B",
+        "secondaryColor": "#52717B",
+        "organizationName": "AMPA Nova School Almeria"
+    },
+    "revocationEnabled": false
+}
