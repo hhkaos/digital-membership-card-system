@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Screenshot placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4f7f9" />
+      <stop offset="100%" stop-color="#e8eef2" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)" />
+  <rect x="120" y="120" width="1040" height="480" rx="16" fill="#ffffff" stroke="#c6d3dc" stroke-width="4" />
+  <text x="640" y="330" text-anchor="middle" fill="#30414b" font-family="Arial, sans-serif" font-size="48" font-weight="700">SCREENSHOT PLACEHOLDER</text>
+  <text x="640" y="385" text-anchor="middle" fill="#52717b" font-family="Arial, sans-serif" font-size="28">Replace this image with a real app screenshot</text>
+</svg>

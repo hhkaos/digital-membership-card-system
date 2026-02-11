@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verifier End User Manual</title>
+    <style>
+      :root {
+        --bg: #f5f7f8;
+        --card: #ffffff;
+        --text: #1f2f36;
+        --muted: #526770;
+        --line: #d8e1e6;
+        --brand: #30414b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      h1, h2, h3 { margin: 0 0 10px; color: var(--brand); }
+      p, li { line-height: 1.45; }
+      section { margin-top: 20px; }
+      .lang-section { display: none; }
+      .lang-section.active { display: block; }
+      ul, ol { margin: 0 0 12px; padding-left: 20px; }
+      code {
+        background: #eef3f6;
+        border: 1px solid #d9e4ea;
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.95em;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .lang {
+        display: flex;
+        gap: 8px;
+      }
+      .lang a {
+        font-size: 12px;
+        color: var(--brand);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: #fff;
+      }
+      .lang a.active {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+      .img-ph {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .caption {
+        margin-top: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .back {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        display: inline-block;
+        font-size: 13px;
+        color: #fff;
+        background: var(--brand);
+        border: 1px solid var(--brand);
+        border-radius: 999px;
+        padding: 8px 12px;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        z-index: 50;
+      }
+      .back:focus, .back:hover {
+        background: #223039;
+        border-color: #223039;
+      }
+      .meta {
+        margin-top: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="card">
+        <div class="top">
+          <h1>Verifier End User Manual</h1>
+          <nav class="lang" aria-label="Language">
+            <a href="#en">EN</a>
+            <a href="#es">ES</a>
+          </nav>
+        </div>
+
+        <section id="en" class="lang-section">
+<h1>Verifier End User Manual (English)</h1>
+<h2>Who this guide is for</h2>
+<p>This guide is for merchants and non-technical users checking membership cards in the Verifier app.</p>
+<h2>What Verifier does</h2>
+<p>After scanning a card QR, Verifier checks:</p>
+<ul>
+<li>Signature validity</li>
+<li>Expiry date</li>
+<li>Issuer match</li>
+<li>Revocation status</li>
+</ul>
+<h2>1. Open verification from QR</h2>
+<ol>
+<li>Scan member QR code</li>
+<li>Open the verification URL</li>
+<li>Wait for validation result</li>
+</ol>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Verifier loading" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: verifier loading state.</p>
+<h2>2. Understand result states</h2>
+<h3>Valid Membership</h3>
+<ul>
+<li>Green state with member name</li>
+<li>Shows validity date</li>
+<li>Membership is accepted</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Valid result" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: valid membership state.</p>
+<h3>Membership Revoked</h3>
+<ul>
+<li>Revoked membership warning</li>
+<li>Card/member should not be accepted</li>
+<li>Use contact link for support</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Revoked result" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: revoked state.</p>
+<h3>Invalid Membership</h3>
+<p>Possible reasons:</p>
+<ul>
+<li>expired card</li>
+<li>modified/tampered token</li>
+<li>invalid format</li>
+<li>wrong issuer</li>
+</ul>
+<p>You can open <code>Show Technical Details</code> for support diagnostics.</p>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Invalid result" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: invalid state with technical details.</p>
+<h2>3. Language and support</h2>
+<ul>
+<li>Switch language with <code>ES/EN</code></li>
+<li>Use contact link when shown for AMPA support</li>
+</ul>
+<h2>Common issues</h2>
+<ul>
+<li><code>No membership card detected</code></li>
+<li>QR URL does not include token</li>
+<li><code>Verification system not configured</code></li>
+<li>Public key/config missing in verifier deployment</li>
+<li><code>Revocation status could not be checked</code></li>
+<li>Temporary network or revocation file issue</li>
+</ul>
+        </section>
+
+        <section id="es" class="lang-section">
+<h1>Manual de Usuario Verificador (Español)</h1>
+<h2>Para quién es esta guía</h2>
+<p>Esta guía es para comercios y usuarios no técnicos que validan tarjetas en la app Verificador.</p>
+<h2>Qué hace Verificador</h2>
+<p>Al escanear un QR, Verificador comprueba:</p>
+<ul>
+<li>validez de firma</li>
+<li>fecha de caducidad</li>
+<li>coincidencia del emisor</li>
+<li>estado de revocación</li>
+</ul>
+<h2>1. Abrir verificación desde QR</h2>
+<ol>
+<li>Escanea el QR de la tarjeta</li>
+<li>Abre la URL de verificación</li>
+<li>Espera el resultado</li>
+</ol>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Verificador cargando" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: estado de carga del verificador.</p>
+<h2>2. Entender los estados</h2>
+<h3>Membresía válida</h3>
+<ul>
+<li>Estado verde con nombre del socio</li>
+<li>Muestra fecha de validez</li>
+<li>La membresía es aceptada</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Resultado válido" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: estado de membresía válida.</p>
+<h3>Membresía revocada</h3>
+<ul>
+<li>Aviso de membresía revocada</li>
+<li>La tarjeta/socio no debe aceptarse</li>
+<li>Usa el enlace de contacto para soporte</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Resultado revocado" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: estado de revocación.</p>
+<h3>Membresía no válida</h3>
+<p>Posibles motivos:</p>
+<ul>
+<li>tarjeta caducada</li>
+<li>token alterado/manipulado</li>
+<li>formato inválido</li>
+<li>emisor incorrecto</li>
+</ul>
+<p>Puedes abrir <code>Mostrar detalles técnicos</code> para diagnóstico de soporte.</p>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Resultado no válido" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: estado no válido con detalles técnicos.</p>
+<h2>3. Idioma y soporte</h2>
+<ul>
+<li>Cambia idioma con <code>ES/EN</code></li>
+<li>Usa el enlace de contacto cuando aparezca para soporte AMPA</li>
+</ul>
+<h2>Problemas frecuentes</h2>
+<ul>
+<li><code>No se detectó una tarjeta de membresía</code></li>
+<li>La URL del QR no incluye token</li>
+<li><code>El sistema de verificación no está configurado</code></li>
+<li>Falta clave pública/configuración en el despliegue</li>
+<li><code>No se pudo comprobar el estado de revocación</code></li>
+<li>Problema temporal de red o del archivo de revocación</li>
+</ul>
+        </section>
+
+        <a class="back" href="../" aria-label="Back to app">Back to app</a>
+        <p class="meta">Generated from docs/manuals/end-user/verifier/{en,es}/README.md. Do not edit this file directly.</p>
+      </div>
+    </main>
+    <script>
+      (function () {
+        function getQueryParam(name) {
+          var params = new URLSearchParams(window.location.search);
+          return params.get(name);
+        }
+        function resolveLanguage() {
+          var fromQuery = getQueryParam("lang");
+          if (fromQuery === "es" || fromQuery === "en") return fromQuery;
+          try {
+            var issuerLang = localStorage.getItem("ampa.issuer.language");
+            if (issuerLang === "es" || issuerLang === "en") return issuerLang;
+            var verificationLang = localStorage.getItem("ampa.verification.language");
+            if (verificationLang === "es" || verificationLang === "en") return verificationLang;
+          } catch (e) {}
+          var browser = (navigator.language || "es").toLowerCase().split("-")[0];
+          return browser === "en" ? "en" : "es";
+        }
+        function setActiveLanguage(lang) {
+          var en = document.getElementById("en");
+          var es = document.getElementById("es");
+          if (!en || !es) return;
+          en.classList.toggle("active", lang === "en");
+          es.classList.toggle("active", lang === "es");
+          var links = document.querySelectorAll(".lang a");
+          for (var i = 0; i < links.length; i += 1) {
+            var href = links[i].getAttribute("href") || "";
+            links[i].classList.toggle("active", href === "#" + lang);
+          }
+          var back = document.querySelector(".back");
+          if (back) {
+            var backLabel = lang === "es" ? "Volver a la app" : "Back to app";
+            back.textContent = backLabel;
+            back.setAttribute("aria-label", backLabel);
+            back.setAttribute("title", backLabel);
+          }
+        }
+        var activeLang = resolveLanguage();
+        setActiveLanguage(activeLang);
+        var links = document.querySelectorAll(".lang a");
+        for (var i = 0; i < links.length; i += 1) {
+          links[i].addEventListener("click", function (event) {
+            var href = event.currentTarget.getAttribute("href") || "";
+            var lang = href.replace("#", "");
+            if (lang !== "en" && lang !== "es") return;
+            event.preventDefault();
+            setActiveLanguage(lang);
+            history.replaceState(null, "", "?lang=" + lang + "#" + lang);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

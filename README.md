@@ -61,6 +61,13 @@ For full end-to-end setup (key generation, config wiring, card generation, verif
 
 ## Documentation Map
 
+- Manuals index (EN/ES, end-user + technical): [docs/MANUALS.md](docs/MANUALS.md)
+- Issuer end-user manual (EN): [docs/manuals/end-user/issuer/en/README.md](docs/manuals/end-user/issuer/en/README.md)
+- Manual de usuario del Emisor (ES): [docs/manuals/end-user/issuer/es/README.md](docs/manuals/end-user/issuer/es/README.md)
+- Verifier end-user manual (EN): [docs/manuals/end-user/verifier/en/README.md](docs/manuals/end-user/verifier/en/README.md)
+- Manual de usuario del Verificador (ES): [docs/manuals/end-user/verifier/es/README.md](docs/manuals/end-user/verifier/es/README.md)
+- Technical manual (EN): [docs/manuals/technical/en/README.md](docs/manuals/technical/en/README.md)
+- Manual técnico (ES): [docs/manuals/technical/es/README.md](docs/manuals/technical/es/README.md)
 - End-to-end local setup: [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md)
 - Issuer details: [issuer/README.md](issuer/README.md)
 - Issuer PWA install/offline guide: [issuer/README.md#pwa-install-and-offline-behavior](issuer/README.md#pwa-install-and-offline-behavior)

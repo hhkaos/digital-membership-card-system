@@ -26,6 +26,9 @@ The format is intentionally simple and commit-driven:
 - GitHub Actions desktop workflow (`.github/workflows/desktop.yml`) to build unsigned installer artifacts for Linux, Windows, and macOS.
 - `docs/DESKTOP_SIGNING.md` runbook covering Windows signing, macOS notarization, Linux checksum/GPG strategy, and release pipeline guidance.
 - Automated personal macOS release scripts (`desktop:release:mac`) and checksum generation (`desktop:checksums`) for repeatable installer publishing.
+- Bilingual, audience-specific manuals under `docs/manuals/` with separate end-user guides for issuer and verifier.
+- Docs HTML generator script (`npm run docs:generate`, `npm run docs:check`) to render app-facing help pages from Markdown sources.
+- In-app Help entry points in issuer and verification UIs linking to localized docs pages.
 
 ### Changed
 - Moved SPEC.md, PLAN.md, TODO.md into `docs/` folder to reduce root clutter.
@@ -40,6 +43,8 @@ The format is intentionally simple and commit-driven:
 - Added issuer scripts for desktop packaging: `build:desktop`, `desktop:dev`, and `desktop:build`.
 - Updated personal desktop release flow to avoid local secret files, using shell env vars plus macOS Keychain lookup for notarization password.
 - Temporarily disabled installer generation in `.github/workflows/desktop.yml` to remove desktop installer distribution from the active build process.
+- Documentation map in `README.md` now points to the new manuals structure.
+- Generated `/docs` pages are now language-aware (`en`/`es`), with localized sticky back-to-app action and clearer help navigation styling.
 
 ### Fixed
 - Issuer logo asset paths now use `import.meta.env.BASE_URL`, fixing missing logo rendering in local and `/issuer/` base-path environments.

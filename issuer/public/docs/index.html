@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Issuer End User Manual</title>
+    <style>
+      :root {
+        --bg: #f5f7f8;
+        --card: #ffffff;
+        --text: #1f2f36;
+        --muted: #526770;
+        --line: #d8e1e6;
+        --brand: #30414b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      h1, h2, h3 { margin: 0 0 10px; color: var(--brand); }
+      p, li { line-height: 1.45; }
+      section { margin-top: 20px; }
+      .lang-section { display: none; }
+      .lang-section.active { display: block; }
+      ul, ol { margin: 0 0 12px; padding-left: 20px; }
+      code {
+        background: #eef3f6;
+        border: 1px solid #d9e4ea;
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.95em;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .lang {
+        display: flex;
+        gap: 8px;
+      }
+      .lang a {
+        font-size: 12px;
+        color: var(--brand);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: #fff;
+      }
+      .lang a.active {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+      .img-ph {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .caption {
+        margin-top: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .back {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        display: inline-block;
+        font-size: 13px;
+        color: #fff;
+        background: var(--brand);
+        border: 1px solid var(--brand);
+        border-radius: 999px;
+        padding: 8px 12px;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        z-index: 50;
+      }
+      .back:focus, .back:hover {
+        background: #223039;
+        border-color: #223039;
+      }
+      .meta {
+        margin-top: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="card">
+        <div class="top">
+          <h1>Issuer End User Manual</h1>
+          <nav class="lang" aria-label="Language">
+            <a href="#en">EN</a>
+            <a href="#es">ES</a>
+          </nav>
+        </div>
+
+        <section id="en" class="lang-section">
+<h1>Issuer End User Manual (English)</h1>
+<h2>Who this guide is for</h2>
+<p>This guide is for non-technical AMPA admins using the Issuer app.</p>
+<h2>What you can do in Issuer</h2>
+<ul>
+<li>Load or create signing keys</li>
+<li>Generate one card manually</li>
+<li>Generate many cards from CSV</li>
+<li>Revoke cards/members and export <code>revoked.json</code></li>
+</ul>
+<h2>1. Open the app</h2>
+<p>Open the Issuer app and select language with <code>ES/EN</code>.</p>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Issuer home" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: Issuer home with tabs.</p>
+<h2>2. Key Management</h2>
+<p>Go to <code>🔑 Key Management</code>.</p>
+<ul>
+<li>First time: click <code>Generate New Keypair</code></li>
+<li>Existing key: paste it in <code>Import Existing Private Key</code></li>
+<li>Keep private key secret</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Key Management" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: key generation/import area.</p>
+<h2>3. Generate one card</h2>
+<p>Go to <code>🎫 Generate Card</code>.</p>
+<ol>
+<li>Enter <code>Full Name</code></li>
+<li>Enter <code>Member ID</code></li>
+<li>Set <code>Expiry Date</code></li>
+<li>Click <code>Generate Card</code></li>
+</ol>
+<p>Expected result: PNG card is downloaded.</p>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Generate Card" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: manual generation form and success.</p>
+<h2>4. Generate cards from CSV</h2>
+<p>Go to <code>📦 Batch Upload</code>.</p>
+<p>CSV columns:</p>
+<ul>
+<li><code>full_name</code></li>
+<li><code>member_id</code></li>
+<li><code>expiry_date</code> (YYYY-MM-DD)</li>
+</ul>
+<p>Steps:</p>
+<ol>
+<li>Click <code>Select CSV File</code></li>
+<li>Review validation</li>
+<li>Click <code>Generate N Cards</code></li>
+</ol>
+<p>Expected result: ZIP with cards and metadata.</p>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Batch Upload" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: CSV validation and generate button.</p>
+<h2>5. Revocation</h2>
+<p>Go to <code>🚫 Revocation</code>.</p>
+<p>You can:</p>
+<ul>
+<li>Revoke one token by <code>jti</code></li>
+<li>Revoke all member tokens by <code>sub</code></li>
+</ul>
+<p>Recommended flow:</p>
+<ol>
+<li>Load and merge current <code>revoked.json</code></li>
+<li>Add revocations (manual or QR PNG lookup)</li>
+<li>Download updated <code>revoked.json</code></li>
+<li>Publish it through your normal deployment process</li>
+</ol>
+<figure><img src="./assets/placeholder.svg" alt="Placeholder - Revocation" class="img-ph"></figure>
+<p class="caption">Replace with screenshot: current list and export actions.</p>
+<h2>Common issues</h2>
+<ul>
+<li><code>Private key not loaded</code></li>
+<li>Load/import key in <code>Key Management</code></li>
+<li>Batch CSV errors</li>
+<li>Check required columns and date format</li>
+<li>Revocation not reflected</li>
+<li>Make sure updated <code>revoked.json</code> was deployed</li>
+</ul>
+        </section>
+
+        <section id="es" class="lang-section">
+<h1>Manual de Usuario Emisor (Español)</h1>
+<h2>Para quién es esta guía</h2>
+<p>Esta guía es para administradores AMPA no técnicos que usan la app Emisor.</p>
+<h2>Qué puedes hacer en Emisor</h2>
+<ul>
+<li>Cargar o crear claves de firma</li>
+<li>Generar una tarjeta manualmente</li>
+<li>Generar muchas tarjetas desde CSV</li>
+<li>Revocar tarjetas/socios y exportar <code>revoked.json</code></li>
+</ul>
+<h2>1. Abrir la app</h2>
+<p>Abre la app Emisor y selecciona idioma con <code>ES/EN</code>.</p>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Inicio Emisor" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: inicio del Emisor con pestañas.</p>
+<h2>2. Gestión de claves</h2>
+<p>Ve a <code>🔑 Gestión de claves</code>.</p>
+<ul>
+<li>Primera vez: pulsa <code>Generar nuevo par de claves</code></li>
+<li>Clave existente: pégala en <code>Importar clave privada existente</code></li>
+<li>Mantén siempre la clave privada en secreto</li>
+</ul>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Gestión de claves" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: zona de generación/importación de claves.</p>
+<h2>3. Generar una tarjeta</h2>
+<p>Ve a <code>🎫 Generar tarjeta</code>.</p>
+<ol>
+<li>Introduce <code>Nombre completo</code></li>
+<li>Introduce <code>ID de socio</code></li>
+<li>Elige <code>Fecha de caducidad</code></li>
+<li>Pulsa <code>Generar tarjeta</code></li>
+</ol>
+<p>Resultado esperado: se descarga un PNG.</p>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Generar tarjeta" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: formulario manual y estado de éxito.</p>
+<h2>4. Generar tarjetas desde CSV</h2>
+<p>Ve a <code>📦 Carga por lotes</code>.</p>
+<p>Columnas CSV:</p>
+<ul>
+<li><code>full_name</code></li>
+<li><code>member_id</code></li>
+<li><code>expiry_date</code> (AAAA-MM-DD)</li>
+</ul>
+<p>Pasos:</p>
+<ol>
+<li>Pulsa <code>Seleccionar archivo CSV</code></li>
+<li>Revisa validación</li>
+<li>Pulsa <code>Generar N tarjetas</code></li>
+</ol>
+<p>Resultado esperado: ZIP con tarjetas y metadatos.</p>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Carga por lotes" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: validación CSV y botón de generar.</p>
+<h2>5. Revocación</h2>
+<p>Ve a <code>🚫 Revocación</code>.</p>
+<p>Puedes:</p>
+<ul>
+<li>Revocar un token por <code>jti</code></li>
+<li>Revocar todos los tokens de un socio por <code>sub</code></li>
+</ul>
+<p>Flujo recomendado:</p>
+<ol>
+<li>Cargar y fusionar <code>revoked.json</code> actual</li>
+<li>Añadir revocaciones (manual o lectura de QR PNG)</li>
+<li>Descargar <code>revoked.json</code> actualizado</li>
+<li>Publicarlo con tu proceso habitual</li>
+</ol>
+<figure><img src="./assets/placeholder.svg" alt="Marcador - Revocación" class="img-ph"></figure>
+<p class="caption">Sustituir por captura: lista actual y acciones de exportación.</p>
+<h2>Problemas frecuentes</h2>
+<ul>
+<li><code>No hay clave privada cargada</code></li>
+<li>Carga/importa clave en <code>Gestión de claves</code></li>
+<li>Errores en CSV por lotes</li>
+<li>Revisa columnas y formato de fecha</li>
+<li>Revocación no aplicada</li>
+<li>Verifica que el <code>revoked.json</code> actualizado se ha desplegado</li>
+</ul>
+        </section>
+
+        <a class="back" href="../" aria-label="Back to app">Back to app</a>
+        <p class="meta">Generated from docs/manuals/end-user/issuer/{en,es}/README.md. Do not edit this file directly.</p>
+      </div>
+    </main>
+    <script>
+      (function () {
+        function getQueryParam(name) {
+          var params = new URLSearchParams(window.location.search);
+          return params.get(name);
+        }
+        function resolveLanguage() {
+          var fromQuery = getQueryParam("lang");
+          if (fromQuery === "es" || fromQuery === "en") return fromQuery;
+          try {
+            var issuerLang = localStorage.getItem("ampa.issuer.language");
+            if (issuerLang === "es" || issuerLang === "en") return issuerLang;
+            var verificationLang = localStorage.getItem("ampa.verification.language");
+            if (verificationLang === "es" || verificationLang === "en") return verificationLang;
+          } catch (e) {}
+          var browser = (navigator.language || "es").toLowerCase().split("-")[0];
+          return browser === "en" ? "en" : "es";
+        }
+        function setActiveLanguage(lang) {
+          var en = document.getElementById("en");
+          var es = document.getElementById("es");
+          if (!en || !es) return;
+          en.classList.toggle("active", lang === "en");
+          es.classList.toggle("active", lang === "es");
+          var links = document.querySelectorAll(".lang a");
+          for (var i = 0; i < links.length; i += 1) {
+            var href = links[i].getAttribute("href") || "";
+            links[i].classList.toggle("active", href === "#" + lang);
+          }
+          var back = document.querySelector(".back");
+          if (back) {
+            var backLabel = lang === "es" ? "Volver a la app" : "Back to app";
+            back.textContent = backLabel;
+            back.setAttribute("aria-label", backLabel);
+            back.setAttribute("title", backLabel);
+          }
+        }
+        var activeLang = resolveLanguage();
+        setActiveLanguage(activeLang);
+        var links = document.querySelectorAll(".lang a");
+        for (var i = 0; i < links.length; i += 1) {
+          links[i].addEventListener("click", function (event) {
+            var href = event.currentTarget.getAttribute("href") || "";
+            var lang = href.replace("#", "");
+            if (lang !== "en" && lang !== "es") return;
+            event.preventDefault();
+            setActiveLanguage(lang);
+            history.replaceState(null, "", "?lang=" + lang + "#" + lang);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

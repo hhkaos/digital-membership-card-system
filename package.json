@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "npm --prefix verification run dev & npm --prefix issuer run dev & wait",
     "test": "cd verification && npm test && cd ../issuer && npm test",
+    "docs:generate": "node scripts/generate-docs-html.cjs",
+    "docs:check": "node scripts/generate-docs-html.cjs --check",
     "prepare": "husky"
   },
   "devDependencies": {

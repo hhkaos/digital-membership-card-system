@@ -101,7 +101,7 @@ const styles = {
   },
   languageRow: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     marginBottom: '8px',
     gap: '8px',
     alignItems: 'center'
@@ -119,6 +119,15 @@ const styles = {
   languageButtonActive: {
     backgroundColor: '#30414B',
     color: '#fff'
+  },
+  helpInlineLink: {
+    color: '#666',
+    textDecoration: 'underline',
+    fontWeight: 400
+  },
+  separator: {
+    margin: '0 8px',
+    color: '#bbb'
   }
 };
 
@@ -223,7 +232,7 @@ export const ValidState = ({ memberName, expiryDate, revocationWarning }) => {
 };
 
 export const InvalidState = ({ errorType, errorMessage, memberName, errorDetails }) => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [showDetails, setShowDetails] = useState(false);
   const isRevoked = errorType === VerificationError.REVOKED;
   const title = isRevoked ? t('invalid.revokedTitle') : t('invalid.title');
@@ -261,6 +270,13 @@ export const InvalidState = ({ errorType, errorMessage, memberName, errorDetails
         )}
         
         <p style={{ marginTop: '24px', fontSize: '14px', color: '#999' }}>
+          <a
+            href={`${import.meta.env.BASE_URL}docs/index.html?lang=${language}`}
+            style={styles.helpInlineLink}
+          >
+            ℹ️ {t('help.label')}
+          </a>
+          <span style={styles.separator}>|</span>
           <a
             href={config.contactUrl}
             target="_blank"

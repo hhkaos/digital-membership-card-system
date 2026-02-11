@@ -83,6 +83,25 @@ const styles = {
   languageButtonActive: {
     backgroundColor: '#30414B',
     color: '#fff'
+  },
+  docsLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    fontSize: '12px',
+    color: '#0B4F66',
+    backgroundColor: '#E7F4F8',
+    border: '1px solid #0B6B8F',
+    borderRadius: '999px',
+    padding: '6px 11px',
+    fontWeight: 700,
+    textDecoration: 'none',
+    marginLeft: '12px',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
+  },
+  docsIcon: {
+    fontSize: '13px',
+    lineHeight: 1
   }
 };
 
@@ -172,6 +191,15 @@ function App() {
           >
             {t('language.en')}
           </button>
+          <a
+            href={`${import.meta.env.BASE_URL}docs/index.html?lang=${language}`}
+            style={styles.docsLink}
+            aria-label={t('help.label')}
+            title={t('help.label')}
+          >
+            <span aria-hidden="true" style={styles.docsIcon}>ℹ️</span>
+            <span>{t('help.label')}</span>
+          </a>
         </div>
         <img src={`${import.meta.env.BASE_URL}ampa-logo.png`} alt="AMPA Logo" style={styles.logo} />
         <h1 style={styles.title}>{t('app.title')}</h1>

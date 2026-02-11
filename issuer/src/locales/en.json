@@ -4,6 +4,9 @@
     "es": "ES",
     "en": "EN"
   },
+  "help": {
+    "label": "Help"
+  },
   "app": {
     "title": "AMPA Card Issuer",
     "subtitle": "Generate secure digital membership cards",

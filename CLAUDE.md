@@ -68,5 +68,6 @@ Verification deploys at domain root (`/`), issuer at `/issuer/` subpath. The `is
 - **AI commits**: use `git cai "message"` (prefixes with "AI: ", sets AI author). Human commits: `git ch "message"`
 - **Custom skills**: `/ship` (commit + push with doc updates) and `/release` (versioned release with tag + GitHub Release)
 - When shipping (`/ship`), update `CHANGELOG.md` (under `[Unreleased]`), `docs/TODO.md`, and `docs/SPEC.md` if feature-related
+- When shipping (`/ship`), if `docs/manuals/end-user/**` changed, run `npm run docs:generate` and include regenerated `*/public/docs/*` files
 - Stage files by name — never use `git add -A` or `git add .`
 - Never commit `.pem` files, private keys, or real member data

@@ -4,6 +4,9 @@
     "es": "ES",
     "en": "EN"
   },
+  "help": {
+    "label": "Ayuda"
+  },
   "loading": {
     "verifyingMembership": "Verificando membresía..."
   },

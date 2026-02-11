@@ -4,6 +4,9 @@
     "es": "ES",
     "en": "EN"
   },
+  "help": {
+    "label": "Ayuda"
+  },
   "app": {
     "title": "Emisor de Tarjetas AMPA",
     "subtitle": "Genera tarjetas digitales de membresía seguras",

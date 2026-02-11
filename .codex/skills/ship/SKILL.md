@@ -20,6 +20,16 @@ Use this skill when the user asks to commit and push current work.
 
 Update only files directly impacted by the current change set.
 
+### End-user docs HTML regeneration
+
+- If files under `docs/manuals/end-user/` changed, run:
+  - `npm run docs:generate`
+- This regenerates:
+  - `issuer/public/docs/index.html`
+  - `verification/public/docs/index.html`
+  - related assets in each app `public/docs/assets/`
+- If regeneration updates files, include those generated files in the same commit.
+
 ### `CHANGELOG.md`
 
 - Add an entry under `## [Unreleased]`.

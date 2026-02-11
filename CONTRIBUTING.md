@@ -83,9 +83,10 @@ If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), this p
 
 1. Type `/ship` in the Claude Code chat.
 2. Claude reviews your changes and updates project docs (`CHANGELOG.md`, `docs/TODO.md`, and `docs/SPEC.md` if relevant).
-3. Claude stages the relevant files and generates a commit message following the project's conventional commit style.
-4. You choose the alias: **`git cai`** (AI-attributed) or **`git ch`** (regular).
-5. Claude commits and pushes for you.
+3. If end-user manuals changed (`docs/manuals/end-user/**`), Claude regenerates app docs HTML with `npm run docs:generate`.
+4. Claude stages the relevant files and generates a commit message following the project's conventional commit style.
+5. You choose the alias: **`git cai`** (AI-attributed) or **`git ch`** (regular).
+6. Claude commits and pushes for you.
 
 Skill definition: `.claude/skills/ship/SKILL.md`
 
