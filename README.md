@@ -62,6 +62,7 @@ For full end-to-end setup (key generation, config wiring, card generation, verif
 
 - End-to-end local setup: [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md)
 - Issuer details: [issuer/README.md](issuer/README.md)
+- Issuer PWA install/offline guide: [issuer/README.md#pwa-install-and-offline-behavior](issuer/README.md#pwa-install-and-offline-behavior)
 - Verification details: [verification/README.md](verification/README.md)
 - Security policy and model: [SECURITY.md](SECURITY.md)
 - Technical specification: [docs/SPEC.md](docs/SPEC.md)

@@ -31,6 +31,94 @@ npm run dev
 
 App runs on http://localhost:5174
 
+## PWA Install and Offline Behavior
+
+The issuer supports PWA install (desktop/mobile icon + standalone window), but install prompts only appear when the app is considered installable by the browser.
+
+### Important: Dev mode vs installability
+
+- `npm run dev` is for development and is not the best way to validate install/offline behavior.
+- To test install and offline correctly, use a production build:
+
+```bash
+npm run build
+npm run preview
+```
+
+Then open `http://localhost:4173/issuer/` (Vite preview default) while online first.
+
+### Installability checklist (Chrome)
+
+1. `manifest.json` is valid and includes icons.
+2. Service worker is active and controlling the page.
+3. URL is within scope (`/issuer/`).
+4. App loaded at least once while online.
+
+If these are true, Chrome may show:
+- Desktop: install icon in address bar, or menu option `Install app...`
+- Android: `Add to Home screen` / install prompt
+
+Note: `beforeinstallprompt` is browser-controlled and may not appear every time.
+
+### If no install prompt appears
+
+1. Open DevTools -> Application -> Manifest and check installability errors.
+2. Open DevTools -> Application -> Service Workers and verify the page is controlled.
+3. Clear site data if needed (especially if prompt was dismissed before).
+4. In this app, dismissing the custom banner stores: `ampa.issuer.installPromptDismissed` in localStorage.
+
+### How to test offline
+
+1. Open issuer from `npm run preview` while online.
+2. Wait until the service worker is active/controlling.
+3. In DevTools, set network throttling to `Offline`.
+4. Reload the page and verify the issuer still opens.
+
+### Where to find the installed app after installing
+
+- Windows (Chrome/Edge):
+  - Open Start menu and search `AMPA Card Issuer` or `AMPA Issuer`.
+  - You can pin it to taskbar/start like any desktop app.
+- macOS (Chrome/Edge):
+  - Press `Cmd + Space` (Spotlight) and search `AMPA Card Issuer` / `AMPA Issuer`.
+  - After opening once, keep it in Dock with `Options -> Keep in Dock`.
+- Linux (Chrome/Edge):
+  - Open your desktop app launcher/menu and search `AMPA Card Issuer` / `AMPA Issuer`.
+  - On some desktops it appears under Internet/Web apps.
+- ChromeOS:
+  - Open launcher and search `AMPA Card Issuer` / `AMPA Issuer`.
+  - You can pin it to the shelf.
+- Android (Chrome/Edge):
+  - It appears in the app drawer and usually on the home screen after install.
+- iOS/iPadOS (Safari):
+  - Use Safari share menu -> `Add to Home Screen`.
+  - It appears on the home screen and can be found via Spotlight search.
+
+Note:
+- iOS/iPadOS does not use Chrome's `beforeinstallprompt`; installation is manual from Safari.
+
+### Alternative quick-access options (bookmark/shortcut)
+
+If you want faster access without relying on install prompts, you can also:
+
+- Install as app (recommended):
+  - Chrome/Edge address bar install icon, or browser menu `Install app`.
+  - Creates an app-style launcher entry and standalone window behavior.
+  - Official steps:
+    - Chrome (web apps): https://support.google.com/chromebook/answer/9658361?co=GENIE.Platform%3DDesktop&hl=en
+    - Edge (install/manage apps): https://support.microsoft.com/en-us/topic/install-manage-or-uninstall-apps-in-microsoft-edge-0c156575-a94a-45e4-a54f-3a84846f6113
+- Create desktop shortcut manually:
+  - Chrome: `More tools -> Create shortcut...` and enable `Open as window`.
+  - Edge: `Apps -> Install this site as an app`.
+  - Official steps:
+    - Chrome (create shortcut): https://support.google.com/chrome/answer/15085120?co=GENIE.Platform%3DDesktop&hl=en
+    - Edge (shortcut options via `edge://apps`): https://support.microsoft.com/en-us/topic/install-manage-or-uninstall-apps-in-microsoft-edge-0c156575-a94a-45e4-a54f-3a84846f6113
+- Add a normal bookmark:
+  - Works everywhere, but opens in a browser tab (not standalone app mode).
+  - Official steps:
+    - Chrome bookmarks: https://support.google.com/chrome/answer/188842?co=GENIE.Platform%3DDesktop&hl=en
+    - Safari on iPhone/iPad (bookmark or home screen icon): https://support.apple.com/en-tm/guide/iphone/iph42ab2f3a7/ios
+
 ## Testing
 
 ```bash

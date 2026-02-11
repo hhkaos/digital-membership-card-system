@@ -148,7 +148,7 @@ export async function generatePlainQRCard(memberData) {
     };
 
     // Load logo
-    logo.src = '/ampa-logo.png';
+    logo.src = `${import.meta.env.BASE_URL}ampa-logo.png`;
   });
 }
 

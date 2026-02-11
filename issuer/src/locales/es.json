@@ -14,6 +14,14 @@
       "revocation": "🚫 Revocación"
     }
   },
+  "pwa": {
+    "installPrompt": {
+      "title": "Instala esta app",
+      "message": "Instala el emisor en tu dispositivo para usarlo como app y sin conexión.",
+      "install": "Instalar",
+      "dismiss": "Ahora no"
+    }
+  },
   "card": {
     "labels": {
       "validUntil": "Válido hasta",

@@ -6,6 +6,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "dev": "npm --prefix verification run dev & npm --prefix issuer run dev & wait",
     "test": "cd verification && npm test && cd ../issuer && npm test",
     "prepare": "husky"
   },

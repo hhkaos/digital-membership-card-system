@@ -320,11 +320,11 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ### Phase 6 Manual Verification
 
-- [ ] Revoke token by jti → verification shows ❌ "Membership revoked"
+- [x] Revoke token by jti → verification shows ❌ "Membership revoked"
 - [ ] Revoke by sub → all member's cards show revoked
 - [ ] Network error → shows ✅ valid with ⚠️ warning
-- [ ] Export revoked.json → place in verification/public/ → works
-- [ ] All existing tests still pass
+- [x] Export revoked.json → place in verification/public/ → works
+- [x] All existing tests still pass
 
 ---
 
@@ -377,72 +377,41 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Phase 8: Wallet-Style Cards ⬜ TODO
-
-### Card Renderer
-
-- [ ] Add `generateWalletCard(memberData, qrDataUrl, logoImage)` to `card.js`
-- [ ] Layout: header bar with logo + org name, member name, expiry, QR code, member ID
-- [ ] Design: Primary color header (#30414B), white background, rounded corners
-- [ ] Size: 800x1200px portrait
-
-### UI Integration
-
-- [ ] Add card format selector to `ManualEntry.jsx` (radio: "Plain QR" / "Wallet-style")
-- [ ] Add card format selector to `CSVUpload.jsx`
-- [ ] Default to "Wallet-style card"
-- [ ] Update `batch.js` to accept `cardFormat` parameter
-
-### Phase 8 Tests
-
-- [ ] `card.test.js` — Wallet card generates correct dimensions
-- [ ] `card.test.js` — Card format selection works ("plain" vs "wallet")
-- [ ] `batch.test.js` — Batch respects card format parameter
-
-### Phase 8 Manual Verification
-
-- [ ] Generate wallet-style card manually → professional layout
-- [ ] Generate batch with wallet format → all cards use wallet layout
-- [ ] Plain QR format still works when selected
-- [ ] All existing tests still pass
-
----
-
-## Phase 9: PWA Features (Issuer) ⬜ TODO
+## Phase 9: PWA Features (Issuer) 🚧 IN PROGRESS
 
 ### Setup
 
-- [ ] Install `vite-plugin-pwa` in issuer
-- [ ] Configure VitePWA in `issuer/vite.config.js`
+- [x] Install `vite-plugin-pwa` in issuer
+- [x] Configure VitePWA in `issuer/vite.config.js`
 
 ### PWA Assets
 
-- [ ] Create `issuer/public/manifest.json` (name, icons, theme, display: standalone)
-- [ ] Generate PWA icons from logo (192x192, 512x512) in `issuer/public/icons/`
+- [x] Create `issuer/public/manifest.json` (name, icons, theme, display: standalone)
+- [x] Generate PWA icons from logo (192x192, 512x512) in `issuer/public/icons/`
 
 ### Service Worker
 
-- [ ] Configure Workbox precaching for all app assets
-- [ ] Offline: full functionality (all crypto is client-side)
+- [x] Configure Workbox precaching for all app assets
+- [x] Offline: full functionality (all crypto is client-side)
 
 ### Install Prompt
 
-- [ ] Create `issuer/src/components/InstallPrompt.jsx`
-- [ ] Detect `beforeinstallprompt` event
-- [ ] Show install banner with dismiss option
-- [ ] Hide after installation
+- [x] Create `issuer/src/components/InstallPrompt.jsx`
+- [x] Detect `beforeinstallprompt` event
+- [x] Show install banner with dismiss option
+- [x] Hide after installation
 
 ### Phase 9 Tests
 
-- [ ] Manifest is valid JSON with required fields
-- [ ] All required icon sizes present
-- [ ] Service worker registers
+- [x] Manifest is valid JSON with required fields
+- [x] All required icon sizes present
+- [x] Service worker registers
 
 ### Phase 9 Manual Verification
 
-- [ ] Install on Chrome Desktop → opens standalone
-- [ ] Go offline → all features still work
-- [ ] Install prompt appears for new visitors
+- [x] Install on Chrome Desktop → opens standalone
+- [x] Go offline → all features still work
+- [x] Install prompt appears for new visitors
 - [ ] All existing tests still pass
 
 ---
@@ -538,8 +507,7 @@ Building a cryptographically secure digital membership card system with QR codes
 
 **Phase 6**: 🚧 IN PROGRESS — Revocation system (code complete, manual verification pending)
 **Phase 7**: ✅ COMPLETE — Internationalization (i18n)
-**Phase 8**: ⬜ TODO — Wallet-style cards
-**Phase 9**: ⬜ TODO — PWA features
+**Phase 9**: 🚧 IN PROGRESS — PWA features (implementation complete, manual verification pending)
 **Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)
 **Phase 11**: 🚧 IN PROGRESS — GitHub Pages deployment
 **Phase 12**: ⬜ TODO — Analytics (optional)

@@ -17,6 +17,8 @@ The format is intentionally simple and commit-driven:
 - FUNDING.yml linking to rauljimenez.info for sponsorship inquiries.
 - Roadmap section in README.md with V2 phase status table.
 - `docs/LOCAL_SETUP.md` with end-to-end local setup (keys, config, issuing, verification).
+- Issuer PWA setup with `vite-plugin-pwa`, manifest/icons, service worker registration, and install prompt component.
+- PWA validation tests in issuer for manifest fields, required icon sizes, and service-worker registration wiring.
 
 ### Changed
 - Moved SPEC.md, PLAN.md, TODO.md into `docs/` folder to reduce root clutter.
@@ -26,6 +28,11 @@ The format is intentionally simple and commit-driven:
 - Expanded GitHub Pages workflow to build and publish both apps (verification at root and issuer at `/issuer/`).
 - Added browser-language detection coverage in both app i18n test suites.
 - Set `issuer/vite.config.js` base path to `/issuer/` for GitHub Pages subpath deployment.
+- Added root `npm run dev` script to run verification and issuer dev servers in parallel.
+- Expanded issuer documentation with installability/offline troubleshooting and platform-specific app-launch guidance with official browser help links.
+
+### Fixed
+- Issuer logo asset paths now use `import.meta.env.BASE_URL`, fixing missing logo rendering in local and `/issuer/` base-path environments.
 
 ### Removed
 - `ROADMAP_ISSUE.md` (its roadmap content is now represented directly in project docs).

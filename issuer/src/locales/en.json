@@ -14,6 +14,14 @@
       "revocation": "🚫 Revocation"
     }
   },
+  "pwa": {
+    "installPrompt": {
+      "title": "Install this app",
+      "message": "Install the issuer on your device for an app-like experience and offline use.",
+      "install": "Install",
+      "dismiss": "Not now"
+    }
+  },
   "card": {
     "labels": {
       "validUntil": "Valid until",

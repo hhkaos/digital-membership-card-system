@@ -3,6 +3,7 @@ import { KeyManagement } from './components/KeyManagement';
 import { ManualEntry } from './components/ManualEntry';
 import CSVUpload from './components/CSVUpload';
 import RevocationManager from './components/RevocationManager';
+import InstallPrompt from './components/InstallPrompt';
 import { importPrivateKey } from './utils/crypto';
 import { useI18n } from './i18n';
 
@@ -157,10 +158,12 @@ function App() {
             {t('language.en')}
           </button>
         </div>
-        <img src="/ampa-logo.png" alt="AMPA Logo" style={styles.logo} />
+        <img src={`${import.meta.env.BASE_URL}ampa-logo.png`} alt="AMPA Logo" style={styles.logo} />
         <h1 style={styles.title}>{t('app.title')}</h1>
         <p style={styles.subtitle}>{t('app.subtitle')}</p>
       </div>
+
+      <InstallPrompt />
 
       <div style={styles.tabs}>
         <button
