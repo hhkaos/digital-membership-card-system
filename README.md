@@ -11,6 +11,8 @@
 
 A cryptographically secure digital membership card platform.
 
+![digital-membership-card-system composition](./images/digital-membership-card-system.webp)
+
 ## Try the Live Apps
 
 - **Verifier (production domain):** https://verify.ampanovaschoolalmeria.org/
