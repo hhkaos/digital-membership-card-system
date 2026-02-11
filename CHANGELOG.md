@@ -11,6 +11,7 @@ The format is intentionally simple and commit-driven:
 ## [Unreleased]
 
 ### Added
+- `CLAUDE.md` project instructions file for Claude Code with architecture overview, commands, and conventions.
 - GitHub issue templates (bug report, feature request) and PR template for standardized contributions.
 - SECURITY.md with vulnerability reporting process and security model documentation.
 - CODE_OF_CONDUCT.md (Contributor Covenant v2.1).
