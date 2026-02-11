@@ -1,3 +1,5 @@
+import QRCode from 'qrcode';
+
 /**
  * Sanitize filename: remove special chars, replace spaces, lowercase
  * @param {string} name - Member name
@@ -19,12 +21,11 @@ export function sanitizeFileName(name) {
  * @returns {Promise<HTMLCanvasElement>} QR code canvas
  */
 async function generateQRCanvas(jwt) {
-  const QRCode = await import('qrcode');
   const url = `https://verify.ampanovaschoolalmeria.org/#token=${jwt}`;
 
   const canvas = document.createElement('canvas');
   await QRCode.toCanvas(canvas, url, {
-    width: 400,
+    width: 700,
     margin: 2,
     color: {
       dark: '#30414B',
@@ -49,7 +50,7 @@ export async function generatePlainQRCard(memberData) {
 
   // Card dimensions
   const width = 800;
-  const height = 1200;
+  const height = 850;
 
   // Create card canvas
   const canvas = document.createElement('canvas');
@@ -68,46 +69,57 @@ export async function generatePlainQRCard(memberData) {
   return new Promise((resolve, reject) => {
     logo.onload = () => {
       try {
-        // Draw logo (centered, top)
-        const logoMaxWidth = 300;
-        const logoMaxHeight = 200;
-        const logoAspect = logo.width / logo.height;
-        let logoWidth, logoHeight;
-
-        if (logoAspect > logoMaxWidth / logoMaxHeight) {
-          logoWidth = logoMaxWidth;
-          logoHeight = logoMaxWidth / logoAspect;
-        } else {
-          logoHeight = logoMaxHeight;
-          logoWidth = logoMaxHeight * logoAspect;
-        }
-
-        const logoX = (width - logoWidth) / 2;
-        const logoY = 80;
-        ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
-
-        // Draw QR code (centered)
-        const qrSize = 400;
+        // Draw QR code (as large as possible, centered at top)
+        const qrSize = 700;
         const qrX = (width - qrSize) / 2;
-        const qrY = 350;
+        const qrY = 20;
         ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
 
-        // Member name (below QR)
-        ctx.fillStyle = '#30414B';
-        ctx.font = 'bold 48px Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(memberName, width / 2, 820);
+        // Overlay logo in the center of the QR code
+        const logoMaxSize = 120;
+        const logoAspect = logo.width / logo.height;
+        let logoWidth, logoHeight;
+        if (logoAspect > 1) {
+          logoWidth = logoMaxSize;
+          logoHeight = logoMaxSize / logoAspect;
+        } else {
+          logoHeight = logoMaxSize;
+          logoWidth = logoMaxSize * logoAspect;
+        }
+        const logoCenterX = qrX + (qrSize - logoWidth) / 2;
+        const logoCenterY = qrY + (qrSize - logoHeight) / 2;
 
-        // Valid until text
+        // White rounded background behind logo for better contrast
+        const logoPadding = 10;
+        const bgX = logoCenterX - logoPadding;
+        const bgY = logoCenterY - logoPadding;
+        const bgW = logoWidth + logoPadding * 2;
+        const bgH = logoHeight + logoPadding * 2;
+        const radius = Math.max(bgW, bgH) / 2;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(bgX + bgW / 2, bgY + bgH / 2, radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+        ctx.clip();
+        ctx.drawImage(logo, logoCenterX, logoCenterY, logoWidth, logoHeight);
+        ctx.restore();
+
+        // Text centered below QR
+        const textY = qrY + qrSize + 35;
+        ctx.textAlign = 'center';
+
+        // Member name
+        ctx.fillStyle = '#30414B';
+        ctx.font = 'bold 36px Arial, sans-serif';
+        ctx.fillText(memberName, width / 2, textY);
+
+        // Valid until + Member ID
         const expiryFormatted = new Date(expiryDate).toLocaleDateString('es-ES');
         ctx.fillStyle = '#52717B';
-        ctx.font = '36px Arial, sans-serif';
-        ctx.fillText(`Valid until: ${expiryFormatted}`, width / 2, 900);
-
-        // Member ID (small, bottom)
-        ctx.fillStyle = '#999999';
-        ctx.font = '24px monospace';
-        ctx.fillText(`ID: ${memberId}`, width / 2, 1100);
+        ctx.font = '24px Arial, sans-serif';
+        ctx.fillText(`Valid until: ${expiryFormatted}  ·  ID: ${memberId}`, width / 2, textY + 35);
 
         // Convert to blob
         canvas.toBlob((blob) => {
