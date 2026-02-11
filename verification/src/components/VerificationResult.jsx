@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import config from '../config.json';
 import { VerificationError } from '../utils/verify';
+import { useI18n } from '../i18n';
 
 const styles = {
   container: {
@@ -97,6 +98,27 @@ const styles = {
     marginTop: '20px',
     fontSize: '18px',
     color: '#666'
+  },
+  languageRow: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: '8px',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  languageButton: {
+    border: 'none',
+    backgroundColor: '#eef2f5',
+    color: '#30414B',
+    borderRadius: '6px',
+    fontSize: '12px',
+    fontWeight: 600,
+    padding: '4px 8px',
+    cursor: 'pointer'
+  },
+  languageButtonActive: {
+    backgroundColor: '#30414B',
+    color: '#fff'
   }
 };
 
@@ -112,37 +134,72 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
 
+function LanguageToggle() {
+  const { language, setLanguage, t } = useI18n();
+
+  return (
+    <div style={styles.languageRow}>
+      <span style={{ fontSize: '12px', color: '#666' }}>{t('language.label')}:</span>
+      <button
+        type="button"
+        onClick={() => setLanguage('es')}
+        style={{
+          ...styles.languageButton,
+          ...(language === 'es' ? styles.languageButtonActive : {})
+        }}
+      >
+        {t('language.es')}
+      </button>
+      <button
+        type="button"
+        onClick={() => setLanguage('en')}
+        style={{
+          ...styles.languageButton,
+          ...(language === 'en' ? styles.languageButtonActive : {})
+        }}
+      >
+        {t('language.en')}
+      </button>
+    </div>
+  );
+}
+
 export const LoadingState = () => {
+  const { t } = useI18n();
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
+        <LanguageToggle />
         <img 
           src="/ampa-logo.png" 
           alt={config.branding.organizationName}
           style={styles.logo}
         />
         <div style={styles.spinner}></div>
-        <p style={styles.loadingText}>Verifying membership...</p>
+        <p style={styles.loadingText}>{t('loading.verifyingMembership')}</p>
       </div>
     </div>
   );
 };
 
 export const ValidState = ({ memberName, expiryDate, revocationWarning }) => {
-  const formattedDate = new Date(expiryDate * 1000).toLocaleDateString('es-ES');
+  const { t, formatDate } = useI18n();
+  const formattedDate = formatDate(expiryDate);
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
+        <LanguageToggle />
         <img
           src="/ampa-logo.png"
           alt={config.branding.organizationName}
           style={styles.logo}
         />
         <div style={{ ...styles.icon, color: '#28a745' }}>✓</div>
-        <h1 style={{ ...styles.heading, color: '#28a745' }}>Valid Membership</h1>
+        <h1 style={{ ...styles.heading, color: '#28a745' }}>{t('valid.title')}</h1>
         <p style={styles.memberName}>{memberName}</p>
-        <p style={styles.expiryText}>Valid until: {formattedDate}</p>
+        <p style={styles.expiryText}>{t('valid.validUntil', { date: formattedDate })}</p>
         {revocationWarning && (
           <div style={{
             marginTop: '16px',
@@ -154,11 +211,11 @@ export const ValidState = ({ memberName, expiryDate, revocationWarning }) => {
             fontSize: '14px',
             textAlign: 'center'
           }}>
-            ⚠️ Revocation status could not be checked
+            {t('valid.revocationUnknown')}
           </div>
         )}
         <p style={{ marginTop: '24px', fontSize: '16px', color: '#666' }}>
-          This membership is valid for AMPA discounts
+          {t('valid.discounts')}
         </p>
       </div>
     </div>
@@ -166,16 +223,18 @@ export const ValidState = ({ memberName, expiryDate, revocationWarning }) => {
 };
 
 export const InvalidState = ({ errorType, errorMessage, memberName, errorDetails }) => {
+  const { t } = useI18n();
   const [showDetails, setShowDetails] = useState(false);
   const isRevoked = errorType === VerificationError.REVOKED;
-  const title = isRevoked ? 'Membership Revoked' : 'Invalid Membership';
+  const title = isRevoked ? t('invalid.revokedTitle') : t('invalid.title');
   const icon = isRevoked ? '⛔' : '✗';
   const subtitle = isRevoked ? (memberName || errorMessage) : errorMessage;
-  const helper = isRevoked ? 'Contact AMPA to restore this membership' : 'Contact AMPA for support';
+  const helper = isRevoked ? t('invalid.contactRestore') : t('invalid.contactSupport');
   
   return (
     <div style={styles.container}>
       <div style={styles.card}>
+        <LanguageToggle />
         <img 
           src="/ampa-logo.png" 
           alt={config.branding.organizationName}
@@ -191,7 +250,7 @@ export const InvalidState = ({ errorType, errorMessage, memberName, errorDetails
               onClick={() => setShowDetails(!showDetails)}
               style={styles.detailsToggle}
             >
-              {showDetails ? 'Hide' : 'Show'} Technical Details
+              {showDetails ? t('invalid.hideTechnicalDetails') : t('invalid.showTechnicalDetails')}
             </button>
             {showDetails && (
               <div style={styles.detailsContent}>

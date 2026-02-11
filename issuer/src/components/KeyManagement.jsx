@@ -7,6 +7,7 @@ import {
     isValidPEMFormat,
     getKeyFingerprint,
 } from "../utils/crypto";
+import { useI18n } from "../i18n";
 
 const styles = {
     container: {
@@ -97,6 +98,7 @@ const styles = {
 };
 
 export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPrivateKeyPEM, publicKeyPEM: initialPublicKeyPEM, onKeysChange }) {
+    const { t } = useI18n();
     const [generating, setGenerating] = useState(false);
     const [importError, setImportError] = useState("");
     const [privateKeyPEM, setPrivateKeyPEM] = useState(initialPrivateKeyPEM || "");
@@ -124,7 +126,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
             setPublicKeyPEM(pubPEM);
             onKeysChange(privKey, pubKey, privPEM, pubPEM);
         } catch (error) {
-            setImportError("Failed to generate keypair: " + error.message);
+            setImportError(`${t("keys.errors.generateFailed")}: ${error.message}`);
         } finally {
             setGenerating(false);
         }
@@ -143,7 +145,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
         if (!isValidPEMFormat(pem)) {
             setImportError(
-                'Invalid PEM format. Private key must start with "-----BEGIN PRIVATE KEY-----"',
+                t("keys.errors.invalidPem"),
             );
             return;
         }
@@ -157,7 +159,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
             setImportError("");
             onKeysChange(privKey, null, pem, "");
         } catch (error) {
-            setImportError("Failed to import private key: " + error.message);
+            setImportError(`${t("keys.errors.importFailed")}: ${error.message}`);
         }
     };
 
@@ -166,7 +168,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.heading}>Key Management</h1>
+            <h1 style={styles.heading}>{t("keys.title")}</h1>
 
             {/* Key Status */}
             <div
@@ -177,15 +179,15 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
                         : styles.statusUnloaded),
                 }}
             >
-                {keyLoaded ? "✅ Key loaded" : "⚠️ No key loaded"}
-                {fingerprint && ` - Fingerprint: ${fingerprint}`}
+                {keyLoaded ? t("keys.status.loaded") : t("keys.status.unloaded")}
+                {fingerprint && ` - ${t("keys.status.fingerprint")}: ${fingerprint}`}
             </div>
 
             {/* Generate New Keypair */}
             <div style={styles.section}>
-                <h2 style={styles.heading}>Generate New Keypair</h2>
+                <h2 style={styles.heading}>{t("keys.generate.title")}</h2>
                 <p>
-                    Create a new Ed25519 keypair for signing membership cards.
+                    {t("keys.generate.description")}
                 </p>
                 <button
                     onClick={handleGenerateKeypair}
@@ -195,7 +197,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
                         ...(generating ? styles.buttonDisabled : {}),
                     }}
                 >
-                    {generating ? "Generating..." : "Generate New Keypair"}
+                    {generating ? t("keys.generate.generating") : t("keys.generate.button")}
                 </button>
 
                 {importError && <div style={styles.error}>{importError}</div>}
@@ -204,26 +206,24 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
                     <>
                         <div style={styles.warning}>
                             <div style={styles.warningTitle}>
-                                🔒 SECURITY WARNINGS
+                                {t("keys.securityWarnings.title")}
                             </div>
                             <ul style={styles.warningList}>
                                 <li>
-                                    Store private key securely (password manager
-                                    recommended)
+                                    {t("keys.securityWarnings.item1")}
                                 </li>
                                 <li>
-                                    NEVER commit private key to Git repository
+                                    {t("keys.securityWarnings.item2")}
                                 </li>
                                 <li>
-                                    Losing this key means regenerating ALL
-                                    member cards
+                                    {t("keys.securityWarnings.item3")}
                                 </li>
                             </ul>
                         </div>
 
                         <div style={{ marginTop: "16px" }}>
                             <label style={styles.label}>
-                                Private Key (KEEP SECRET)
+                                {t("keys.labels.privateKeySecret")}
                             </label>
                             <textarea
                                 value={privateKeyPEM}
@@ -238,7 +238,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
                         <div style={{ marginTop: "16px" }}>
                             <label style={styles.label}>
-                                Public Key (PEM format)
+                                {t("keys.labels.publicKeyPem")}
                             </label>
                             <textarea
                                 value={publicKeyPEM}
@@ -250,7 +250,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
                         <div style={{ marginTop: "16px" }}>
                             <label style={styles.label}>
-                                Public Key for config.json (copy this → verification/src/config.json)
+                                {t("keys.labels.publicKeyForConfig")}
                             </label>
                             <textarea
                                 value={JSON.stringify(publicKeyPEM)}
@@ -263,7 +263,7 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
                                 onClick={(e) => e.target.select()}
                             />
                             <p style={{ fontSize: "14px", color: "#666", marginTop: "8px" }}>
-                                ℹ️ This is the JSON-escaped format. Copy and paste as the value for "publicKey" in your verification config.json
+                                {t("keys.labels.publicKeyHelp")}
                             </p>
                         </div>
                     </>
@@ -272,28 +272,25 @@ export function KeyManagement({ privateKey, publicKey, privateKeyPEM: initialPri
 
             {/* Import Existing Private Key */}
             <div style={styles.section}>
-                <h2 style={styles.heading}>Import Existing Private Key</h2>
+                <h2 style={styles.heading}>{t("keys.import.title")}</h2>
                 <p>
-                    Paste your private key in PEM format to use for card
-                    generation.
+                    {t("keys.import.description")}
                 </p>
 
-                <label style={styles.label}>Private Key (PEM format)</label>
+                <label style={styles.label}>{t("keys.labels.privateKeyPem")}</label>
                 <textarea
                     value={privateKeyPEM}
                     onChange={handleImportPrivateKey}
-                    placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                    placeholder={t("keys.import.placeholder")}
                     style={styles.textarea}
                 />
 
                 {importError && <div style={styles.error}>{importError}</div>}
 
                 <div style={styles.warning}>
-                    <div style={styles.warningTitle}>🔒 SECURITY NOTE</div>
+                    <div style={styles.warningTitle}>{t("keys.securityNote.title")}</div>
                     <p style={{ margin: "8px 0", color: "#c62828" }}>
-                        Private key is saved in browser storage to survive
-                        refresh. Use only on trusted devices and clear browser
-                        data when finished.
+                        {t("keys.securityNote.body")}
                     </p>
                 </div>
             </div>

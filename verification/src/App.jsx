@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { parseTokenFromFragment, verifyToken, checkRevocation, VerificationError } from './utils/verify';
 import { LoadingState, ValidState, InvalidState } from './components/VerificationResult';
 import config from './config.json';
+import { useI18n } from './i18n';
 
 function App() {
+  const { t } = useI18n();
   const [state, setState] = useState('loading'); // 'loading', 'valid', 'invalid'
   const [result, setResult] = useState(null);
   const [revocationWarning, setRevocationWarning] = useState(false);
@@ -18,8 +20,8 @@ function App() {
         setResult({
           error: {
             type: 'NO_TOKEN',
-            message: 'No membership card detected',
-            details: 'URL must contain #token=<JWT> parameter'
+            message: t('errors.noTokenMessage'),
+            details: t('errors.noTokenDetails')
           }
         });
         return;
@@ -31,8 +33,8 @@ function App() {
         setResult({
           error: {
             type: 'CONFIG_ERROR',
-            message: 'Verification system not configured',
-            details: 'Public key not set in configuration.'
+            message: t('errors.configMessage'),
+            details: t('errors.configDetails')
           }
         });
         return;
@@ -59,7 +61,7 @@ function App() {
           setResult({
             error: {
               type: VerificationError.REVOKED,
-              message: verificationResult.payload.name || 'Unknown member',
+              message: verificationResult.payload.name || t('errors.unknownMember'),
               memberName: verificationResult.payload.name || null,
               details: `Token ID '${verificationResult.payload.jti}' found in revocation list`
             }
@@ -80,7 +82,7 @@ function App() {
     // Small delay to show loading state (better UX)
     const timer = setTimeout(performVerification, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [t]);
 
   // Render appropriate state
   switch (state) {

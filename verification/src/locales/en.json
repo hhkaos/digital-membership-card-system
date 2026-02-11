@@ -1,0 +1,31 @@
+{
+  "language": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN"
+  },
+  "loading": {
+    "verifyingMembership": "Verifying membership..."
+  },
+  "valid": {
+    "title": "Valid Membership",
+    "validUntil": "Valid until: {{date}}",
+    "discounts": "This membership is valid for AMPA discounts",
+    "revocationUnknown": "⚠️ Revocation status could not be checked"
+  },
+  "invalid": {
+    "title": "Invalid Membership",
+    "revokedTitle": "Membership Revoked",
+    "showTechnicalDetails": "Show Technical Details",
+    "hideTechnicalDetails": "Hide Technical Details",
+    "contactSupport": "Contact AMPA for support",
+    "contactRestore": "Contact AMPA to restore this membership"
+  },
+  "errors": {
+    "noTokenMessage": "No membership card detected",
+    "noTokenDetails": "URL must contain #token=<JWT> parameter",
+    "configMessage": "Verification system not configured",
+    "configDetails": "Public key not set in configuration.",
+    "unknownMember": "Unknown member"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "language": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN"
+  },
+  "loading": {
+    "verifyingMembership": "Verificando membresía..."
+  },
+  "valid": {
+    "title": "Membresía válida",
+    "validUntil": "Válida hasta: {{date}}",
+    "discounts": "Esta membresía es válida para descuentos AMPA",
+    "revocationUnknown": "⚠️ No se pudo comprobar el estado de revocación"
+  },
+  "invalid": {
+    "title": "Membresía no válida",
+    "revokedTitle": "Membresía revocada",
+    "showTechnicalDetails": "Mostrar detalles técnicos",
+    "hideTechnicalDetails": "Ocultar detalles técnicos",
+    "contactSupport": "Contactar con AMPA para soporte",
+    "contactRestore": "Contactar con AMPA para restaurar esta membresía"
+  },
+  "errors": {
+    "noTokenMessage": "No se detectó una tarjeta de membresía",
+    "noTokenDetails": "La URL debe contener el parámetro #token=<JWT>",
+    "configMessage": "El sistema de verificación no está configurado",
+    "configDetails": "No se ha configurado la clave pública.",
+    "unknownMember": "Miembro desconocido"
+  }
+}

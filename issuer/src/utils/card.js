@@ -43,7 +43,16 @@ async function generateQRCanvas(jwt) {
  * @returns {Promise<Blob>} Card image as blob
  */
 export async function generatePlainQRCard(memberData) {
-  const { jwt, memberName, memberId, expiryDate } = memberData;
+  const {
+    jwt,
+    memberName,
+    memberId,
+    expiryDate,
+    locale = 'es-ES',
+    labels = {},
+  } = memberData;
+  const validUntilLabel = labels.validUntil || 'Valid until';
+  const memberIdLabel = labels.memberId || 'ID';
 
   // Generate QR code canvas
   const qrCanvas = await generateQRCanvas(jwt);
@@ -116,10 +125,10 @@ export async function generatePlainQRCard(memberData) {
         ctx.fillText(memberName, width / 2, textY);
 
         // Valid until + Member ID
-        const expiryFormatted = new Date(expiryDate).toLocaleDateString('es-ES');
+        const expiryFormatted = new Date(expiryDate).toLocaleDateString(locale);
         ctx.fillStyle = '#52717B';
         ctx.font = '24px Arial, sans-serif';
-        ctx.fillText(`Valid until: ${expiryFormatted}  ·  ID: ${memberId}`, width / 2, textY + 35);
+        ctx.fillText(`${validUntilLabel}: ${expiryFormatted}  ·  ${memberIdLabel}: ${memberId}`, width / 2, textY + 35);
 
         // Convert to blob
         canvas.toBlob((blob) => {

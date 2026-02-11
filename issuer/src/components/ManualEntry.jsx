@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createMemberPayload, signJWT } from '../utils/crypto';
 import { generatePlainQRCard, generateCardFilename, downloadCard } from '../utils/card';
+import { useI18n } from '../i18n';
 
 const styles = {
   container: {
@@ -61,6 +62,7 @@ const styles = {
 };
 
 export function ManualEntry({ privateKey }) {
+  const { t, language } = useI18n();
   const [fullName, setFullName] = useState('');
   const [memberId, setMemberId] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
@@ -72,22 +74,22 @@ export function ManualEntry({ privateKey }) {
     const newErrors = {};
     
     if (!fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
+      newErrors.fullName = t('manual.errors.fullNameRequired');
     }
     
     if (!memberId.trim()) {
-      newErrors.memberId = 'Member ID is required';
+      newErrors.memberId = t('manual.errors.memberIdRequired');
     }
     
     if (!expiryDate) {
-      newErrors.expiryDate = 'Expiry date is required';
+      newErrors.expiryDate = t('manual.errors.expiryRequired');
     } else {
       const expiry = new Date(expiryDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
       if (expiry <= today) {
-        newErrors.expiryDate = 'Expiry date must be in the future';
+        newErrors.expiryDate = t('manual.errors.expiryFuture');
       }
     }
     
@@ -100,7 +102,7 @@ export function ManualEntry({ privateKey }) {
     setSuccess(false);
     
     if (!privateKey) {
-      alert('Please load a private key first');
+      alert(t('manual.alerts.loadPrivateKey'));
       return;
     }
     
@@ -126,7 +128,12 @@ export function ManualEntry({ privateKey }) {
         jwt,
         memberName: fullName.trim(),
         memberId: memberId.trim(),
-        expiryDate
+        expiryDate,
+        locale: language === 'es' ? 'es-ES' : 'en-US',
+        labels: {
+          validUntil: t('card.labels.validUntil'),
+          memberId: t('card.labels.memberId'),
+        },
       });
 
       // Download card
@@ -144,7 +151,7 @@ export function ManualEntry({ privateKey }) {
       }, 3000);
       
     } catch (error) {
-      alert('Failed to generate card: ' + error.message);
+      alert(`${t('manual.alerts.generateFailed')}: ${error.message}`);
     } finally {
       setGenerating(false);
     }
@@ -152,35 +159,35 @@ export function ManualEntry({ privateKey }) {
 
   return (
     <div style={styles.container}>
-      <h2 style={{ color: '#30414B', marginBottom: '24px' }}>Generate Membership Card</h2>
+      <h2 style={{ color: '#30414B', marginBottom: '24px' }}>{t('manual.title')}</h2>
       
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Full Name *</label>
+          <label style={styles.label}>{t('manual.fields.fullName')} *</label>
           <input
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             style={styles.input}
-            placeholder="e.g., Raúl Jiménez"
+            placeholder={t('manual.placeholders.fullName')}
           />
           {errors.fullName && <div style={styles.error}>{errors.fullName}</div>}
         </div>
         
         <div style={styles.formGroup}>
-          <label style={styles.label}>Member ID *</label>
+          <label style={styles.label}>{t('manual.fields.memberId')} *</label>
           <input
             type="text"
             value={memberId}
             onChange={(e) => setMemberId(e.target.value)}
             style={styles.input}
-            placeholder="e.g., 12345 or UUID"
+            placeholder={t('manual.placeholders.memberId')}
           />
           {errors.memberId && <div style={styles.error}>{errors.memberId}</div>}
         </div>
         
         <div style={styles.formGroup}>
-          <label style={styles.label}>Expiry Date *</label>
+          <label style={styles.label}>{t('manual.fields.expiryDate')} *</label>
           <input
             type="date"
             value={expiryDate}
@@ -198,14 +205,14 @@ export function ManualEntry({ privateKey }) {
             ...((generating || !privateKey) ? styles.buttonDisabled : {})
           }}
         >
-          {generating ? 'Generating Card...' : 'Generate Card'}
+          {generating ? t('manual.actions.generating') : t('manual.actions.generate')}
         </button>
       </form>
       
       {success && (
         <div style={styles.success}>
-          <strong>✅ Card generated successfully!</strong>
-          <p style={{ margin: '8px 0 0 0' }}>Check your downloads folder.</p>
+          <strong>{t('manual.success.title')}</strong>
+          <p style={{ margin: '8px 0 0 0' }}>{t('manual.success.subtitle')}</p>
         </div>
       )}
     </div>

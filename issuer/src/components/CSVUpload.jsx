@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { parseCSV } from '../utils/csv.js';
 import { generateBatch, downloadZip, getZipFilename } from '../utils/batch.js';
+import { useI18n } from '../i18n';
 
 export default function CSVUpload({ privateKey }) {
+  const { t, language } = useI18n();
   const [csvFile, setCsvFile] = useState(null);
   const [parseResults, setParseResults] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -18,7 +20,7 @@ export default function CSVUpload({ privateKey }) {
       const results = await parseCSV(file);
       setParseResults(results);
     } catch (error) {
-      alert(`Failed to parse CSV: ${error.message}`);
+      alert(`${t('csv.alerts.parseFailed')}: ${error.message}`);
       setCsvFile(null);
       setParseResults(null);
     }
@@ -36,15 +38,26 @@ export default function CSVUpload({ privateKey }) {
         privateKey,
         (current, total) => {
           setProgress({ current, total });
+        },
+        undefined,
+        {
+          locale: language === 'es' ? 'es-ES' : 'en-US',
+          cardLabels: {
+            validUntil: t('card.labels.validUntil'),
+            memberId: t('card.labels.memberId'),
+          },
         }
       );
 
       const filename = getZipFilename();
       downloadZip(zipBlob, filename);
 
-      alert(`✅ Successfully generated ${parseResults.valid.length} cards!\n\nDownloaded: ${filename}`);
+      alert(t('csv.alerts.generateSuccess', {
+        count: parseResults.valid.length,
+        filename,
+      }));
     } catch (error) {
-      alert(`Failed to generate cards: ${error.message}`);
+      alert(`${t('csv.alerts.generateFailed')}: ${error.message}`);
     } finally {
       setIsGenerating(false);
       setProgress({ current: 0, total: 0 });
@@ -59,15 +72,15 @@ export default function CSVUpload({ privateKey }) {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <h2>CSV Batch Upload</h2>
+      <h2>{t('csv.title')}</h2>
 
       <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '5px' }}>
-        <h3 style={{ marginTop: 0 }}>CSV Format</h3>
-        <p>Your CSV file must have these columns:</p>
+        <h3 style={{ marginTop: 0 }}>{t('csv.format.title')}</h3>
+        <p>{t('csv.format.requiredColumnsIntro')}</p>
         <ul>
-          <li><strong>full_name</strong> - Member's full name</li>
-          <li><strong>member_id</strong> - Unique member identifier</li>
-          <li><strong>expiry_date</strong> - Card expiration (formats: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY)</li>
+          <li><strong>full_name</strong> - {t('csv.format.fullName')}</li>
+          <li><strong>member_id</strong> - {t('csv.format.memberId')}</li>
+          <li><strong>expiry_date</strong> - {t('csv.format.expiryDate')}</li>
         </ul>
       </div>
 
@@ -81,7 +94,7 @@ export default function CSVUpload({ privateKey }) {
             borderRadius: '5px',
             cursor: 'pointer'
           }}>
-            📁 Select CSV File
+            {t('csv.actions.selectFile')}
           </label>
           <input
             id="csv-upload"
@@ -102,7 +115,10 @@ export default function CSVUpload({ privateKey }) {
             border: `1px solid ${parseResults.errors.length > 0 ? '#ffc107' : '#28a745'}`,
             borderRadius: '5px'
           }}>
-            <strong>Summary:</strong> {parseResults.valid.length} valid, {parseResults.errors.length} errors
+            <strong>{t('csv.summary.label')}</strong> {t('csv.summary.value', {
+              valid: parseResults.valid.length,
+              errors: parseResults.errors.length,
+            })}
           </div>
 
           <div style={{ marginBottom: '20px', overflowX: 'auto' }}>
@@ -114,11 +130,11 @@ export default function CSVUpload({ privateKey }) {
             }}>
               <thead>
                 <tr style={{ backgroundColor: '#30414B', color: 'white' }}>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Line</th>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Member ID</th>
-                  <th style={{ padding: '12px', textAlign: 'left' }}>Expiry Date</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>{t('csv.table.status')}</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>{t('csv.table.line')}</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>{t('csv.table.name')}</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>{t('csv.table.memberId')}</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>{t('csv.table.expiryDate')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,12 +159,12 @@ export default function CSVUpload({ privateKey }) {
                     <td style={{ padding: '12px' }}>{entry.lineNumber}</td>
                     <td style={{ padding: '12px' }} colSpan="3">
                       <div>
-                        <strong>Error:</strong> {entry.error}
+                        <strong>{t('csv.table.errorLabel')}</strong> {entry.error}
                       </div>
                       <div style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
-                        {entry.data.full_name && `Name: ${entry.data.full_name} | `}
-                        {entry.data.member_id && `ID: ${entry.data.member_id} | `}
-                        {entry.data.expiry_date && `Expiry: ${entry.data.expiry_date}`}
+                        {entry.data.full_name && `${t('csv.table.name')}: ${entry.data.full_name} | `}
+                        {entry.data.member_id && `${t('csv.table.memberIdShort')}: ${entry.data.member_id} | `}
+                        {entry.data.expiry_date && `${t('csv.table.expiryShort')}: ${entry.data.expiry_date}`}
                       </div>
                     </td>
                   </tr>
@@ -172,8 +188,8 @@ export default function CSVUpload({ privateKey }) {
               }}
             >
               {isGenerating
-                ? `Generating... ${progress.current}/${progress.total}`
-                : `🎫 Generate All Cards (${parseResults.valid.length})`
+                ? t('csv.actions.generatingProgress', { current: progress.current, total: progress.total })
+                : t('csv.actions.generateAll', { count: parseResults.valid.length })
               }
             </button>
 
@@ -190,7 +206,7 @@ export default function CSVUpload({ privateKey }) {
                 cursor: isGenerating ? 'not-allowed' : 'pointer'
               }}
             >
-              Reset
+              {t('csv.actions.reset')}
             </button>
           </div>
 
@@ -203,7 +219,7 @@ export default function CSVUpload({ privateKey }) {
               borderRadius: '5px',
               color: '#721c24'
             }}>
-              ⚠️ No private key loaded. Please load a keypair first.
+              {t('csv.warnings.noPrivateKey')}
             </div>
           )}
         </>

@@ -306,6 +306,14 @@ Embed in source code or `config.json`:
 - **Date parsing**: date-fns or day.js (flexible date format support)
 - **File generation**: canvas (for PNG), jspdf (if PDF needed later)
 
+### 7.1.1 Dependency Manifest Requirements
+
+- Every third-party package imported in source code MUST exist in the corresponding app `package.json` (`dependencies` or `devDependencies`).
+- Runtime imports used by app code MUST be in `dependencies`.
+- Test-only/build-only imports MAY be in `devDependencies`.
+- `package-lock.json` files MUST be committed and kept in sync with `package.json`.
+- CI/test execution MUST fail if a module import is missing from installed dependencies.
+
 ### 7.2 Installation & Distribution
 
 - **Type**: PWA (installable web app)

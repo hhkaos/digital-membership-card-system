@@ -683,6 +683,7 @@ Functions:
 ## Phase 7: Internationalization (i18n)
 
 **Goal**: Support Spanish (primary) and English (fallback) in both apps.
+**Status (2026-02-11)**: In progress. Verification i18n and issuer app-level i18n are implemented with a local provider fallback due blocked package install network access.
 
 **Why second**: The AMPA is in Spain — Spanish should be the primary language. Most merchants and members will use Spanish.
 

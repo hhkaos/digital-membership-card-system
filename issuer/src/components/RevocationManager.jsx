@@ -11,6 +11,7 @@ import {
   decodeQRCodeFromImageFile,
   extractIdentifiersFromQrText,
 } from '../utils/tokenLookup';
+import { useI18n } from '../i18n';
 
 const DEFAULT_LOCAL_REVOKED_URL = 'http://localhost:5173/revoked.json';
 const DEFAULT_DEPLOYED_REVOKED_URL = 'https://verify.ampanovaschoolalmeria.org/revoked.json';
@@ -177,6 +178,7 @@ function buildRows(list) {
 }
 
 export function RevocationManager() {
+  const { t, language } = useI18n();
   const [revocationList, setRevocationList] = useState(createEmptyRevocationList);
   const [entryId, setEntryId] = useState('');
   const [entryType, setEntryType] = useState('jti');
@@ -200,7 +202,7 @@ export function RevocationManager() {
     const merged = mergeRevocationLists(revocationList, loadedList);
     setRevocationList(merged);
     if (merged === revocationList) {
-      setSuccess('No new revocation entries found. Existing list preserved.');
+      setSuccess(t('revocation.feedback.noNewEntries'));
     } else {
       setSuccess(successMessage);
     }
@@ -211,9 +213,9 @@ export function RevocationManager() {
       const nextList = addToRevocationList(revocationList, id, type);
       setRevocationList(nextList);
       if (nextList === revocationList) {
-        setSuccess('Entry already exists in the list.');
+        setSuccess(t('revocation.feedback.entryAlreadyExists'));
       } else {
-        setSuccess(`Added ${type.toUpperCase()} to revocation list.`);
+        setSuccess(t('revocation.feedback.entryAdded', { type: type.toUpperCase() }));
       }
     } catch (error) {
       setError(error.message);
@@ -227,7 +229,7 @@ export function RevocationManager() {
 
   const handleLookupRevoke = (type) => {
     if (!lookupResult || !lookupResult[type]) {
-      setError(`No ${type.toUpperCase()} found in uploaded QR token`);
+      setError(t('revocation.feedback.lookupMissingType', { type: type.toUpperCase() }));
       return;
     }
     addRevocationEntry(lookupResult[type], type);
@@ -239,7 +241,7 @@ export function RevocationManager() {
     try {
       const nextList = removeFromRevocationList(revocationList, id, type);
       setRevocationList(nextList);
-      setSuccess(`Removed ${type.toUpperCase()} from revocation list.`);
+      setSuccess(t('revocation.feedback.entryRemoved', { type: type.toUpperCase() }));
     } catch (error) {
       setError(error.message);
     }
@@ -248,7 +250,7 @@ export function RevocationManager() {
   const handleImport = () => {
     try {
       const parsed = importRevocationJSON(importText);
-      mergeIntoCurrentList(parsed, 'Revocation list merged from pasted JSON.');
+      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromPastedJson'));
     } catch (error) {
       setError(error.message);
     }
@@ -262,7 +264,7 @@ export function RevocationManager() {
       const text = await file.text();
       setImportText(text);
       const parsed = importRevocationJSON(text);
-      mergeIntoCurrentList(parsed, 'Revocation list merged from file.');
+      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromFile'));
     } catch (error) {
       setError(error.message);
     } finally {
@@ -282,18 +284,18 @@ export function RevocationManager() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error(`revoked.json not found at ${url} (HTTP 404)`);
+          throw new Error(t('revocation.errors.revokedNotFound', { url }));
         }
-        throw new Error(`Failed to load revoked.json from ${url} (HTTP ${response.status})`);
+        throw new Error(t('revocation.errors.failedToLoadFromUrl', { url, status: response.status }));
       }
 
       const data = await response.json();
       const parsed = importRevocationJSON(JSON.stringify(data));
-      mergeIntoCurrentList(parsed, `Revocation list merged from ${url}`);
-      setLoadStatus({ kind: 'success', message: `Loaded and merged from ${url}` });
+      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromUrl', { url }));
+      setLoadStatus({ kind: 'success', message: t('revocation.feedback.loadedAndMergedFromUrl', { url }) });
     } catch (error) {
       setError(error.message);
-      setLoadStatus({ kind: 'error', message: error.message || 'Failed to load revoked.json' });
+      setLoadStatus({ kind: 'error', message: error.message || t('revocation.errors.loadFailed') });
     } finally {
       setLoadBusy(false);
     }
@@ -309,16 +311,16 @@ export function RevocationManager() {
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
-    setSuccess('Downloaded revoked.json');
+    setSuccess(t('revocation.feedback.downloaded'));
   };
 
   const handleCopy = async () => {
     try {
       if (!navigator.clipboard || !navigator.clipboard.writeText) {
-        throw new Error('Clipboard API is not available in this browser.');
+        throw new Error(t('revocation.errors.clipboardUnavailable'));
       }
       await navigator.clipboard.writeText(exportedJSON);
-      setSuccess('JSON copied to clipboard.');
+      setSuccess(t('revocation.feedback.copiedToClipboard'));
     } catch (error) {
       setError(error.message);
     }
@@ -346,7 +348,7 @@ export function RevocationManager() {
         setEntryId(identifiers.sub);
       }
 
-      setSuccess('QR decoded successfully. Token identifiers loaded.');
+      setSuccess(t('revocation.feedback.qrDecoded'));
     } catch (error) {
       setLookupResult(null);
       setError(error.message);
@@ -356,15 +358,17 @@ export function RevocationManager() {
     }
   };
 
+  const dateLocale = language === 'es' ? 'es-ES' : 'en-US';
+
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>Revocation Manager</h2>
+      <h2 style={styles.heading}>{t('revocation.title')}</h2>
       <p style={styles.description}>
-        Revoke single cards by token ID (`jti`) or revoke all cards for a member by member ID (`sub`).
+        {t('revocation.description')}
       </p>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Load Existing `revoked.json`</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.loadExisting.title')}</h3>
         <div style={styles.row}>
           <label style={styles.label}>
             <input
@@ -374,7 +378,7 @@ export function RevocationManager() {
               checked={loadSource === 'local'}
               onChange={(event) => setLoadSource(event.target.value)}
             />{' '}
-            Local verifier (default)
+            {t('revocation.loadExisting.sources.local')}
           </label>
           <label style={styles.label}>
             <input
@@ -384,7 +388,7 @@ export function RevocationManager() {
               checked={loadSource === 'deployed'}
               onChange={(event) => setLoadSource(event.target.value)}
             />{' '}
-            Deployed domain
+            {t('revocation.loadExisting.sources.deployed')}
           </label>
         </div>
         <div style={styles.row}>
@@ -394,7 +398,7 @@ export function RevocationManager() {
             value={localRevokedUrl}
             onChange={(event) => setLocalRevokedUrl(event.target.value)}
             disabled={loadSource !== 'local'}
-            placeholder="http://localhost:5173/revoked.json"
+            placeholder={t('revocation.loadExisting.placeholders.localUrl')}
           />
           <input
             type="text"
@@ -402,7 +406,7 @@ export function RevocationManager() {
             value={deployedRevokedUrl}
             onChange={(event) => setDeployedRevokedUrl(event.target.value)}
             disabled={loadSource !== 'deployed'}
-            placeholder="https://verify.ampanovaschoolalmeria.org/revoked.json"
+            placeholder={t('revocation.loadExisting.placeholders.deployedUrl')}
           />
           <button
             type="button"
@@ -410,21 +414,21 @@ export function RevocationManager() {
             disabled={loadBusy}
             style={{ ...styles.button, ...styles.secondaryButton }}
           >
-            {loadBusy ? 'Loading...' : 'Load and Merge'}
+            {loadBusy ? t('revocation.loadExisting.actions.loading') : t('revocation.loadExisting.actions.loadAndMerge')}
           </button>
         </div>
         <p style={styles.info}>
-          Loading from URL merges entries into the current list (deduplicated) to avoid overwriting previous revokes.
+          {t('revocation.loadExisting.help')}
         </p>
         {loadStatus.kind === 'error' && <p style={styles.error}>{loadStatus.message}</p>}
         {loadStatus.kind === 'success' && <p style={styles.success}>{loadStatus.message}</p>}
       </section>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Identify from QR PNG</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.qrLookup.title')}</h3>
         <div style={styles.row}>
           <label style={styles.label} htmlFor="qr-png-upload">
-            Upload PNG with member QR
+            {t('revocation.qrLookup.uploadLabel')}
           </label>
           <input
             id="qr-png-upload"
@@ -434,16 +438,16 @@ export function RevocationManager() {
           />
         </div>
         <p style={styles.info}>
-          The app decodes the QR locally in your browser, then reads unverified `jti`/`sub` claims from the JWT.
+          {t('revocation.qrLookup.help')}
         </p>
-        {lookupLoading && <p style={styles.info}>Reading QR image...</p>}
+        {lookupLoading && <p style={styles.info}>{t('revocation.qrLookup.reading')}</p>}
         {lookupResult && (
           <div style={styles.lookupCard}>
-            <p style={styles.info}>File: {lookupResult.fileName}</p>
-            <p style={{ ...styles.info, ...styles.mono }}>jti: {lookupResult.jti || 'not found'}</p>
-            <p style={{ ...styles.info, ...styles.mono }}>sub: {lookupResult.sub || 'not found'}</p>
-            <p style={styles.info}>name: {lookupResult.name || 'not found'}</p>
-            <p style={styles.info}>iss: {lookupResult.iss || 'not found'}</p>
+            <p style={styles.info}>{t('revocation.qrLookup.fields.file')}: {lookupResult.fileName}</p>
+            <p style={{ ...styles.info, ...styles.mono }}>jti: {lookupResult.jti || t('revocation.qrLookup.notFound')}</p>
+            <p style={{ ...styles.info, ...styles.mono }}>sub: {lookupResult.sub || t('revocation.qrLookup.notFound')}</p>
+            <p style={styles.info}>{t('revocation.qrLookup.fields.name')}: {lookupResult.name || t('revocation.qrLookup.notFound')}</p>
+            <p style={styles.info}>{t('revocation.qrLookup.fields.issuer')}: {lookupResult.iss || t('revocation.qrLookup.notFound')}</p>
             <div style={styles.row}>
               <button
                 type="button"
@@ -451,7 +455,7 @@ export function RevocationManager() {
                 onClick={() => handleLookupRevoke('jti')}
                 style={{ ...styles.button, ...styles.primaryButton }}
               >
-                Revoke this token (jti)
+                {t('revocation.qrLookup.actions.revokeToken')}
               </button>
               <button
                 type="button"
@@ -459,7 +463,7 @@ export function RevocationManager() {
                 onClick={() => handleLookupRevoke('sub')}
                 style={{ ...styles.button, ...styles.ghostButton }}
               >
-                Revoke this member (sub)
+                {t('revocation.qrLookup.actions.revokeMember')}
               </button>
             </div>
           </div>
@@ -467,40 +471,40 @@ export function RevocationManager() {
       </section>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Add Revocation Entry</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.addEntry.title')}</h3>
         <div style={styles.row}>
           <input
             type="text"
             value={entryId}
             onChange={(event) => setEntryId(event.target.value)}
-            placeholder="Enter token ID (jti) or member ID (sub)"
+            placeholder={t('revocation.addEntry.placeholder')}
             style={styles.input}
           />
           <select value={entryType} onChange={(event) => setEntryType(event.target.value)} style={styles.select}>
-            <option value="jti">Revoke specific token (jti)</option>
-            <option value="sub">Revoke all tokens for member (sub)</option>
+            <option value="jti">{t('revocation.addEntry.options.jti')}</option>
+            <option value="sub">{t('revocation.addEntry.options.sub')}</option>
           </select>
           <button
             type="button"
             onClick={handleAdd}
             style={{ ...styles.button, ...styles.primaryButton }}
           >
-            Add to Revocation List
+            {t('revocation.addEntry.actions.add')}
           </button>
         </div>
       </section>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Current Revocation List</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.currentList.title')}</h3>
         {rows.length === 0 ? (
-          <p style={styles.info}>No revoked entries yet.</p>
+          <p style={styles.info}>{t('revocation.currentList.empty')}</p>
         ) : (
           <table style={styles.table}>
             <thead>
               <tr>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>ID</th>
-                <th style={styles.th}>Action</th>
+                <th style={styles.th}>{t('revocation.currentList.table.type')}</th>
+                <th style={styles.th}>{t('revocation.currentList.table.id')}</th>
+                <th style={styles.th}>{t('revocation.currentList.table.action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -514,7 +518,7 @@ export function RevocationManager() {
                       onClick={() => handleRemove(row.id, row.type)}
                       style={{ ...styles.button, ...styles.dangerButton }}
                     >
-                      Remove
+                      {t('revocation.currentList.actions.remove')}
                     </button>
                   </td>
                 </tr>
@@ -522,11 +526,11 @@ export function RevocationManager() {
             </tbody>
           </table>
         )}
-        <p style={styles.info}>Last updated: {new Date(revocationList.updated_at).toLocaleString('es-ES')}</p>
+        <p style={styles.info}>{t('revocation.currentList.lastUpdated')}: {new Date(revocationList.updated_at).toLocaleString(dateLocale)}</p>
       </section>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Import Existing `revoked.json`</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.importSection.title')}</h3>
         <div style={styles.row}>
           <input type="file" accept=".json,application/json" onChange={handleFileImport} />
           <button
@@ -534,40 +538,39 @@ export function RevocationManager() {
             onClick={handleImport}
             style={{ ...styles.button, ...styles.ghostButton }}
           >
-            Import from text
+            {t('revocation.importSection.actions.importFromText')}
           </button>
         </div>
         <textarea
           style={styles.textarea}
-          placeholder="Paste existing revoked.json content here"
+          placeholder={t('revocation.importSection.placeholder')}
           value={importText}
           onChange={(event) => setImportText(event.target.value)}
         />
-        <p style={styles.info}>File/text imports are merged into the current list, not replaced.</p>
+        <p style={styles.info}>{t('revocation.importSection.help')}</p>
       </section>
 
       <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>Export `revoked.json`</h3>
+        <h3 style={styles.sectionTitle}>{t('revocation.exportSection.title')}</h3>
         <div style={styles.row}>
           <button
             type="button"
             onClick={handleDownload}
             style={{ ...styles.button, ...styles.secondaryButton }}
           >
-            Download `revoked.json`
+            {t('revocation.exportSection.actions.download')}
           </button>
           <button
             type="button"
             onClick={handleCopy}
             style={{ ...styles.button, ...styles.ghostButton }}
           >
-            Copy JSON to Clipboard
+            {t('revocation.exportSection.actions.copy')}
           </button>
         </div>
         <textarea style={styles.textarea} readOnly value={exportedJSON} />
         <p style={styles.instructions}>
-          Upload this file to your GitHub Pages repo at `verification/public/revoked.json`, then deploy the
-          verification app so merchants receive the updated revocation status.
+          {t('revocation.exportSection.instructions')}
         </p>
       </section>
 

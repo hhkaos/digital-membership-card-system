@@ -294,40 +294,42 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Phase 7: Internationalization (i18n) ⬜ TODO
+## Phase 7: Internationalization (i18n) 🚧 IN PROGRESS
 
 ### Setup
 - [ ] Install `react-i18next`, `i18next`, `i18next-browser-languagedetector` in verification
 - [ ] Install `react-i18next`, `i18next`, `i18next-browser-languagedetector` in issuer
+- [x] Add local i18n provider fallback in verification (network install blocked)
+- [x] Add local i18n provider fallback in issuer (network install blocked)
 
 ### Verification App i18n
-- [ ] Create `verification/src/i18n.js` (config: default `es`, fallback `en`)
-- [ ] Create `verification/src/locales/es.json` (all UI strings in Spanish)
-- [ ] Create `verification/src/locales/en.json` (current English strings)
-- [ ] Replace hardcoded strings in `VerificationResult.jsx` with `t()` calls
-- [ ] Add language toggle (ES | EN) to header
-- [ ] Initialize i18n in `App.jsx`
-- [ ] Localize date formatting (DD/MM/YYYY for ES, MM/DD/YYYY for EN)
+- [x] Create `verification/src/i18n.js` (config: default `es`, fallback `en`)
+- [x] Create `verification/src/locales/es.json` (all UI strings in Spanish)
+- [x] Create `verification/src/locales/en.json` (current English strings)
+- [x] Replace hardcoded strings in `VerificationResult.jsx` with `t()` calls
+- [x] Add language toggle (ES | EN) to header
+- [x] Initialize i18n in app entrypoint (`main.jsx`) and consume in `App.jsx`
+- [x] Localize date formatting (DD/MM/YYYY for ES, MM/DD/YYYY for EN)
 
 ### Issuer App i18n
-- [ ] Create `issuer/src/i18n.js`
-- [ ] Create `issuer/src/locales/es.json` (all UI strings in Spanish)
-- [ ] Create `issuer/src/locales/en.json` (current English strings)
+- [x] Create `issuer/src/i18n.js`
+- [x] Create `issuer/src/locales/es.json` (all UI strings in Spanish)
+- [x] Create `issuer/src/locales/en.json` (current English strings)
 - [ ] Replace hardcoded strings in all components with `t()` calls:
   - [ ] `KeyManagement.jsx`
   - [ ] `ManualEntry.jsx`
   - [ ] `CSVUpload.jsx`
   - [ ] `RevocationManager.jsx`
-  - [ ] `App.jsx`
-- [ ] Add language toggle
+  - [x] `App.jsx`
+- [x] Add language toggle
 
 ### Phase 7 Tests
-- [ ] Spanish translations load correctly
-- [ ] English translations load correctly
-- [ ] All keys exist in both language files (no missing translations)
+- [x] Spanish translations load correctly
+- [x] English translations load correctly
+- [x] All keys exist in both language files (no missing translations)
 - [ ] Language switching works
 - [ ] Browser language detection selects correct language
-- [ ] Date formatting changes per locale
+- [x] Date formatting changes per locale
 
 ### Phase 7 Manual Verification
 - [ ] Verification app displays in Spanish by default
@@ -478,7 +480,7 @@ Building a cryptographically secure digital membership card system with QR codes
 ## V2 Progress Tracking
 
 **Phase 6**: ⬜ TODO — Revocation system
-**Phase 7**: ⬜ TODO — Internationalization (i18n)
+**Phase 7**: 🚧 IN PROGRESS — Internationalization (i18n)
 **Phase 8**: ⬜ TODO — Wallet-style cards
 **Phase 9**: ⬜ TODO — PWA features
 **Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)

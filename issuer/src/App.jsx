@@ -4,6 +4,7 @@ import { ManualEntry } from './components/ManualEntry';
 import CSVUpload from './components/CSVUpload';
 import RevocationManager from './components/RevocationManager';
 import { importPrivateKey } from './utils/crypto';
+import { useI18n } from './i18n';
 
 const STORAGE_KEYS = {
   privateKeyPEM: 'ampa.issuer.privateKeyPEM',
@@ -57,10 +58,32 @@ const styles = {
   tabInactive: {
     backgroundColor: 'white',
     color: '#666'
+  },
+  languageRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '8px',
+    alignItems: 'center',
+    marginBottom: '12px'
+  },
+  languageButton: {
+    border: 'none',
+    borderRadius: '6px',
+    padding: '4px 8px',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    backgroundColor: '#eef2f5',
+    color: '#30414B'
+  },
+  languageButtonActive: {
+    backgroundColor: '#30414B',
+    color: '#fff'
   }
 };
 
 function App() {
+  const { t, language, setLanguage } = useI18n();
   const [activeTab, setActiveTab] = useState('keys'); // 'keys', 'generate', 'batch', or 'revocation'
   const [privateKey, setPrivateKey] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
@@ -111,9 +134,32 @@ function App() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
+        <div style={styles.languageRow}>
+          <span style={{ fontSize: '12px', color: '#666' }}>{t('language.label')}:</span>
+          <button
+            type="button"
+            onClick={() => setLanguage('es')}
+            style={{
+              ...styles.languageButton,
+              ...(language === 'es' ? styles.languageButtonActive : {})
+            }}
+          >
+            {t('language.es')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage('en')}
+            style={{
+              ...styles.languageButton,
+              ...(language === 'en' ? styles.languageButtonActive : {})
+            }}
+          >
+            {t('language.en')}
+          </button>
+        </div>
         <img src="/ampa-logo.png" alt="AMPA Logo" style={styles.logo} />
-        <h1 style={styles.title}>AMPA Card Issuer</h1>
-        <p style={styles.subtitle}>Generate secure digital membership cards</p>
+        <h1 style={styles.title}>{t('app.title')}</h1>
+        <p style={styles.subtitle}>{t('app.subtitle')}</p>
       </div>
 
       <div style={styles.tabs}>
@@ -124,7 +170,7 @@ function App() {
             ...(activeTab === 'keys' ? styles.tabActive : styles.tabInactive)
           }}
         >
-          🔑 Key Management
+          {t('app.tabs.keys')}
         </button>
         <button
           onClick={() => setActiveTab('generate')}
@@ -133,7 +179,7 @@ function App() {
             ...(activeTab === 'generate' ? styles.tabActive : styles.tabInactive)
           }}
         >
-          🎫 Generate Card
+          {t('app.tabs.generate')}
         </button>
         <button
           onClick={() => setActiveTab('batch')}
@@ -142,7 +188,7 @@ function App() {
             ...(activeTab === 'batch' ? styles.tabActive : styles.tabInactive)
           }}
         >
-          📦 Batch Upload
+          {t('app.tabs.batch')}
         </button>
         <button
           onClick={() => setActiveTab('revocation')}
@@ -151,7 +197,7 @@ function App() {
             ...(activeTab === 'revocation' ? styles.tabActive : styles.tabInactive)
           }}
         >
-          🚫 Revocation
+          {t('app.tabs.revocation')}
         </button>
       </div>
 

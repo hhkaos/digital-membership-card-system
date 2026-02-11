@@ -1,0 +1,228 @@
+{
+  "language": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN"
+  },
+  "app": {
+    "title": "Emisor de Tarjetas AMPA",
+    "subtitle": "Genera tarjetas digitales de membresía seguras",
+    "tabs": {
+      "keys": "🔑 Gestión de claves",
+      "generate": "🎫 Generar tarjeta",
+      "batch": "📦 Carga por lotes",
+      "revocation": "🚫 Revocación"
+    }
+  },
+  "card": {
+    "labels": {
+      "validUntil": "Válido hasta",
+      "memberId": "ID"
+    }
+  },
+  "manual": {
+    "title": "Generar tarjeta de socio",
+    "fields": {
+      "fullName": "Nombre completo",
+      "memberId": "ID de socio",
+      "expiryDate": "Fecha de caducidad"
+    },
+    "placeholders": {
+      "fullName": "p. ej. María García López",
+      "memberId": "p. ej. 12345"
+    },
+    "errors": {
+      "fullNameRequired": "El nombre completo es obligatorio",
+      "memberIdRequired": "El ID de socio es obligatorio",
+      "expiryRequired": "La fecha de caducidad es obligatoria",
+      "expiryFuture": "La fecha de caducidad debe ser futura"
+    },
+    "alerts": {
+      "loadPrivateKey": "Primero carga o genera una clave privada",
+      "generateFailed": "No se pudo generar la tarjeta"
+    },
+    "actions": {
+      "generate": "Generar tarjeta",
+      "generating": "Generando..."
+    },
+    "success": {
+      "title": "Tarjeta generada correctamente",
+      "subtitle": "Se ha descargado el archivo PNG"
+    }
+  },
+  "csv": {
+    "title": "Carga por lotes desde CSV",
+    "format": {
+      "title": "Requisitos del formato CSV",
+      "requiredColumnsIntro": "Tu archivo CSV debe tener estas columnas:",
+      "fullName": "Nombre completo del socio",
+      "memberId": "Identificador único del socio",
+      "expiryDate": "Fecha en formato AAAA-MM-DD"
+    },
+    "summary": {
+      "label": "Resumen:",
+      "value": "{{valid}} registros válidos, {{errors}} errores"
+    },
+    "table": {
+      "status": "Estado",
+      "line": "Línea",
+      "name": "Nombre",
+      "memberId": "ID de socio",
+      "expiryDate": "Caducidad",
+      "errorLabel": "Error:",
+      "memberIdShort": "ID",
+      "expiryShort": "Cad."
+    },
+    "actions": {
+      "selectFile": "Seleccionar archivo CSV",
+      "generateAll": "Generar {{count}} tarjetas",
+      "generatingProgress": "Generando... {{current}}/{{total}}",
+      "reset": "Reiniciar"
+    },
+    "alerts": {
+      "parseFailed": "No se pudo parsear el CSV",
+      "generateSuccess": "Se generaron {{count}} tarjetas en {{filename}}",
+      "generateFailed": "No se pudo generar el lote"
+    },
+    "warnings": {
+      "noPrivateKey": "No hay clave privada cargada. Genera o importa una clave privada en la pestaña de gestión de claves primero."
+    }
+  },
+  "keys": {
+    "title": "Gestión de claves",
+    "status": {
+      "loaded": "Clave privada cargada",
+      "unloaded": "No hay clave privada cargada",
+      "fingerprint": "Huella"
+    },
+    "generate": {
+      "title": "Generar nuevo par de claves",
+      "description": "Crea un nuevo par de claves Ed25519 para firmar tarjetas de membresía.",
+      "button": "Generar nuevo par de claves",
+      "generating": "Generando..."
+    },
+    "import": {
+      "title": "Importar clave privada existente",
+      "description": "Pega tu clave privada existente abajo.",
+      "placeholder": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+    },
+    "labels": {
+      "privateKeySecret": "Clave privada (¡MANTENER EN SECRETO!)",
+      "privateKeyPem": "Clave privada (formato PEM)",
+      "publicKeyPem": "Clave pública (para la app de verificación)",
+      "publicKeyForConfig": "Clave pública para config.js",
+      "publicKeyHelp": "Copia exactamente esta cadena (incluyendo comillas) en verification/public/config.js"
+    },
+    "securityWarnings": {
+      "title": "⚠️ ADVERTENCIA DE SEGURIDAD IMPORTANTE",
+      "item1": "Guarda tu clave privada en un gestor seguro inmediatamente",
+      "item2": "Nunca subas claves privadas a Git ni las compartas",
+      "item3": "Si la clave privada se compromete, hay que reemitir todas las tarjetas"
+    },
+    "securityNote": {
+      "title": "🔒 Nota de seguridad",
+      "body": "Las claves privadas solo se guardan en memoria del navegador y NO se persisten. Debes importar tu clave en cada sesión."
+    },
+    "errors": {
+      "generateFailed": "No se pudo generar el par de claves",
+      "invalidPem": "Formato PEM inválido. Debe incluir marcadores BEGIN/END PRIVATE KEY.",
+      "importFailed": "No se pudo importar la clave privada"
+    }
+  },
+  "revocation": {
+    "title": "Gestor de revocaciones",
+    "description": "Revoca tarjetas individuales por ID de token (`jti`) o revoca todas las tarjetas de un socio por ID de socio (`sub`).",
+    "feedback": {
+      "noNewEntries": "No se encontraron nuevas entradas de revocación. Se conserva la lista actual.",
+      "entryAlreadyExists": "La entrada ya existe en la lista.",
+      "entryAdded": "Se añadió {{type}} a la lista de revocación.",
+      "entryRemoved": "Se eliminó {{type}} de la lista de revocación.",
+      "lookupMissingType": "No se encontró {{type}} en el token QR subido",
+      "mergedFromPastedJson": "Lista de revocación fusionada desde JSON pegado.",
+      "mergedFromFile": "Lista de revocación fusionada desde archivo.",
+      "mergedFromUrl": "Lista de revocación fusionada desde {{url}}",
+      "loadedAndMergedFromUrl": "Cargado y fusionado desde {{url}}",
+      "downloaded": "revoked.json descargado",
+      "copiedToClipboard": "JSON copiado al portapapeles.",
+      "qrDecoded": "QR decodificado correctamente. Identificadores del token cargados."
+    },
+    "errors": {
+      "revokedNotFound": "No se encontró revoked.json en {{url}} (HTTP 404)",
+      "failedToLoadFromUrl": "No se pudo cargar revoked.json desde {{url}} (HTTP {{status}})",
+      "loadFailed": "No se pudo cargar revoked.json",
+      "clipboardUnavailable": "La API del portapapeles no está disponible en este navegador."
+    },
+    "loadExisting": {
+      "title": "Cargar `revoked.json` existente",
+      "sources": {
+        "local": "Verificador local (por defecto)",
+        "deployed": "Dominio desplegado"
+      },
+      "placeholders": {
+        "localUrl": "http://localhost:5173/revoked.json",
+        "deployedUrl": "https://verify.ampanovaschoolalmeria.org/revoked.json"
+      },
+      "actions": {
+        "loading": "Cargando...",
+        "loadAndMerge": "Cargar y fusionar"
+      },
+      "help": "Cargar desde URL fusiona las entradas en la lista actual (sin duplicados) para evitar sobrescribir revocaciones previas."
+    },
+    "qrLookup": {
+      "title": "Identificar desde PNG QR",
+      "uploadLabel": "Subir PNG con QR del socio",
+      "help": "La app decodifica el QR localmente en tu navegador y luego lee los claims no verificados `jti`/`sub` del JWT.",
+      "reading": "Leyendo imagen QR...",
+      "notFound": "no encontrado",
+      "fields": {
+        "file": "Archivo",
+        "name": "nombre",
+        "issuer": "iss"
+      },
+      "actions": {
+        "revokeToken": "Revocar este token (jti)",
+        "revokeMember": "Revocar este socio (sub)"
+      }
+    },
+    "addEntry": {
+      "title": "Añadir entrada de revocación",
+      "placeholder": "Introduce ID de token (jti) o ID de socio (sub)",
+      "options": {
+        "jti": "Revocar token específico (jti)",
+        "sub": "Revocar todos los tokens del socio (sub)"
+      },
+      "actions": {
+        "add": "Añadir a la lista de revocación"
+      }
+    },
+    "currentList": {
+      "title": "Lista actual de revocación",
+      "empty": "Todavía no hay entradas revocadas.",
+      "lastUpdated": "Última actualización",
+      "table": {
+        "type": "Tipo",
+        "id": "ID",
+        "action": "Acción"
+      },
+      "actions": {
+        "remove": "Eliminar"
+      }
+    },
+    "importSection": {
+      "title": "Importar `revoked.json` existente",
+      "placeholder": "Pega aquí el contenido existente de revoked.json",
+      "help": "Las importaciones por archivo/texto se fusionan con la lista actual, no la reemplazan.",
+      "actions": {
+        "importFromText": "Importar desde texto"
+      }
+    },
+    "exportSection": {
+      "title": "Exportar `revoked.json`",
+      "instructions": "Sube este archivo a tu repo de GitHub Pages en `verification/public/revoked.json` y luego despliega la app de verificación para que los comercios reciban el estado de revocación actualizado.",
+      "actions": {
+        "download": "Descargar `revoked.json`",
+        "copy": "Copiar JSON al portapapeles"
+      }
+    }
+  }
+}

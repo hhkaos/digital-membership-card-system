@@ -1,0 +1,228 @@
+{
+  "language": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN"
+  },
+  "app": {
+    "title": "AMPA Card Issuer",
+    "subtitle": "Generate secure digital membership cards",
+    "tabs": {
+      "keys": "🔑 Key Management",
+      "generate": "🎫 Generate Card",
+      "batch": "📦 Batch Upload",
+      "revocation": "🚫 Revocation"
+    }
+  },
+  "card": {
+    "labels": {
+      "validUntil": "Valid until",
+      "memberId": "ID"
+    }
+  },
+  "manual": {
+    "title": "Generate Membership Card",
+    "fields": {
+      "fullName": "Full Name",
+      "memberId": "Member ID",
+      "expiryDate": "Expiry Date"
+    },
+    "placeholders": {
+      "fullName": "e.g. Maria Garcia Lopez",
+      "memberId": "e.g. 12345"
+    },
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "memberIdRequired": "Member ID is required",
+      "expiryRequired": "Expiry date is required",
+      "expiryFuture": "Expiry date must be in the future"
+    },
+    "alerts": {
+      "loadPrivateKey": "Please load or generate a private key first",
+      "generateFailed": "Failed to generate card"
+    },
+    "actions": {
+      "generate": "Generate Card",
+      "generating": "Generating..."
+    },
+    "success": {
+      "title": "Card generated successfully",
+      "subtitle": "The PNG file has been downloaded"
+    }
+  },
+  "csv": {
+    "title": "Batch Upload from CSV",
+    "format": {
+      "title": "CSV Format Requirements",
+      "requiredColumnsIntro": "Your CSV file must have these columns:",
+      "fullName": "Member full name",
+      "memberId": "Unique member identifier",
+      "expiryDate": "Date in YYYY-MM-DD format"
+    },
+    "summary": {
+      "label": "Summary:",
+      "value": "{{valid}} valid entries, {{errors}} errors"
+    },
+    "table": {
+      "status": "Status",
+      "line": "Line",
+      "name": "Name",
+      "memberId": "Member ID",
+      "expiryDate": "Expiry Date",
+      "errorLabel": "Error:",
+      "memberIdShort": "ID",
+      "expiryShort": "Expiry"
+    },
+    "actions": {
+      "selectFile": "Select CSV File",
+      "generateAll": "Generate {{count}} Cards",
+      "generatingProgress": "Generating... {{current}}/{{total}}",
+      "reset": "Reset"
+    },
+    "alerts": {
+      "parseFailed": "Failed to parse CSV",
+      "generateSuccess": "Successfully generated {{count}} cards in {{filename}}",
+      "generateFailed": "Failed to generate batch"
+    },
+    "warnings": {
+      "noPrivateKey": "Private key not loaded. Please generate or import a private key in the Key Management tab first."
+    }
+  },
+  "keys": {
+    "title": "Key Management",
+    "status": {
+      "loaded": "Private Key Loaded",
+      "unloaded": "No Private Key Loaded",
+      "fingerprint": "Fingerprint"
+    },
+    "generate": {
+      "title": "Generate New Keypair",
+      "description": "Create a new Ed25519 keypair for signing membership cards.",
+      "button": "Generate New Keypair",
+      "generating": "Generating..."
+    },
+    "import": {
+      "title": "Import Existing Private Key",
+      "description": "Paste your existing private key below.",
+      "placeholder": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+    },
+    "labels": {
+      "privateKeySecret": "Private Key (KEEP SECRET!)",
+      "privateKeyPem": "Private Key (PEM format)",
+      "publicKeyPem": "Public Key (for verification app)",
+      "publicKeyForConfig": "Public Key for config.js",
+      "publicKeyHelp": "Copy this exact string (including quotes) into verification/public/config.js"
+    },
+    "securityWarnings": {
+      "title": "⚠️ IMPORTANT SECURITY WARNING",
+      "item1": "Save your private key in a secure password manager immediately",
+      "item2": "Never commit private keys to Git or share them",
+      "item3": "If private key is compromised, all cards must be reissued"
+    },
+    "securityNote": {
+      "title": "🔒 Security Note",
+      "body": "Private keys are only stored in browser memory and are NOT persisted. You must import your key each session."
+    },
+    "errors": {
+      "generateFailed": "Failed to generate keypair",
+      "invalidPem": "Invalid PEM format. Must include BEGIN/END PRIVATE KEY markers.",
+      "importFailed": "Failed to import private key"
+    }
+  },
+  "revocation": {
+    "title": "Revocation Manager",
+    "description": "Revoke single cards by token ID (`jti`) or revoke all cards for a member by member ID (`sub`).",
+    "feedback": {
+      "noNewEntries": "No new revocation entries found. Existing list preserved.",
+      "entryAlreadyExists": "Entry already exists in the list.",
+      "entryAdded": "Added {{type}} to revocation list.",
+      "entryRemoved": "Removed {{type}} from revocation list.",
+      "lookupMissingType": "No {{type}} found in uploaded QR token",
+      "mergedFromPastedJson": "Revocation list merged from pasted JSON.",
+      "mergedFromFile": "Revocation list merged from file.",
+      "mergedFromUrl": "Revocation list merged from {{url}}",
+      "loadedAndMergedFromUrl": "Loaded and merged from {{url}}",
+      "downloaded": "Downloaded revoked.json",
+      "copiedToClipboard": "JSON copied to clipboard.",
+      "qrDecoded": "QR decoded successfully. Token identifiers loaded."
+    },
+    "errors": {
+      "revokedNotFound": "revoked.json not found at {{url}} (HTTP 404)",
+      "failedToLoadFromUrl": "Failed to load revoked.json from {{url}} (HTTP {{status}})",
+      "loadFailed": "Failed to load revoked.json",
+      "clipboardUnavailable": "Clipboard API is not available in this browser."
+    },
+    "loadExisting": {
+      "title": "Load Existing `revoked.json`",
+      "sources": {
+        "local": "Local verifier (default)",
+        "deployed": "Deployed domain"
+      },
+      "placeholders": {
+        "localUrl": "http://localhost:5173/revoked.json",
+        "deployedUrl": "https://verify.ampanovaschoolalmeria.org/revoked.json"
+      },
+      "actions": {
+        "loading": "Loading...",
+        "loadAndMerge": "Load and Merge"
+      },
+      "help": "Loading from URL merges entries into the current list (deduplicated) to avoid overwriting previous revokes."
+    },
+    "qrLookup": {
+      "title": "Identify from QR PNG",
+      "uploadLabel": "Upload PNG with member QR",
+      "help": "The app decodes the QR locally in your browser, then reads unverified `jti`/`sub` claims from the JWT.",
+      "reading": "Reading QR image...",
+      "notFound": "not found",
+      "fields": {
+        "file": "File",
+        "name": "name",
+        "issuer": "iss"
+      },
+      "actions": {
+        "revokeToken": "Revoke this token (jti)",
+        "revokeMember": "Revoke this member (sub)"
+      }
+    },
+    "addEntry": {
+      "title": "Add Revocation Entry",
+      "placeholder": "Enter token ID (jti) or member ID (sub)",
+      "options": {
+        "jti": "Revoke specific token (jti)",
+        "sub": "Revoke all tokens for member (sub)"
+      },
+      "actions": {
+        "add": "Add to Revocation List"
+      }
+    },
+    "currentList": {
+      "title": "Current Revocation List",
+      "empty": "No revoked entries yet.",
+      "lastUpdated": "Last updated",
+      "table": {
+        "type": "Type",
+        "id": "ID",
+        "action": "Action"
+      },
+      "actions": {
+        "remove": "Remove"
+      }
+    },
+    "importSection": {
+      "title": "Import Existing `revoked.json`",
+      "placeholder": "Paste existing revoked.json content here",
+      "help": "File/text imports are merged into the current list, not replaced.",
+      "actions": {
+        "importFromText": "Import from text"
+      }
+    },
+    "exportSection": {
+      "title": "Export `revoked.json`",
+      "instructions": "Upload this file to your GitHub Pages repo at `verification/public/revoked.json`, then deploy the verification app so merchants receive the updated revocation status.",
+      "actions": {
+        "download": "Download `revoked.json`",
+        "copy": "Copy JSON to Clipboard"
+      }
+    }
+  }
+}

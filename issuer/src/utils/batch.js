@@ -34,7 +34,7 @@ function generateFilename(memberId, fullName) {
  * Generate a single card
  * Returns { blob, filename, metadata }
  */
-async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-school-almeria") {
+async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-school-almeria", options = {}) {
   const jti = uuidv4();
   const expiryDate = member.parsedExpiryDate;
 
@@ -57,7 +57,9 @@ async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-s
     jwt,
     memberName: member.full_name,
     memberId: member.member_id,
-    expiryDate: format(expiryDate, 'yyyy-MM-dd')
+    expiryDate: format(expiryDate, 'yyyy-MM-dd'),
+    locale: options.locale,
+    labels: options.cardLabels,
   });
 
   const filename = generateFilename(member.member_id, member.full_name);
@@ -83,7 +85,13 @@ async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-s
  * @param {string} issuer - Issuer identifier
  * @returns {Promise<Blob>} ZIP file as blob
  */
-export async function generateBatch(validMembers, privateKey, onProgress = null, issuer = "ampa:ampa-nova-school-almeria") {
+export async function generateBatch(
+  validMembers,
+  privateKey,
+  onProgress = null,
+  issuer = "ampa:ampa-nova-school-almeria",
+  options = {},
+) {
   const zip = new JSZip();
   const memberMetadata = [];
   const total = validMembers.length;
@@ -92,7 +100,7 @@ export async function generateBatch(validMembers, privateKey, onProgress = null,
     const member = validMembers[i].data;
 
     // Generate card
-    const { blob, filename, metadata } = await generateSingleCard(member, privateKey, issuer);
+    const { blob, filename, metadata } = await generateSingleCard(member, privateKey, issuer, options);
 
     // Add to ZIP
     zip.file(filename, blob);
