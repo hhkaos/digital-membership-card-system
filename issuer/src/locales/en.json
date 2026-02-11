@@ -7,6 +7,10 @@
   "help": {
     "label": "Help"
   },
+  "common": {
+    "next": "Next",
+    "back": "Back"
+  },
   "app": {
     "title": "AMPA Card Issuer",
     "subtitle": "Generate secure digital membership cards",
@@ -106,6 +110,17 @@
       "unloaded": "No Private Key Loaded",
       "fingerprint": "Fingerprint"
     },
+    "wizard": {
+      "stepOf": "Step {{current}} of {{total}}",
+      "chooseTitle": "Choose Key Source"
+    },
+    "actions": {
+      "changeKey": "Change Key",
+      "copyPublicKey": "Copy Public Key",
+      "copyForConfig": "Copy for config.json",
+      "showKey": "Show",
+      "hideKey": "Hide"
+    },
     "generate": {
       "title": "Generate New Keypair",
       "description": "Create a new Ed25519 keypair for signing membership cards.",
@@ -118,7 +133,7 @@
       "placeholder": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
     },
     "labels": {
-      "privateKeySecret": "Private Key (KEEP SECRET!)",
+      "privateKeySecret": "Private Key",
       "privateKeyPem": "Private Key (PEM format)",
       "publicKeyPem": "Public Key (for verification app)",
       "publicKeyForConfig": "Public Key for config.js",
@@ -143,6 +158,16 @@
   "revocation": {
     "title": "Revocation Manager",
     "description": "Revoke single cards by token ID (`jti`) or revoke all cards for a member by member ID (`sub`).",
+    "wizard": {
+      "step1Label": "Load",
+      "step2Label": "Manage",
+      "step3Label": "Export",
+      "stepOf": "Step {{current}} of {{total}}: {{label}}"
+    },
+    "manage": {
+      "switchToQr": "📷 Switch to QR Upload",
+      "switchToManual": "⌨️ Switch to Manual"
+    },
     "feedback": {
       "noNewEntries": "No new revocation entries found. Existing list preserved.",
       "entryAlreadyExists": "Entry already exists in the list.",
@@ -166,8 +191,11 @@
     "loadExisting": {
       "title": "Load Existing `revoked.json`",
       "sources": {
-        "local": "Local verifier (default)",
-        "deployed": "Deployed domain"
+        "label": "Source",
+        "local": "Local dev server",
+        "deployed": "Deployed domain",
+        "file": "Upload file",
+        "custom": "Custom URL"
       },
       "placeholders": {
         "localUrl": "http://localhost:5173/revoked.json",

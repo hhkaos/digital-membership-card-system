@@ -56,52 +56,23 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: '#30414B',
-        color: '#fff',
-        borderRadius: '12px',
-        padding: '12px 16px',
-        margin: '0 auto 20px',
-        width: 'min(680px, 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div className="bg-[#30414B] text-white rounded-xl px-4 py-3 mb-5 mx-auto max-w-[680px] w-full flex items-center justify-between gap-3 box-border">
       <div>
-        <strong style={{ display: 'block', marginBottom: '4px' }}>{t('pwa.installPrompt.title')}</strong>
-        <span>{t('pwa.installPrompt.message')}</span>
+        <strong className="block mb-1">{t('pwa.installPrompt.title')}</strong>
+        <span className="text-sm">{t('pwa.installPrompt.message')}</span>
       </div>
-      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+      <div className="flex gap-2 shrink-0">
         <button
           type="button"
           onClick={handleDismiss}
-          style={{
-            border: '1px solid rgba(255,255,255,0.35)',
-            borderRadius: '8px',
-            background: 'transparent',
-            color: '#fff',
-            padding: '8px 10px',
-            cursor: 'pointer',
-          }}
+          className="border border-white/35 rounded-lg bg-transparent text-white px-2.5 py-2 cursor-pointer hover:bg-white/10"
         >
           {t('pwa.installPrompt.dismiss')}
         </button>
         <button
           type="button"
           onClick={handleInstall}
-          style={{
-            border: 'none',
-            borderRadius: '8px',
-            background: '#fff',
-            color: '#30414B',
-            padding: '8px 12px',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
+          className="border-none rounded-lg bg-white text-[#30414B] px-3 py-2 font-bold cursor-pointer hover:bg-gray-100"
         >
           {t('pwa.installPrompt.install')}
         </button>

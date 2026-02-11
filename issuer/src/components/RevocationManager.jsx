@@ -12,174 +12,17 @@ import {
   extractIdentifiersFromQrText,
 } from '../utils/tokenLookup';
 import { useI18n } from '../i18n';
+import InfoTooltip from './InfoTooltip';
 
 const DEFAULT_LOCAL_REVOKED_URL = 'http://localhost:5173/revoked.json';
 const DEFAULT_DEPLOYED_REVOKED_URL = 'https://verify.ampanovaschoolalmeria.org/revoked.json';
 
-function resolveDefaultLoadSource() {
-  if (typeof window === 'undefined' || !window.location) {
-    return 'local';
-  }
-
+function resolveDefaultSourceType() {
+  if (typeof window === 'undefined' || !window.location) return 'local';
   const host = window.location.hostname;
   const isLocalHost = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '';
   return isLocalHost ? 'local' : 'deployed';
 }
-
-const styles = {
-  container: {
-    maxWidth: '980px',
-    margin: '0 auto',
-    padding: '24px',
-    backgroundColor: '#ffffff',
-    borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-  },
-  heading: {
-    marginTop: 0,
-    marginBottom: '8px',
-    color: '#30414B',
-  },
-  description: {
-    marginTop: 0,
-    color: '#5c6770',
-    marginBottom: '20px',
-  },
-  section: {
-    marginBottom: '24px',
-    padding: '16px',
-    border: '1px solid #e7eaee',
-    borderRadius: '10px',
-    backgroundColor: '#fafbfc',
-  },
-  sectionTitle: {
-    marginTop: 0,
-    marginBottom: '12px',
-    color: '#30414B',
-    fontSize: '18px',
-  },
-  row: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '12px',
-    alignItems: 'center',
-  },
-  input: {
-    flex: '1 1 320px',
-    padding: '10px 12px',
-    border: '1px solid #ccd3da',
-    borderRadius: '8px',
-    fontSize: '14px',
-  },
-  select: {
-    flex: '0 0 230px',
-    padding: '10px 12px',
-    border: '1px solid #ccd3da',
-    borderRadius: '8px',
-    fontSize: '14px',
-    backgroundColor: '#fff',
-  },
-  button: {
-    padding: '10px 14px',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontWeight: 600,
-    fontSize: '14px',
-  },
-  primaryButton: {
-    backgroundColor: '#30414B',
-    color: '#fff',
-  },
-  secondaryButton: {
-    backgroundColor: '#52717B',
-    color: '#fff',
-  },
-  ghostButton: {
-    backgroundColor: '#f2f4f6',
-    color: '#2a2f33',
-  },
-  dangerButton: {
-    backgroundColor: '#fff1f1',
-    color: '#b42318',
-    border: '1px solid #f2c5c2',
-  },
-  info: {
-    marginTop: '10px',
-    marginBottom: 0,
-    fontSize: '13px',
-    color: '#6b7280',
-  },
-  error: {
-    marginTop: '10px',
-    marginBottom: 0,
-    color: '#b42318',
-    fontWeight: 600,
-  },
-  success: {
-    marginTop: '10px',
-    marginBottom: 0,
-    color: '#087443',
-    fontWeight: 600,
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    fontSize: '14px',
-    backgroundColor: '#fff',
-  },
-  th: {
-    textAlign: 'left',
-    padding: '10px',
-    borderBottom: '1px solid #e7eaee',
-    color: '#334155',
-  },
-  td: {
-    padding: '10px',
-    borderBottom: '1px solid #f1f5f9',
-    verticalAlign: 'middle',
-  },
-  mono: {
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-    wordBreak: 'break-all',
-  },
-  textarea: {
-    width: '100%',
-    minHeight: '140px',
-    padding: '10px 12px',
-    border: '1px solid #ccd3da',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-    boxSizing: 'border-box',
-  },
-  instructions: {
-    marginTop: '12px',
-    marginBottom: 0,
-    fontSize: '13px',
-    color: '#334155',
-    lineHeight: 1.5,
-  },
-  label: {
-    fontSize: '13px',
-    fontWeight: 600,
-    color: '#30414B',
-  },
-  lookupCard: {
-    marginTop: '12px',
-    padding: '12px',
-    border: '1px solid #d6e2ea',
-    borderRadius: '8px',
-    backgroundColor: '#ffffff',
-  },
-  smallInput: {
-    flex: '1 1 420px',
-    padding: '10px 12px',
-    border: '1px solid #ccd3da',
-    borderRadius: '8px',
-    fontSize: '13px',
-  },
-};
 
 function buildRows(list) {
   const jtiRows = list.revoked_jti.map((id) => ({ id, type: 'jti' }));
@@ -189,18 +32,29 @@ function buildRows(list) {
 
 export function RevocationManager() {
   const { t, language } = useI18n();
+
+  // Wizard state
+  const [wizardStep, setWizardStep] = useState(1);
+
+  // Data state
   const [revocationList, setRevocationList] = useState(createEmptyRevocationList);
   const [entryId, setEntryId] = useState('');
   const [entryType, setEntryType] = useState('jti');
-  const [importText, setImportText] = useState('');
   const [feedback, setFeedback] = useState({ kind: '', message: '' });
   const [lookupResult, setLookupResult] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
-  const [loadSource, setLoadSource] = useState(resolveDefaultLoadSource);
-  const [localRevokedUrl, setLocalRevokedUrl] = useState(DEFAULT_LOCAL_REVOKED_URL);
-  const [deployedRevokedUrl, setDeployedRevokedUrl] = useState(DEFAULT_DEPLOYED_REVOKED_URL);
+
+  // Step 1 state
+  const [sourceType, setSourceType] = useState(resolveDefaultSourceType);
+  const [sourceUrl, setSourceUrl] = useState(
+    resolveDefaultSourceType() === 'local' ? DEFAULT_LOCAL_REVOKED_URL : DEFAULT_DEPLOYED_REVOKED_URL
+  );
+  const [customUrl, setCustomUrl] = useState('');
   const [loadBusy, setLoadBusy] = useState(false);
   const [loadStatus, setLoadStatus] = useState({ kind: '', message: '' });
+
+  // Step 2 state
+  const [manualMode, setManualMode] = useState(false);
 
   const rows = useMemo(() => buildRows(revocationList), [revocationList]);
   const exportedJSON = useMemo(() => exportRevocationJSON(revocationList), [revocationList]);
@@ -257,40 +111,19 @@ export function RevocationManager() {
     }
   };
 
-  const handleImport = () => {
-    try {
-      const parsed = importRevocationJSON(importText);
-      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromPastedJson'));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleFileImport = async (event) => {
-    const [file] = event.target.files || [];
-    if (!file) return;
-
-    try {
-      const text = await file.text();
-      setImportText(text);
-      const parsed = importRevocationJSON(text);
-      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromFile'));
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      event.target.value = '';
-    }
+  const handleSourceTypeChange = (newType) => {
+    setSourceType(newType);
+    if (newType === 'local') setSourceUrl(DEFAULT_LOCAL_REVOKED_URL);
+    else if (newType === 'deployed') setSourceUrl(DEFAULT_DEPLOYED_REVOKED_URL);
   };
 
   const handleLoadFromUrl = async () => {
     setLoadBusy(true);
     setLoadStatus({ kind: '', message: '' });
     try {
-      const url = loadSource === 'local' ? localRevokedUrl : deployedRevokedUrl;
+      const url = sourceType === 'custom' ? customUrl : sourceUrl;
       const cacheBustedUrl = `${url}${url.includes('?') ? '&' : '?'}_ts=${Date.now()}`;
-      const response = await fetch(cacheBustedUrl, {
-        cache: 'no-store',
-      });
+      const response = await fetch(cacheBustedUrl, { cache: 'no-store' });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -308,6 +141,23 @@ export function RevocationManager() {
       setLoadStatus({ kind: 'error', message: error.message || t('revocation.errors.loadFailed') });
     } finally {
       setLoadBusy(false);
+    }
+  };
+
+  const handleFileImport = async (event) => {
+    const [file] = event.target.files || [];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const parsed = importRevocationJSON(text);
+      mergeIntoCurrentList(parsed, t('revocation.feedback.mergedFromFile'));
+      setLoadStatus({ kind: 'success', message: t('revocation.feedback.mergedFromFile') });
+    } catch (error) {
+      setError(error.message);
+      setLoadStatus({ kind: 'error', message: error.message });
+    } finally {
+      event.target.value = '';
     }
   };
 
@@ -370,222 +220,351 @@ export function RevocationManager() {
 
   const dateLocale = language === 'es' ? 'es-ES' : 'en-US';
 
+  const stepLabels = {
+    1: t('revocation.wizard.step1Label'),
+    2: t('revocation.wizard.step2Label'),
+    3: t('revocation.wizard.step3Label'),
+  };
+
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>{t('revocation.title')}</h2>
-      <p style={styles.description}>
-        {t('revocation.description')}
+    <div className="max-w-4xl mx-auto">
+      {/* Step indicator */}
+      <p className="text-sm text-gray-500 mb-6">
+        {t('revocation.wizard.stepOf', { current: wizardStep, total: '3', label: stepLabels[wizardStep] })}
       </p>
 
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.loadExisting.title')}</h3>
-        <div style={styles.row}>
-          <label style={styles.label}>
-            <input
-              type="radio"
-              name="revoked-source"
-              value="local"
-              checked={loadSource === 'local'}
-              onChange={(event) => setLoadSource(event.target.value)}
-            />{' '}
-            {t('revocation.loadExisting.sources.local')}
-          </label>
-          <label style={styles.label}>
-            <input
-              type="radio"
-              name="revoked-source"
-              value="deployed"
-              checked={loadSource === 'deployed'}
-              onChange={(event) => setLoadSource(event.target.value)}
-            />{' '}
-            {t('revocation.loadExisting.sources.deployed')}
-          </label>
-        </div>
-        <div style={styles.row}>
-          <input
-            type="text"
-            style={styles.smallInput}
-            value={localRevokedUrl}
-            onChange={(event) => setLocalRevokedUrl(event.target.value)}
-            disabled={loadSource !== 'local'}
-            placeholder={t('revocation.loadExisting.placeholders.localUrl')}
-          />
-          <input
-            type="text"
-            style={styles.smallInput}
-            value={deployedRevokedUrl}
-            onChange={(event) => setDeployedRevokedUrl(event.target.value)}
-            disabled={loadSource !== 'deployed'}
-            placeholder={t('revocation.loadExisting.placeholders.deployedUrl')}
-          />
+      {/* Feedback */}
+      {feedback.kind && (
+        <div className={`mb-4 p-3 rounded-lg text-sm ${
+          feedback.kind === 'error' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'
+        }`}>
+          {feedback.message}
           <button
             type="button"
-            onClick={handleLoadFromUrl}
-            disabled={loadBusy}
-            style={{ ...styles.button, ...styles.secondaryButton }}
+            onClick={() => setFeedback({ kind: '', message: '' })}
+            className="ml-2 text-gray-400 hover:text-gray-600 cursor-pointer bg-transparent border-none"
           >
-            {loadBusy ? t('revocation.loadExisting.actions.loading') : t('revocation.loadExisting.actions.loadAndMerge')}
+            ✕
           </button>
         </div>
-        <p style={styles.info}>
-          {t('revocation.loadExisting.help')}
-        </p>
-        {loadStatus.kind === 'error' && <p style={styles.error}>{loadStatus.message}</p>}
-        {loadStatus.kind === 'success' && <p style={styles.success}>{loadStatus.message}</p>}
-      </section>
+      )}
 
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.qrLookup.title')}</h3>
-        <div style={styles.row}>
-          <label style={styles.label} htmlFor="qr-png-upload">
-            {t('revocation.qrLookup.uploadLabel')}
-          </label>
-          <input
-            id="qr-png-upload"
-            type="file"
-            accept=".png,image/png"
-            onChange={handleQrPngUpload}
-          />
-        </div>
-        <p style={styles.info}>
-          {t('revocation.qrLookup.help')}
-        </p>
-        {lookupLoading && <p style={styles.info}>{t('revocation.qrLookup.reading')}</p>}
-        {lookupResult && (
-          <div style={styles.lookupCard}>
-            <p style={styles.info}>{t('revocation.qrLookup.fields.file')}: {lookupResult.fileName}</p>
-            <p style={{ ...styles.info, ...styles.mono }}>jti: {lookupResult.jti || t('revocation.qrLookup.notFound')}</p>
-            <p style={{ ...styles.info, ...styles.mono }}>sub: {lookupResult.sub || t('revocation.qrLookup.notFound')}</p>
-            <p style={styles.info}>{t('revocation.qrLookup.fields.name')}: {lookupResult.name || t('revocation.qrLookup.notFound')}</p>
-            <p style={styles.info}>{t('revocation.qrLookup.fields.issuer')}: {lookupResult.iss || t('revocation.qrLookup.notFound')}</p>
-            <div style={styles.row}>
+      {/* STEP 1: Load */}
+      {wizardStep === 1 && (
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-[#30414B] mb-4">
+            {t('revocation.loadExisting.title')}
+            <InfoTooltip content={t('revocation.loadExisting.help')} />
+          </h3>
+
+          <div className="mb-4">
+            <label className="block mb-2 font-semibold text-gray-800 text-sm">
+              {t('revocation.loadExisting.sources.label')}
+            </label>
+            <select
+              value={sourceType}
+              onChange={(e) => handleSourceTypeChange(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B] bg-white"
+            >
+              <option value="local">{t('revocation.loadExisting.sources.local')}</option>
+              <option value="deployed">{t('revocation.loadExisting.sources.deployed')}</option>
+              <option value="file">{t('revocation.loadExisting.sources.file')}</option>
+              <option value="custom">{t('revocation.loadExisting.sources.custom')}</option>
+            </select>
+          </div>
+
+          {(sourceType === 'local' || sourceType === 'deployed') && (
+            <div className="mb-4">
+              <input
+                type="text"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B] box-border"
+                placeholder={sourceType === 'local' ? DEFAULT_LOCAL_REVOKED_URL : DEFAULT_DEPLOYED_REVOKED_URL}
+              />
+            </div>
+          )}
+
+          {sourceType === 'file' && (
+            <div className="mb-4">
+              <input
+                type="file"
+                accept=".json,application/json"
+                onChange={handleFileImport}
+                className="w-full p-2 text-sm"
+              />
+            </div>
+          )}
+
+          {sourceType === 'custom' && (
+            <div className="mb-4">
+              <input
+                type="text"
+                value={customUrl}
+                onChange={(e) => setCustomUrl(e.target.value)}
+                placeholder="https://example.com/revoked.json"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B] box-border"
+              />
+            </div>
+          )}
+
+          {loadStatus.kind && (
+            <div className={`mb-4 p-3 rounded-lg text-sm ${
+              loadStatus.kind === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
+            }`}>
+              {loadStatus.message}
+            </div>
+          )}
+
+          <div className="flex gap-3 flex-wrap">
+            {sourceType !== 'file' && (
               <button
                 type="button"
-                disabled={!lookupResult.jti}
-                onClick={() => handleLookupRevoke('jti')}
-                style={{ ...styles.button, ...styles.primaryButton }}
+                onClick={handleLoadFromUrl}
+                disabled={loadBusy}
+                className={`px-5 py-3 rounded-lg font-semibold text-sm border-none cursor-pointer min-h-[44px] ${
+                  loadBusy
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#52717B] text-white hover:bg-[#30414B]'
+                }`}
               >
-                {t('revocation.qrLookup.actions.revokeToken')}
+                {loadBusy ? t('revocation.loadExisting.actions.loading') : t('revocation.loadExisting.actions.loadAndMerge')}
               </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setWizardStep(2)}
+              className="px-5 py-3 bg-[#30414B] text-white rounded-lg font-semibold text-sm hover:bg-[#52717B] cursor-pointer border-none min-h-[44px]"
+            >
+              {t('common.next')} →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2: Manage Entries */}
+      {wizardStep === 2 && (
+        <>
+          {/* Add entry section */}
+          <div className="bg-white p-6 rounded-lg border border-gray-300 mb-6">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <h3 className="text-lg font-semibold text-[#30414B] m-0">
+                {manualMode ? t('revocation.addEntry.title') : t('revocation.qrLookup.title')}
+                {!manualMode && <InfoTooltip content={t('revocation.qrLookup.help')} />}
+              </h3>
               <button
                 type="button"
-                disabled={!lookupResult.sub}
-                onClick={() => handleLookupRevoke('sub')}
-                style={{ ...styles.button, ...styles.ghostButton }}
+                onClick={() => setManualMode(!manualMode)}
+                className="px-3 py-2 text-xs bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer border-none font-semibold"
               >
-                {t('revocation.qrLookup.actions.revokeMember')}
+                {manualMode ? t('revocation.manage.switchToQr') : t('revocation.manage.switchToManual')}
               </button>
             </div>
+
+            {!manualMode ? (
+              /* QR Upload mode */
+              <div>
+                <div className="mb-3">
+                  <label className="block mb-2 text-sm font-semibold text-gray-800" htmlFor="qr-png-upload">
+                    {t('revocation.qrLookup.uploadLabel')}
+                  </label>
+                  <input
+                    id="qr-png-upload"
+                    type="file"
+                    accept=".png,image/png"
+                    onChange={handleQrPngUpload}
+                    className="text-sm"
+                  />
+                </div>
+
+                {lookupLoading && (
+                  <p className="text-gray-500 text-sm">{t('revocation.qrLookup.reading')}</p>
+                )}
+
+                {lookupResult && (
+                  <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-gray-700 mb-1">
+                      {t('revocation.qrLookup.fields.file')}: <strong>{lookupResult.fileName}</strong>
+                    </p>
+                    <p className="text-sm font-mono mb-1 break-all">
+                      jti: {lookupResult.jti || t('revocation.qrLookup.notFound')}
+                    </p>
+                    <p className="text-sm font-mono mb-1 break-all">
+                      sub: {lookupResult.sub || t('revocation.qrLookup.notFound')}
+                    </p>
+                    <p className="text-sm text-gray-700 mb-1">
+                      {t('revocation.qrLookup.fields.name')}: {lookupResult.name || t('revocation.qrLookup.notFound')}
+                    </p>
+                    <p className="text-sm text-gray-700 mb-3">
+                      {t('revocation.qrLookup.fields.issuer')}: {lookupResult.iss || t('revocation.qrLookup.notFound')}
+                    </p>
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        disabled={!lookupResult.jti}
+                        onClick={() => handleLookupRevoke('jti')}
+                        className={`px-4 py-2 rounded-lg font-semibold text-sm border-none cursor-pointer min-h-[44px] ${
+                          lookupResult.jti
+                            ? 'bg-[#30414B] text-white hover:bg-[#52717B]'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        {t('revocation.qrLookup.actions.revokeToken')}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={!lookupResult.sub}
+                        onClick={() => handleLookupRevoke('sub')}
+                        className={`px-4 py-2 rounded-lg font-semibold text-sm border-none cursor-pointer min-h-[44px] ${
+                          lookupResult.sub
+                            ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        {t('revocation.qrLookup.actions.revokeMember')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Manual entry mode */
+              <div className="flex gap-2 flex-wrap">
+                <input
+                  type="text"
+                  value={entryId}
+                  onChange={(e) => setEntryId(e.target.value)}
+                  placeholder={t('revocation.addEntry.placeholder')}
+                  className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B] box-border"
+                />
+                <select
+                  value={entryType}
+                  onChange={(e) => setEntryType(e.target.value)}
+                  className="p-3 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#30414B]/30"
+                >
+                  <option value="jti">{t('revocation.addEntry.options.jti')}</option>
+                  <option value="sub">{t('revocation.addEntry.options.sub')}</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  className="px-5 py-3 bg-[#30414B] text-white rounded-lg font-semibold text-sm hover:bg-[#52717B] cursor-pointer border-none min-h-[44px]"
+                >
+                  {t('revocation.addEntry.actions.add')}
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </section>
 
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.addEntry.title')}</h3>
-        <div style={styles.row}>
-          <input
-            type="text"
-            value={entryId}
-            onChange={(event) => setEntryId(event.target.value)}
-            placeholder={t('revocation.addEntry.placeholder')}
-            style={styles.input}
-          />
-          <select value={entryType} onChange={(event) => setEntryType(event.target.value)} style={styles.select}>
-            <option value="jti">{t('revocation.addEntry.options.jti')}</option>
-            <option value="sub">{t('revocation.addEntry.options.sub')}</option>
-          </select>
+          {/* Current revocation list */}
+          <div className="bg-white p-6 rounded-lg border border-gray-300 mb-6">
+            <h3 className="text-lg font-semibold text-[#30414B] mb-4">
+              {t('revocation.currentList.title')}
+            </h3>
+
+            {rows.length === 0 ? (
+              <p className="text-gray-500 text-sm">{t('revocation.currentList.empty')}</p>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="text-left p-3 border-b border-gray-200 font-semibold text-gray-700">
+                        {t('revocation.currentList.table.type')}
+                      </th>
+                      <th className="text-left p-3 border-b border-gray-200 font-semibold text-gray-700">
+                        {t('revocation.currentList.table.id')}
+                      </th>
+                      <th className="text-left p-3 border-b border-gray-200 font-semibold text-gray-700">
+                        {t('revocation.currentList.table.action')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row) => (
+                      <tr key={`${row.type}:${row.id}`} className="border-b border-gray-100">
+                        <td className="p-3 font-semibold text-gray-700">{row.type.toUpperCase()}</td>
+                        <td className="p-3 font-mono text-xs break-all">{row.id}</td>
+                        <td className="p-3">
+                          <button
+                            type="button"
+                            onClick={() => handleRemove(row.id, row.type)}
+                            className="px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-semibold cursor-pointer hover:bg-red-100 min-h-[36px]"
+                          >
+                            {t('revocation.currentList.actions.remove')}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <p className="mt-3 text-xs text-gray-500">
+              {t('revocation.currentList.lastUpdated')}: {new Date(revocationList.updated_at).toLocaleString(dateLocale)}
+            </p>
+          </div>
+
+          {/* Step navigation */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setWizardStep(1)}
+              className="px-5 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold text-sm hover:bg-gray-300 cursor-pointer border-none min-h-[44px]"
+            >
+              ← {t('common.back')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setWizardStep(3)}
+              className="px-5 py-3 bg-[#30414B] text-white rounded-lg font-semibold text-sm hover:bg-[#52717B] cursor-pointer border-none min-h-[44px]"
+            >
+              {t('common.next')} →
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* STEP 3: Export */}
+      {wizardStep === 3 && (
+        <div className="bg-white p-6 rounded-lg border border-gray-300">
+          <h3 className="text-lg font-semibold text-[#30414B] mb-4">
+            {t('revocation.exportSection.title')}
+            <InfoTooltip content={t('revocation.exportSection.instructions')} />
+          </h3>
+
+          <p className="text-sm text-gray-600 mb-4">
+            {rows.length} {rows.length === 1 ? 'entry' : 'entries'}
+          </p>
+
+          <div className="flex gap-3 flex-wrap mb-6">
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="flex-1 px-5 py-3 bg-[#52717B] text-white rounded-lg font-semibold text-sm hover:bg-[#30414B] cursor-pointer border-none min-h-[44px] min-w-[180px]"
+            >
+              {t('revocation.exportSection.actions.download')}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex-1 px-5 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold text-sm hover:bg-gray-300 cursor-pointer border-none min-h-[44px] min-w-[180px]"
+            >
+              {t('revocation.exportSection.actions.copy')}
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={handleAdd}
-            style={{ ...styles.button, ...styles.primaryButton }}
+            onClick={() => setWizardStep(2)}
+            className="px-5 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold text-sm hover:bg-gray-300 cursor-pointer border-none min-h-[44px]"
           >
-            {t('revocation.addEntry.actions.add')}
+            ← {t('common.back')}
           </button>
         </div>
-      </section>
-
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.currentList.title')}</h3>
-        {rows.length === 0 ? (
-          <p style={styles.info}>{t('revocation.currentList.empty')}</p>
-        ) : (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>{t('revocation.currentList.table.type')}</th>
-                <th style={styles.th}>{t('revocation.currentList.table.id')}</th>
-                <th style={styles.th}>{t('revocation.currentList.table.action')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={`${row.type}:${row.id}`}>
-                  <td style={styles.td}>{row.type.toUpperCase()}</td>
-                  <td style={{ ...styles.td, ...styles.mono }}>{row.id}</td>
-                  <td style={styles.td}>
-                    <button
-                      type="button"
-                      onClick={() => handleRemove(row.id, row.type)}
-                      style={{ ...styles.button, ...styles.dangerButton }}
-                    >
-                      {t('revocation.currentList.actions.remove')}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        <p style={styles.info}>{t('revocation.currentList.lastUpdated')}: {new Date(revocationList.updated_at).toLocaleString(dateLocale)}</p>
-      </section>
-
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.importSection.title')}</h3>
-        <div style={styles.row}>
-          <input type="file" accept=".json,application/json" onChange={handleFileImport} />
-          <button
-            type="button"
-            onClick={handleImport}
-            style={{ ...styles.button, ...styles.ghostButton }}
-          >
-            {t('revocation.importSection.actions.importFromText')}
-          </button>
-        </div>
-        <textarea
-          style={styles.textarea}
-          placeholder={t('revocation.importSection.placeholder')}
-          value={importText}
-          onChange={(event) => setImportText(event.target.value)}
-        />
-        <p style={styles.info}>{t('revocation.importSection.help')}</p>
-      </section>
-
-      <section style={styles.section}>
-        <h3 style={styles.sectionTitle}>{t('revocation.exportSection.title')}</h3>
-        <div style={styles.row}>
-          <button
-            type="button"
-            onClick={handleDownload}
-            style={{ ...styles.button, ...styles.secondaryButton }}
-          >
-            {t('revocation.exportSection.actions.download')}
-          </button>
-          <button
-            type="button"
-            onClick={handleCopy}
-            style={{ ...styles.button, ...styles.ghostButton }}
-          >
-            {t('revocation.exportSection.actions.copy')}
-          </button>
-        </div>
-        <textarea style={styles.textarea} readOnly value={exportedJSON} />
-        <p style={styles.instructions}>
-          {t('revocation.exportSection.instructions')}
-        </p>
-      </section>
-
-      {feedback.kind === 'error' && <p style={styles.error}>{feedback.message}</p>}
-      {feedback.kind === 'success' && <p style={styles.success}>{feedback.message}</p>}
+      )}
     </div>
   );
 }

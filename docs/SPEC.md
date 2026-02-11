@@ -305,6 +305,8 @@ Embed in source code or `config.json`:
 - **CSV parsing**: papaparse
 - **Date parsing**: date-fns or day.js (flexible date format support)
 - **File generation**: canvas (for PNG), jspdf (if PDF needed later)
+- **Styling**: Tailwind CSS (via @tailwindcss/vite plugin)
+- **UI helpers**: @tippyjs/react (tooltips)
 
 ### 7.1.1 Dependency Manifest Requirements
 

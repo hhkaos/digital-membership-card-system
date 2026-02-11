@@ -23,12 +23,15 @@ Explain the reasoning and let the user confirm or override the suggested version
 ## 3. Update project documentation
 
 ### CHANGELOG.md
+
 - Rename `## [Unreleased]` to `## [<version>] - <today's date>` (format: `YYYY-MM-DD`)
 - Add a new empty `## [Unreleased]` section above it
 - Preserve all existing content below
 
 ### docs/TODO.md
+
 Read `docs/TODO.md` and update it to reflect the release:
+
 - Mark completed tasks as `[x]`
 - Update phase status labels (e.g. `⬜ TODO` → `🚧 IN PROGRESS` → `✅ COMPLETE`)
 - Update the V2 Progress Tracking section
@@ -36,16 +39,24 @@ Read `docs/TODO.md` and update it to reflect the release:
 - Update the V2 Success Criteria checklist if applicable
 
 ### docs/SPEC.md
+
 Read `docs/SPEC.md` and update it if the release includes changes that affect the specification:
+
 - Update acceptance criteria checkboxes
 - Reflect any architecture, feature, or dependency changes
 - Update the document version and last updated date in the metadata section
 - Skip if the release is purely internal
 
 ### package.json versions
+
 Set the `version` field to the new version in:
+
 - `issuer/package.json`
 - `verification/package.json`
+
+## 4. Regenerate documentation
+
+Run `npm run docs:generate` to rebuild the HTML documentation from the updated markdown files.
 
 ## 5. Run tests
 
@@ -54,6 +65,7 @@ Run `npm test` from the repo root to ensure everything passes before releasing. 
 ## 6. Build assets
 
 Run `npm run build` in both `issuer/` and `verification/` directories. Then create zip archives:
+
 - `zip -r issuer-v<version>.zip issuer/dist`
 - `zip -r verification-v<version>.zip verification/dist`
 
@@ -89,6 +101,7 @@ The `--notes` should contain the full changelog entries for this version (the Ad
 ## 10. Clean up
 
 Remove the temporary zip files:
+
 - `rm issuer-v<version>.zip verification-v<version>.zip`
 
 Confirm the release is live by showing the GitHub Release URL.

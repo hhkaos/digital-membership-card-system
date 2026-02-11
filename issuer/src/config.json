@@ -2,5 +2,11 @@
   "analytics": {
     "enabled": true,
     "measurementId": "G-ZQEE30JWG6"
+  },
+  "academicYear": {
+    "courseEndMonth": 6,
+    "courseEndDay": 30,
+    "defaultExpiryMonth": 9,
+    "defaultExpiryDay": 30
   }
 }

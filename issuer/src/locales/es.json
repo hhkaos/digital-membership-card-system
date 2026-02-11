@@ -7,6 +7,10 @@
   "help": {
     "label": "Ayuda"
   },
+  "common": {
+    "next": "Siguiente",
+    "back": "Volver"
+  },
   "app": {
     "title": "Emisor de Tarjetas AMPA",
     "subtitle": "Genera tarjetas digitales de membresía seguras",
@@ -106,6 +110,17 @@
       "unloaded": "No hay clave privada cargada",
       "fingerprint": "Huella"
     },
+    "wizard": {
+      "stepOf": "Paso {{current}} de {{total}}",
+      "chooseTitle": "Elegir origen de clave"
+    },
+    "actions": {
+      "changeKey": "Cambiar clave",
+      "copyPublicKey": "Copiar clave pública",
+      "copyForConfig": "Copiar para config.json",
+      "showKey": "Mostrar",
+      "hideKey": "Ocultar"
+    },
     "generate": {
       "title": "Generar nuevo par de claves",
       "description": "Crea un nuevo par de claves Ed25519 para firmar tarjetas de membresía.",
@@ -118,7 +133,7 @@
       "placeholder": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
     },
     "labels": {
-      "privateKeySecret": "Clave privada (¡MANTENER EN SECRETO!)",
+      "privateKeySecret": "Clave privada",
       "privateKeyPem": "Clave privada (formato PEM)",
       "publicKeyPem": "Clave pública (para la app de verificación)",
       "publicKeyForConfig": "Clave pública para config.js",
@@ -143,6 +158,16 @@
   "revocation": {
     "title": "Gestor de revocaciones",
     "description": "Revoca tarjetas individuales por ID de token (`jti`) o revoca todas las tarjetas de un socio por ID de socio (`sub`).",
+    "wizard": {
+      "step1Label": "Cargar",
+      "step2Label": "Gestionar",
+      "step3Label": "Exportar",
+      "stepOf": "Paso {{current}} de {{total}}: {{label}}"
+    },
+    "manage": {
+      "switchToQr": "📷 Cambiar a subida QR",
+      "switchToManual": "⌨️ Cambiar a manual"
+    },
     "feedback": {
       "noNewEntries": "No se encontraron nuevas entradas de revocación. Se conserva la lista actual.",
       "entryAlreadyExists": "La entrada ya existe en la lista.",
@@ -166,8 +191,11 @@
     "loadExisting": {
       "title": "Cargar `revoked.json` existente",
       "sources": {
-        "local": "Verificador local (por defecto)",
-        "deployed": "Dominio desplegado"
+        "label": "Origen",
+        "local": "Servidor local dev",
+        "deployed": "Dominio desplegado",
+        "file": "Subir archivo",
+        "custom": "URL personalizada"
       },
       "placeholders": {
         "localUrl": "http://localhost:5173/revoked.json",

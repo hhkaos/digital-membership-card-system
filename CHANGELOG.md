@@ -10,8 +10,20 @@ The format is intentionally simple and commit-driven:
 
 ## [Unreleased]
 
+### Added
+- Issuer: Tailwind CSS integration, replacing all inline styles with utility classes.
+- Issuer: `ResponsiveTabs` component with automatic collapse to dropdown on narrow screens.
+- Issuer: `InfoTooltip` component (tippy.js) for contextual help hints in forms.
+- Issuer: Wizard-style step flows for Key Management and Revocation Manager.
+- Issuer: Academic year configuration (`academicYear`) in `config.json` for default expiry date logic.
+- Issuer: New i18n keys for wizard steps, key actions, and additional revocation source options (file upload, custom URL).
+- Docs: Real screenshots in verifier end-user manual (ES/EN) replacing placeholder images.
+
 ### Changed
-- Verifier English manual: rewritten to match Spanish version structure with real screenshots and AMPA-specific language.
+- Docs: Verifier end-user manuals (ES + EN) rewritten with AMPA-specific language and simplified content.
+- Docs: HTML generator centers top layout and removes redundant h1 title from generated pages.
+- Issuer: Simplified private key label (removed "KEEP SECRET!" from label text).
+- Tooling: Release skill formatting improvements.
 
 ### Added
 - `CLAUDE.md` project instructions file for Claude Code with architecture overview, commands, and conventions.

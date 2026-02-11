@@ -15,7 +15,7 @@ Run `git status` (never use `-uall`) and `git diff` (both staged and unstaged) t
 Review the changes and update the following files as needed:
 
 ### CHANGELOG.md
-Read `CHANGELOG.md` and add an entry under the `[Unreleased]` section describing the change. Place it under the appropriate subsection (`Added`, `Changed`, `Fixed`, `Removed`). Create the subsection if it doesn't exist. Keep entries concise (one bullet point per logical change).
+Read `CHANGELOG.md` and add an entry under the `[Unreleased]` section describing the change. Place it under the appropriate subsection (`Added`, `Changed`, `Fixed`, `Removed`). Create the subsection if it doesn't exist. Keep entries concise (one bullet point per logical change). Each entry MUST specify which app it applies to (e.g. "Issuer:", "Verification:", "Both apps:", "Docs:") at the start of the bullet point so readers know the scope at a glance.
 
 ### docs/TODO.md
 Read `docs/TODO.md` and update checkboxes or status labels to reflect the current state of the project. For example:

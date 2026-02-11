@@ -2,97 +2,58 @@ import { useState } from 'react';
 import { createMemberPayload, signJWT } from '../utils/crypto';
 import { generatePlainQRCard, generateCardFilename, downloadCard } from '../utils/card';
 import { useI18n } from '../i18n';
+import config from '../config.json';
 
-const styles = {
-  container: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '20px'
-  },
-  form: {
-    backgroundColor: '#f9f9f9',
-    padding: '24px',
-    borderRadius: '8px'
-  },
-  formGroup: {
-    marginBottom: '20px'
-  },
-  label: {
-    display: 'block',
-    fontWeight: '600',
-    marginBottom: '8px',
-    color: '#333'
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    fontSize: '16px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    boxSizing: 'border-box'
-  },
-  button: {
-    backgroundColor: '#30414B',
-    color: 'white',
-    padding: '14px 28px',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontWeight: '600',
-    width: '100%'
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-    cursor: 'not-allowed'
-  },
-  error: {
-    color: '#d32f2f',
-    fontSize: '14px',
-    marginTop: '4px'
-  },
-  success: {
-    backgroundColor: '#e8f5e9',
-    border: '2px solid #4caf50',
-    borderRadius: '6px',
-    padding: '16px',
-    marginTop: '20px',
-    textAlign: 'center'
+function getDefaultExpiryDate() {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+
+  const { courseEndMonth, courseEndDay, defaultExpiryMonth, defaultExpiryDay } = config.academicYear;
+
+  const courseEnd = new Date(currentYear, courseEndMonth - 1, courseEndDay);
+
+  let expiryYear = currentYear;
+  if (today > courseEnd) {
+    expiryYear = currentYear + 1;
   }
-};
+
+  const month = String(defaultExpiryMonth).padStart(2, '0');
+  const day = String(defaultExpiryDay).padStart(2, '0');
+  return `${expiryYear}-${month}-${day}`;
+}
 
 export function ManualEntry({ privateKey }) {
   const { t, language } = useI18n();
   const [fullName, setFullName] = useState('');
   const [memberId, setMemberId] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
+  const [expiryDate, setExpiryDate] = useState(getDefaultExpiryDate);
   const [errors, setErrors] = useState({});
   const [generating, setGenerating] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const validate = () => {
     const newErrors = {};
-    
+
     if (!fullName.trim()) {
       newErrors.fullName = t('manual.errors.fullNameRequired');
     }
-    
+
     if (!memberId.trim()) {
       newErrors.memberId = t('manual.errors.memberIdRequired');
     }
-    
+
     if (!expiryDate) {
       newErrors.expiryDate = t('manual.errors.expiryRequired');
     } else {
       const expiry = new Date(expiryDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      if (expiry <= today) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      if (expiry <= now) {
         newErrors.expiryDate = t('manual.errors.expiryFuture');
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -100,30 +61,27 @@ export function ManualEntry({ privateKey }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess(false);
-    
+
     if (!privateKey) {
       alert(t('manual.alerts.loadPrivateKey'));
       return;
     }
-    
+
     if (!validate()) {
       return;
     }
-    
+
     setGenerating(true);
-    
+
     try {
-      // Create JWT payload
       const payload = createMemberPayload({
         fullName: fullName.trim(),
         memberId: memberId.trim(),
         expiryDate
       });
-      
-      // Sign JWT
+
       const jwt = await signJWT(payload, privateKey);
 
-      // Generate card image (QR code is generated internally)
       const cardBlob = await generatePlainQRCard({
         jwt,
         memberName: fullName.trim(),
@@ -136,20 +94,18 @@ export function ManualEntry({ privateKey }) {
         },
       });
 
-      // Download card
       const filename = generateCardFilename(memberId.trim(), fullName.trim());
       downloadCard(cardBlob, filename);
-      
+
       setSuccess(true);
 
-      // Reset form after delay
       setTimeout(() => {
         setFullName('');
         setMemberId('');
-        setExpiryDate('');
+        setExpiryDate(getDefaultExpiryDate());
         setSuccess(false);
       }, 3000);
-      
+
     } catch (error) {
       alert(`${t('manual.alerts.generateFailed')}: ${error.message}`);
     } finally {
@@ -158,61 +114,60 @@ export function ManualEntry({ privateKey }) {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={{ color: '#30414B', marginBottom: '24px' }}>{t('manual.title')}</h2>
-      
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('manual.fields.fullName')} *</label>
+    <div className="max-w-xl mx-auto">
+      <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+        <div className="mb-5">
+          <label className="block font-semibold mb-2 text-gray-800">{t('manual.fields.fullName')} *</label>
           <input
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            style={styles.input}
+            className="w-full p-3 text-base border border-gray-300 rounded-lg box-border focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B]"
             placeholder={t('manual.placeholders.fullName')}
           />
-          {errors.fullName && <div style={styles.error}>{errors.fullName}</div>}
+          {errors.fullName && <div className="text-red-700 text-sm mt-1">{errors.fullName}</div>}
         </div>
-        
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('manual.fields.memberId')} *</label>
+
+        <div className="mb-5">
+          <label className="block font-semibold mb-2 text-gray-800">{t('manual.fields.memberId')} *</label>
           <input
             type="text"
             value={memberId}
             onChange={(e) => setMemberId(e.target.value)}
-            style={styles.input}
+            className="w-full p-3 text-base border border-gray-300 rounded-lg box-border focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B]"
             placeholder={t('manual.placeholders.memberId')}
           />
-          {errors.memberId && <div style={styles.error}>{errors.memberId}</div>}
+          {errors.memberId && <div className="text-red-700 text-sm mt-1">{errors.memberId}</div>}
         </div>
-        
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('manual.fields.expiryDate')} *</label>
+
+        <div className="mb-5">
+          <label className="block font-semibold mb-2 text-gray-800">{t('manual.fields.expiryDate')} *</label>
           <input
             type="date"
             value={expiryDate}
             onChange={(e) => setExpiryDate(e.target.value)}
-            style={styles.input}
+            className="w-full p-3 text-base border border-gray-300 rounded-lg box-border focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B]"
           />
-          {errors.expiryDate && <div style={styles.error}>{errors.expiryDate}</div>}
+          {errors.expiryDate && <div className="text-red-700 text-sm mt-1">{errors.expiryDate}</div>}
         </div>
-        
+
         <button
           type="submit"
           disabled={generating || !privateKey}
-          style={{
-            ...styles.button,
-            ...((generating || !privateKey) ? styles.buttonDisabled : {})
-          }}
+          className={`w-full min-h-[44px] px-7 py-3 text-base font-semibold rounded-lg border-none cursor-pointer ${
+            generating || !privateKey
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-[#30414B] text-white hover:bg-[#52717B]'
+          }`}
         >
           {generating ? t('manual.actions.generating') : t('manual.actions.generate')}
         </button>
       </form>
-      
+
       {success && (
-        <div style={styles.success}>
-          <strong>{t('manual.success.title')}</strong>
-          <p style={{ margin: '8px 0 0 0' }}>{t('manual.success.subtitle')}</p>
+        <div className="mt-5 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
+          <strong className="block mb-1">{t('manual.success.title')}</strong>
+          <p className="m-0 text-gray-700">{t('manual.success.subtitle')}</p>
         </div>
       )}
     </div>

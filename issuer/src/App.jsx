@@ -4,6 +4,7 @@ import { ManualEntry } from './components/ManualEntry';
 import CSVUpload from './components/CSVUpload';
 import RevocationManager from './components/RevocationManager';
 import InstallPrompt from './components/InstallPrompt';
+import ResponsiveTabs from './components/ResponsiveTabs';
 import { importPrivateKey } from './utils/crypto';
 import { useI18n } from './i18n';
 import { initAnalytics, trackPageView } from './utils/analytics';
@@ -15,96 +16,6 @@ const STORAGE_KEYS = {
   publicKeyPEM: 'ampa.issuer.publicKeyPEM'
 };
 
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-    padding: '20px'
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '40px',
-    paddingTop: '20px'
-  },
-  title: {
-    color: '#30414B',
-    fontSize: '36px',
-    marginBottom: '8px'
-  },
-  subtitle: {
-    color: '#52717B',
-    fontSize: '18px'
-  },
-  logo: {
-    maxWidth: '120px',
-    height: 'auto',
-    marginBottom: '20px'
-  },
-  tabs: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '16px',
-    marginBottom: '32px'
-  },
-  tab: {
-    padding: '12px 32px',
-    border: 'none',
-    borderRadius: '8px 8px 0 0',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontWeight: '600',
-    transition: 'all 0.2s'
-  },
-  tabActive: {
-    backgroundColor: '#30414B',
-    color: 'white'
-  },
-  tabInactive: {
-    backgroundColor: 'white',
-    color: '#666'
-  },
-  languageRow: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '8px',
-    alignItems: 'center',
-    marginBottom: '12px'
-  },
-  languageButton: {
-    border: 'none',
-    borderRadius: '6px',
-    padding: '4px 8px',
-    fontSize: '12px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    backgroundColor: '#eef2f5',
-    color: '#30414B'
-  },
-  languageButtonActive: {
-    backgroundColor: '#30414B',
-    color: '#fff'
-  },
-  docsLink: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontSize: '12px',
-    color: '#0B4F66',
-    backgroundColor: '#E7F4F8',
-    border: '1px solid #0B6B8F',
-    borderRadius: '999px',
-    padding: '6px 11px',
-    fontWeight: 700,
-    textDecoration: 'none',
-    marginLeft: '12px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
-  },
-  docsIcon: {
-    fontSize: '13px',
-    lineHeight: 1
-  }
-};
-
 function startAnalytics() {
   initAnalytics(config);
   trackPageView();
@@ -112,7 +23,7 @@ function startAnalytics() {
 
 function App() {
   const { t, language, setLanguage } = useI18n();
-  const [activeTab, setActiveTab] = useState('keys'); // 'keys', 'generate', 'batch', or 'revocation'
+  const [activeTab, setActiveTab] = useState('keys');
   const [privateKey, setPrivateKey] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
   const [privateKeyPEM, setPrivateKeyPEM] = useState('');
@@ -166,108 +77,89 @@ function App() {
     }
   };
 
+  const tabs = [
+    { id: 'keys', label: t('app.tabs.keys') },
+    { id: 'generate', label: t('app.tabs.generate') },
+    { id: 'batch', label: t('app.tabs.batch') },
+    { id: 'revocation', label: t('app.tabs.revocation') },
+  ];
+
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <div style={styles.languageRow}>
-          <span style={{ fontSize: '12px', color: '#666' }}>{t('language.label')}:</span>
+    <div className="min-h-screen bg-gray-100 px-4 py-5">
+      <header className="text-center mb-8 pt-4">
+        <div className="flex justify-center items-center gap-2 mb-4">
+          <span className="text-xs text-gray-500">{t('language.label')}:</span>
           <button
             type="button"
             onClick={() => setLanguage('es')}
-            style={{
-              ...styles.languageButton,
-              ...(language === 'es' ? styles.languageButtonActive : {})
-            }}
+            className={`px-2 py-1 text-xs font-semibold rounded cursor-pointer border-none ${
+              language === 'es'
+                ? 'bg-[#30414B] text-white'
+                : 'bg-gray-200 text-[#30414B]'
+            }`}
           >
             {t('language.es')}
           </button>
           <button
             type="button"
             onClick={() => setLanguage('en')}
-            style={{
-              ...styles.languageButton,
-              ...(language === 'en' ? styles.languageButtonActive : {})
-            }}
+            className={`px-2 py-1 text-xs font-semibold rounded cursor-pointer border-none ${
+              language === 'en'
+                ? 'bg-[#30414B] text-white'
+                : 'bg-gray-200 text-[#30414B]'
+            }`}
           >
             {t('language.en')}
           </button>
           <a
             href={`${import.meta.env.BASE_URL}docs/index.html?lang=${language}`}
-            style={styles.docsLink}
+            className="inline-flex items-center gap-1.5 ml-3 px-3 py-1.5 text-xs font-bold text-[#0B4F66] bg-[#E7F4F8] border border-[#0B6B8F] rounded-full shadow-sm no-underline hover:shadow"
             aria-label={t('help.label')}
             title={t('help.label')}
           >
-            <span aria-hidden="true" style={styles.docsIcon}>ℹ️</span>
+            <span aria-hidden="true" className="text-xs leading-none">ℹ️</span>
             <span>{t('help.label')}</span>
           </a>
         </div>
-        <img src={`${import.meta.env.BASE_URL}ampa-logo.png`} alt="AMPA Logo" style={styles.logo} />
-        <h1 style={styles.title}>{t('app.title')}</h1>
-        <p style={styles.subtitle}>{t('app.subtitle')}</p>
-      </div>
+
+        <img
+          src={`${import.meta.env.BASE_URL}ampa-logo.png`}
+          alt="AMPA Logo"
+          className="max-w-[120px] h-auto mb-4 mx-auto block"
+        />
+        <h1 className="text-[#30414B] text-3xl font-bold mb-2">{t('app.title')}</h1>
+        <p className="text-[#52717B] text-lg">{t('app.subtitle')}</p>
+      </header>
 
       <InstallPrompt />
 
-      <div style={styles.tabs}>
-        <button
-          onClick={() => setActiveTab('keys')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'keys' ? styles.tabActive : styles.tabInactive)
-          }}
-        >
-          {t('app.tabs.keys')}
-        </button>
-        <button
-          onClick={() => setActiveTab('generate')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'generate' ? styles.tabActive : styles.tabInactive)
-          }}
-        >
-          {t('app.tabs.generate')}
-        </button>
-        <button
-          onClick={() => setActiveTab('batch')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'batch' ? styles.tabActive : styles.tabInactive)
-          }}
-        >
-          {t('app.tabs.batch')}
-        </button>
-        <button
-          onClick={() => setActiveTab('revocation')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'revocation' ? styles.tabActive : styles.tabInactive)
-          }}
-        >
-          {t('app.tabs.revocation')}
-        </button>
-      </div>
+      <ResponsiveTabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      >
+        {activeTab === 'keys' && (
+          <KeyManagement
+            privateKey={privateKey}
+            publicKey={publicKey}
+            privateKeyPEM={privateKeyPEM}
+            publicKeyPEM={publicKeyPEM}
+            onKeysChange={handleKeysChange}
+          />
+        )}
 
-      {activeTab === 'keys' && (
-        <KeyManagement
-          privateKey={privateKey}
-          publicKey={publicKey}
-          privateKeyPEM={privateKeyPEM}
-          publicKeyPEM={publicKeyPEM}
-          onKeysChange={handleKeysChange}
-        />
-      )}
+        {activeTab === 'generate' && (
+          <ManualEntry privateKey={privateKey} />
+        )}
 
-      {activeTab === 'generate' && (
-        <ManualEntry privateKey={privateKey} />
-      )}
+        {activeTab === 'batch' && (
+          <CSVUpload privateKey={privateKey} />
+        )}
 
-      {activeTab === 'batch' && (
-        <CSVUpload privateKey={privateKey} />
-      )}
-
-      {activeTab === 'revocation' && (
-        <RevocationManager />
-      )}
+        {activeTab === 'revocation' && (
+          <RevocationManager />
+        )}
+      </ResponsiveTabs>
 
       {consentPending && (
         <ConsentBanner onDecision={(decision) => {
