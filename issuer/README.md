@@ -12,6 +12,10 @@ This application allows AMPA administrators to:
 
 **IMPORTANT**: This app should NEVER be deployed publicly. It runs locally only.
 
+## Prerequisites
+
+- **Node.js >= 20** (see `.nvmrc` — run `nvm use` if using nvm)
+
 ## Installation
 
 ```bash
@@ -25,6 +29,18 @@ npm run dev
 ```
 
 App runs on http://localhost:5174
+
+## Testing
+
+```bash
+# Run tests once
+npm test
+
+# Watch mode
+npm run test:watch
+```
+
+Tests cover: key generation, JWT signing, CSV parsing, date validation, metadata generation, filename sanitization, and cross-app integration (issuer sign → verification validate).
 
 ## Usage Guide
 
@@ -133,17 +149,25 @@ issuer/
 │   │   ├── ManualEntry.jsx      # Single card form
 │   │   └── CSVUpload.jsx        # Batch upload UI
 │   ├── utils/
-│   │   ├── crypto.js        # EdDSA keypair & JWT signing
-│   │   ├── card.js          # PNG card generation
-│   │   ├── qr.jsx           # QR code generation
-│   │   ├── csv.js           # CSV parsing & validation
-│   │   ├── batch.js         # Batch card generation
-│   │   └── metadata.js      # Metadata generation
+│   │   ├── crypto.js              # EdDSA keypair & JWT signing
+│   │   ├── crypto.test.js         # Unit tests
+│   │   ├── card.js                # PNG card generation
+│   │   ├── card.test.js           # Unit tests
+│   │   ├── qr.jsx                 # QR code generation
+│   │   ├── csv.js                 # CSV parsing & validation
+│   │   ├── csv.test.js            # Unit tests
+│   │   ├── batch.js               # Batch card generation
+│   │   ├── batch.test.js          # Unit tests
+│   │   ├── metadata.js            # Metadata generation
+│   │   ├── metadata.test.js       # Unit tests
+│   │   └── crypto-verify.test.js  # Cross-app integration tests
 │   └── App.jsx
 ├── examples/
 │   └── sample-members.csv   # Example CSV file
 ├── public/
 │   └── ampa-logo.png
+├── .nvmrc                   # Node.js version
+├── vite.config.js           # Vite + Vitest configuration
 ├── package.json
 └── README.md
 ```
@@ -287,6 +311,7 @@ The `metadata.json` file in batch ZIPs contains:
 - `papaparse` - CSV parsing
 - `date-fns` - Date formatting and parsing
 - `jszip` - ZIP file creation
+- `vitest` (dev) - Unit testing framework
 
 ## Future Features (v2)
 

@@ -10,6 +10,10 @@ Merchants scan a member's QR code, which opens this app with a verification URL.
 3. Checks the expiration date
 4. Displays validity status to the merchant
 
+## Prerequisites
+
+- **Node.js >= 20** (see `.nvmrc` — run `nvm use` if using nvm)
+
 ## Installation
 
 ```bash
@@ -23,6 +27,18 @@ npm run dev
 ```
 
 App runs on http://localhost:5173
+
+## Testing
+
+```bash
+# Run tests once
+npm test
+
+# Watch mode
+npm run test:watch
+```
+
+Tests cover: JWT verification, signature validation, expiry checks, error handling.
 
 ## Build for Production
 
@@ -163,11 +179,14 @@ verification/
 │   ├── components/
 │   │   └── VerificationResult.jsx   # UI for valid/invalid states
 │   ├── utils/
-│   │   └── verify.js        # JWT verification logic
+│   │   ├── verify.js        # JWT verification logic
+│   │   └── verify.test.js   # Unit tests (Vitest)
 │   ├── config.json          # Public key & configuration
 │   └── main.jsx
 ├── public/
 │   └── ampa-logo.png
+├── .nvmrc                   # Node.js version
+├── vite.config.js           # Vite + Vitest configuration
 ├── package.json
 └── README.md
 ```

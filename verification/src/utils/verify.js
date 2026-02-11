@@ -234,6 +234,18 @@ export async function verifyToken(jwt, publicKeyPEM, expectedIssuer, clockSkew =
       }
     }
 
+    // Handle expired token
+    if (error.code === 'ERR_JWT_EXPIRED') {
+      return {
+        success: false,
+        error: {
+          type: VerificationError.EXPIRED,
+          message: 'Membership expired',
+          details: error.message
+        }
+      };
+    }
+
     // Handle verification errors
     if (error.code === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED') {
       return {

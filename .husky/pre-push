@@ -1,0 +1,12 @@
+echo "Running tests before push..."
+
+echo ""
+echo "=== Verification App Tests ==="
+cd verification && npm test
+
+echo ""
+echo "=== Issuer App Tests ==="
+cd ../issuer && npm test
+
+echo ""
+echo "✅ All tests passed. Pushing..."
