@@ -10,6 +10,8 @@ The format is intentionally simple and commit-driven:
 
 ## [Unreleased]
 
+## [2.1] - 2026-02-11
+
 ### Added
 - i18n foundation for `verification` and `issuer` apps with local language resources (`es`, `en`) and persistence of selected language.
 - Revocation management enhancements in issuer: load/merge existing `revoked.json`, URL source selection (local/deployed), QR PNG identifier lookup, and safer merge behavior to avoid overwriting prior revocations.
