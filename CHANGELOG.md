@@ -10,6 +10,9 @@ The format is intentionally simple and commit-driven:
 
 ## [Unreleased]
 
+### Changed
+- Verifier English manual: rewritten to match Spanish version structure with real screenshots and AMPA-specific language.
+
 ### Added
 - `CLAUDE.md` project instructions file for Claude Code with architecture overview, commands, and conventions.
 - Optional Google Analytics (GA4) integration for both verification and issuer apps with privacy-respecting event tracking, IP anonymization, and config-based opt-in.
