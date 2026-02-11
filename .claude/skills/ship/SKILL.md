@@ -10,13 +10,31 @@ Follow these steps to commit changes:
 
 Run `git status` (never use `-uall`) and `git diff` (both staged and unstaged) to understand all current changes.
 
-## 2. Update CHANGELOG.md
+## 2. Update project documentation
 
+Review the changes and update the following files as needed:
+
+### CHANGELOG.md
 Read `CHANGELOG.md` and add an entry under the `[Unreleased]` section describing the change. Place it under the appropriate subsection (`Added`, `Changed`, `Fixed`, `Removed`). Create the subsection if it doesn't exist. Keep entries concise (one bullet point per logical change).
+
+### docs/TODO.md
+Read `docs/TODO.md` and update checkboxes or status labels to reflect the current state of the project. For example:
+- Mark completed tasks as `[x]`
+- Update phase status labels (e.g. `⬜ TODO` → `🚧 IN PROGRESS` → `✅ COMPLETE`)
+- Update the V2 Progress Tracking section if a phase status changed
+- Update test counts or other metrics if they changed
+- Only modify items directly related to the current changes
+
+### docs/SPEC.md
+Read `docs/SPEC.md` and update it only if the changes affect the technical specification. For example:
+- New or changed features that alter the documented architecture or behavior
+- New acceptance criteria that should be checked off
+- Updated technology choices or dependencies
+- Skip this file if the changes are purely internal (refactoring, tests, tooling)
 
 ## 3. Stage files
 
-Stage the relevant files by name, including the updated `CHANGELOG.md`. Never use `git add -A` or `git add .`. Never stage files that may contain secrets (`.env`, credentials, private keys, etc.) — warn the user if any are detected.
+Stage the relevant files by name, including any updated documentation files (`CHANGELOG.md`, `docs/TODO.md`, `docs/SPEC.md`). Never use `git add -A` or `git add .`. Never stage files that may contain secrets (`.env`, credentials, private keys, etc.) — warn the user if any are detected.
 
 ## 4. Generate a commit message
 
@@ -41,4 +59,4 @@ Run the chosen alias with the commit message. For example:
 
 ## 7. Push
 
-Ask the user whether to push. If yes, run `git push`. If the branch has no upstream, use `git push -u origin <branch>`.
+Run `git push`. If the branch has no upstream, use `git push -u origin <branch>`.

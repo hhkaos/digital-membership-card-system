@@ -349,5 +349,5 @@ The `metadata.json` file in batch ZIPs contains:
 
 - [Main README](../README.md)
 - [Verification App](../verification/README.md)
-- [Technical Spec](../SPEC.md)
+- [Technical Spec](../docs/SPEC.md)
 - [Sample CSV](examples/sample-members.csv)

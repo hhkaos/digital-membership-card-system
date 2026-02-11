@@ -10,6 +10,18 @@ The format is intentionally simple and commit-driven:
 
 ## [Unreleased]
 
+### Added
+- GitHub issue templates (bug report, feature request) and PR template for standardized contributions.
+- SECURITY.md with vulnerability reporting process and security model documentation.
+- CODE_OF_CONDUCT.md (Contributor Covenant v2.1).
+- FUNDING.yml linking to rauljimenez.info for sponsorship inquiries.
+- ROADMAP_ISSUE.md with content for a pinned GitHub roadmap issue.
+- Roadmap section in README.md with V2 phase status table.
+
+### Changed
+- Moved SPEC.md, PLAN.md, TODO.md into `docs/` folder to reduce root clutter.
+- Updated all internal references to moved docs across README, CONTRIBUTING, skill files, and sub-app READMEs.
+
 ## [2.1] - 2026-02-11
 
 ### Added

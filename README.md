@@ -194,8 +194,10 @@ socios-ampa/
 ├── .nvmrc                 # Node.js version (nvm)
 ├── package.json           # Root: husky + test script
 ├── images/                # Project images
-├── TODO.md               # Implementation checklist
-├── SPEC.md               # Technical specification
+├── docs/
+│   ├── TODO.md            # Implementation checklist & roadmap
+│   ├── SPEC.md            # Technical specification
+│   └── PLAN.md            # Implementation strategy
 └── README.md             # This file
 ```
 
@@ -280,12 +282,31 @@ Supported date formats:
 - `DD-MM-YYYY` (30-06-2025)
 - `D/M/YYYY` (1/6/2025)
 
+## Roadmap
+
+This project is vibe-coded — new features are added iteratively with AI assistance. See the full [Roadmap](docs/TODO.md) for details and the [Technical Specification](docs/SPEC.md) for the system design.
+
+**MVP (V1)**: Complete | **V2**: In progress
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| 6 | Revocation system | In progress |
+| 7 | Internationalization (i18n) | Complete |
+| 8 | Wallet-style cards | Planned |
+| 9 | PWA features (offline issuer) | Planned |
+| 10 | Accessibility (WCAG 2.1 AA) | Planned |
+| 11 | GitHub Pages deployment | Planned |
+| 12 | Analytics (optional) | Planned |
+
+Want a feature prioritized? [Open a feature request](../../issues/new?template=feature_request.md) or reach out at [rauljimenez.info](https://rauljimenez.info).
+
 ## Links
 
 - **Issuer App**: [issuer/README.md](issuer/README.md)
 - **Verification App**: [verification/README.md](verification/README.md)
-- **Technical Spec**: [SPEC.md](SPEC.md)
-- **Implementation TODO**: [TODO.md](TODO.md)
+- **Technical Spec**: [SPEC.md](docs/SPEC.md)
+- **Roadmap**: [TODO.md](docs/TODO.md)
+- **Implementation Plan**: [PLAN.md](docs/PLAN.md)
 
 ## License
 

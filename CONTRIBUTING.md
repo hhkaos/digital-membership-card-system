@@ -82,9 +82,10 @@ If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), this p
 ### `/ship` — commit and push
 
 1. Type `/ship` in the Claude Code chat.
-2. Claude reviews your changes, updates `CHANGELOG.md`, stages the relevant files, and generates a commit message following the project's conventional commit style.
-3. You choose the alias: **`git cai`** (AI-attributed) or **`git ch`** (regular).
-4. Claude commits and pushes for you.
+2. Claude reviews your changes and updates project docs (`CHANGELOG.md`, `docs/TODO.md`, and `docs/SPEC.md` if relevant).
+3. Claude stages the relevant files and generates a commit message following the project's conventional commit style.
+4. You choose the alias: **`git cai`** (AI-attributed) or **`git ch`** (regular).
+5. Claude commits and pushes for you.
 
 Skill definition: `.claude/skills/ship/SKILL.md`
 
@@ -92,7 +93,7 @@ Skill definition: `.claude/skills/ship/SKILL.md`
 
 1. Type `/release` in the Claude Code chat.
 2. Claude shows the unreleased changelog entries and suggests a version bump (major, minor, or patch) based on the nature of the changes.
-3. Claude updates `CHANGELOG.md`, bumps `package.json` versions, runs tests, builds both apps, and creates zip assets.
+3. Claude updates project docs (`CHANGELOG.md`, `docs/TODO.md`, `docs/SPEC.md`), bumps `package.json` versions, runs tests, builds both apps, and creates zip assets.
 4. You choose the commit alias, then Claude commits, tags, pushes, and creates a GitHub Release with the changelog notes and build artifacts attached.
 
 Skill definition: `.claude/skills/release/SKILL.md`

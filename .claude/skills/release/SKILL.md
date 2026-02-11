@@ -20,14 +20,29 @@ Look at the previous version in `CHANGELOG.md` (e.g. `[2.0]`) and analyze the un
 
 Explain the reasoning and let the user confirm or override the suggested version.
 
-## 3. Update CHANGELOG.md
+## 3. Update project documentation
 
+### CHANGELOG.md
 - Rename `## [Unreleased]` to `## [<version>] - <today's date>` (format: `YYYY-MM-DD`)
 - Add a new empty `## [Unreleased]` section above it
 - Preserve all existing content below
 
-## 4. Update package.json versions
+### docs/TODO.md
+Read `docs/TODO.md` and update it to reflect the release:
+- Mark completed tasks as `[x]`
+- Update phase status labels (e.g. `⬜ TODO` → `🚧 IN PROGRESS` → `✅ COMPLETE`)
+- Update the V2 Progress Tracking section
+- Update test counts or other metrics
+- Update the V2 Success Criteria checklist if applicable
 
+### docs/SPEC.md
+Read `docs/SPEC.md` and update it if the release includes changes that affect the specification:
+- Update acceptance criteria checkboxes
+- Reflect any architecture, feature, or dependency changes
+- Update the document version and last updated date in the metadata section
+- Skip if the release is purely internal
+
+### package.json versions
 Set the `version` field to the new version in:
 - `issuer/package.json`
 - `verification/package.json`
@@ -44,7 +59,7 @@ Run `npm run build` in both `issuer/` and `verification/` directories. Then crea
 
 ## 7. Stage, commit, and push
 
-Stage the modified files (`CHANGELOG.md`, `issuer/package.json`, `verification/package.json`) by name. Ask the user which alias to use:
+Stage the modified files (`CHANGELOG.md`, `docs/TODO.md`, `docs/SPEC.md`, `issuer/package.json`, `verification/package.json`) by name. Ask the user which alias to use:
 
 - **`git cai`** — AI-attributed commit (sets author to "AI Generated (hhkaos)" and prefixes the message with "AI: ")
 - **`git ch`** — Regular commit with the user's default git identity

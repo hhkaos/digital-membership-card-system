@@ -269,4 +269,4 @@ Open browser console to see:
 
 - [Main README](../README.md)
 - [Issuer App](../issuer/README.md)
-- [Technical Spec](../SPEC.md)
+- [Technical Spec](../docs/SPEC.md)
