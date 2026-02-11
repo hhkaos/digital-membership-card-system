@@ -1,4 +1,4 @@
-name: Deploy verification to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -22,13 +22,23 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: verification/package-lock.json
-      - name: Install
+          cache-dependency-path: |
+            verification/package-lock.json
+            issuer/package-lock.json
+      - name: Install verification
         run: npm ci
         working-directory: verification
-      - name: Build
+      - name: Build verification
         run: npm run build
         working-directory: verification
+      - name: Install issuer
+        run: npm ci
+        working-directory: issuer
+      - name: Build issuer
+        run: npm run build
+        working-directory: issuer
+      - name: Combine artifacts
+        run: cp -r issuer/dist verification/dist/issuer
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

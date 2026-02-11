@@ -82,3 +82,4 @@ export function useI18n() {
 }
 
 export const i18nResources = resources;
+export { resolveLanguage as _resolveLanguage };

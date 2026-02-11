@@ -15,12 +15,19 @@ The format is intentionally simple and commit-driven:
 - SECURITY.md with vulnerability reporting process and security model documentation.
 - CODE_OF_CONDUCT.md (Contributor Covenant v2.1).
 - FUNDING.yml linking to rauljimenez.info for sponsorship inquiries.
-- ROADMAP_ISSUE.md with content for a pinned GitHub roadmap issue.
 - Roadmap section in README.md with V2 phase status table.
+- `docs/LOCAL_SETUP.md` with end-to-end local setup (keys, config, issuing, verification).
 
 ### Changed
 - Moved SPEC.md, PLAN.md, TODO.md into `docs/` folder to reduce root clutter.
 - Updated all internal references to moved docs across README, CONTRIBUTING, skill files, and sub-app READMEs.
+- Refactored root README into a concise entry point and added one-click live app links for verifier and issuer.
+- Expanded GitHub Pages workflow to build and publish both apps (verification at root and issuer at `/issuer/`).
+- Added browser-language detection coverage in both app i18n test suites.
+- Set `issuer/vite.config.js` base path to `/issuer/` for GitHub Pages subpath deployment.
+
+### Removed
+- `ROADMAP_ISSUE.md` (its roadmap content is now represented directly in project docs).
 
 ## [2.1] - 2026-02-11
 

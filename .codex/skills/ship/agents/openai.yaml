@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship"
+  short_description: "Stage, commit, and push changes safely"
+  default_prompt: "Use $ship to review my changes, craft a commit message, and push."

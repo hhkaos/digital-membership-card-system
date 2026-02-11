@@ -487,14 +487,15 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Phase 11: GitHub Pages Deployment ⬜ TODO
+## Phase 11: GitHub Pages Deployment 🚧 IN PROGRESS
 
 ### Deployment Workflow
 
-- [ ] Create `.github/workflows/deploy-verification.yml`
-- [ ] Configure: trigger on push to main (verification/\*\* paths)
-- [ ] Build and deploy to GitHub Pages
+- [x] Update `.github/workflows/pages.yml` to build and deploy to GitHub Pages
+- [x] Build and publish both apps in one artifact (`verification/` root + `issuer/` subpath)
+- [x] Configure trigger on push to `main`
 - [ ] Set Vite `base` path in `verification/vite.config.js`
+- [x] Set Vite `base` path in `issuer/vite.config.js` to `/issuer/`
 - [ ] Create `verification/public/CNAME` for custom domain
 
 ### Phase 11 Verification
@@ -540,7 +541,7 @@ Building a cryptographically secure digital membership card system with QR codes
 **Phase 8**: ⬜ TODO — Wallet-style cards
 **Phase 9**: ⬜ TODO — PWA features
 **Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)
-**Phase 11**: ⬜ TODO — GitHub Pages deployment
+**Phase 11**: 🚧 IN PROGRESS — GitHub Pages deployment
 **Phase 12**: ⬜ TODO — Analytics (optional)
 
 **V2 Overall**: ~25% Complete (2 of 7 phases done or near-done)

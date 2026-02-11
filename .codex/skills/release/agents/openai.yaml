@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release"
+  short_description: "Create versioned releases with changelog and tags"
+  default_prompt: "Use $release to cut the next version, tag it, and publish release assets."
