@@ -9,7 +9,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-339933?logo=nodedotjs)
 ![Vitest](https://img.shields.io/badge/Tested_with-Vitest-6E9F18?logo=vitest)
 
-A cryptographically secure digital membership card platform for AMPA Nova School Almeria.
+A cryptographically secure digital membership card platform.
 
 ## Try the Live Apps
 
