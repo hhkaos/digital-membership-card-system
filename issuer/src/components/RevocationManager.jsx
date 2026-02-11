@@ -188,6 +188,7 @@ export function RevocationManager() {
   const [localRevokedUrl, setLocalRevokedUrl] = useState(DEFAULT_LOCAL_REVOKED_URL);
   const [deployedRevokedUrl, setDeployedRevokedUrl] = useState(DEFAULT_DEPLOYED_REVOKED_URL);
   const [loadBusy, setLoadBusy] = useState(false);
+  const [loadStatus, setLoadStatus] = useState({ kind: '', message: '' });
 
   const rows = useMemo(() => buildRows(revocationList), [revocationList]);
   const exportedJSON = useMemo(() => exportRevocationJSON(revocationList), [revocationList]);
@@ -271,24 +272,28 @@ export function RevocationManager() {
 
   const handleLoadFromUrl = async () => {
     setLoadBusy(true);
+    setLoadStatus({ kind: '', message: '' });
     try {
       const url = loadSource === 'local' ? localRevokedUrl : deployedRevokedUrl;
-      const response = await fetch(url, {
+      const cacheBustedUrl = `${url}${url.includes('?') ? '&' : '?'}_ts=${Date.now()}`;
+      const response = await fetch(cacheBustedUrl, {
         cache: 'no-store',
-        headers: {
-          'cache-control': 'no-cache',
-        },
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to load revoked.json (${response.status})`);
+        if (response.status === 404) {
+          throw new Error(`revoked.json not found at ${url} (HTTP 404)`);
+        }
+        throw new Error(`Failed to load revoked.json from ${url} (HTTP ${response.status})`);
       }
 
       const data = await response.json();
       const parsed = importRevocationJSON(JSON.stringify(data));
       mergeIntoCurrentList(parsed, `Revocation list merged from ${url}`);
+      setLoadStatus({ kind: 'success', message: `Loaded and merged from ${url}` });
     } catch (error) {
       setError(error.message);
+      setLoadStatus({ kind: 'error', message: error.message || 'Failed to load revoked.json' });
     } finally {
       setLoadBusy(false);
     }
@@ -411,6 +416,8 @@ export function RevocationManager() {
         <p style={styles.info}>
           Loading from URL merges entries into the current list (deduplicated) to avoid overwriting previous revokes.
         </p>
+        {loadStatus.kind === 'error' && <p style={styles.error}>{loadStatus.message}</p>}
+        {loadStatus.kind === 'success' && <p style={styles.success}>{loadStatus.message}</p>}
       </section>
 
       <section style={styles.section}>

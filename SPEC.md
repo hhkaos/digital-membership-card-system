@@ -162,9 +162,10 @@ A token is **VALID** if and only if:
 
 ### 5.3 Verification Behavior
 
-- Fetch `revoked.json` with `cache: "no-store"` header
+- Fetch `revoked.json` with `fetch(..., { cache: "no-store" })` and a cache-busting query parameter
 - Check both `revoked_jti` (specific token) and `revoked_sub` (all member tokens)
 - If offline: soft-fail (allow with warning)
+- If issuer loads `revoked.json` from another origin (e.g., deployed domain from localhost), that origin must allow CORS for GET requests
 
 ---
 
@@ -229,8 +230,9 @@ Embed in source code or `config.json`:
 
 #### Invalid State
 - ❌ Large red X icon
-- Heading: "Invalid Membership"
+- Heading: "Invalid Membership" (or "Membership Revoked" when revoked)
 - Display: Basic error message (user-friendly)
+- Revoked case: second line shows member name from token payload
 - Expandable "Technical Details" section with specific error
 - Optional: "Contact AMPA for support" message
 
@@ -844,7 +846,7 @@ socios-ampa/
 | Invalid signature | "Invalid membership card." | "Signature verification failed with public key." |
 | Expired token | "Membership expired." | "Token expired on [date]. Current time: [time]." |
 | Wrong issuer | "Unrecognized issuer." | "Expected 'ampa:ampa-nova-school-almeria', got '[issuer]'." |
-| Revoked token | "Membership revoked." | "Token ID '[jti]' found in revocation list." |
+| Revoked token | "Membership Revoked" + member name on second line | "Token ID '[jti]' found in revocation list." |
 | Network error (revocation) | "⚠️ Valid, but revocation status unknown." | "Failed to fetch revoked.json: [error]" |
 | Unsupported version | "Unsupported card version." | "Token version [v] not recognized. Supported: 1." |
 

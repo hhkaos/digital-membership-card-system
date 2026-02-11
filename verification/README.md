@@ -8,7 +8,8 @@ Merchants scan a member's QR code, which opens this app with a verification URL.
 1. Extracts the JWT token from the URL fragment
 2. Verifies the cryptographic signature using the public key
 3. Checks the expiration date
-4. Displays validity status to the merchant
+4. Checks revocation status (`revoked.json`) when enabled
+5. Displays validity status to the merchant
 
 ## Prerequisites
 
@@ -57,10 +58,14 @@ Edit [src/config.json](src/config.json):
   "issuer": "AMPA Nova School Almería",
   "publicKey": "-----BEGIN PUBLIC KEY-----\nYOUR_PUBLIC_KEY_HERE\n-----END PUBLIC KEY-----",
   "clockSkewSeconds": 120,
-  "revocationEnabled": false,
+  "revocationEnabled": true,
+  "revocationUrl": "/revoked.json",
+  "offlinePolicy": "soft-fail",
+  "contactUrl": "https://www.ampanovaschoolalmeria.org/sobre-el-ampa/contacto",
   "branding": {
     "primaryColor": "#30414B",
-    "secondaryColor": "#52717B"
+    "secondaryColor": "#52717B",
+    "organizationName": "AMPA Novaschool Almeria"
   }
 }
 ```
@@ -79,7 +84,10 @@ Edit [src/config.json](src/config.json):
 - `issuer` - Organization name (must match JWT issuer)
 - `publicKey` - EdDSA public key in PEM format
 - `clockSkewSeconds` - Tolerance for time differences (default: 120s)
-- `revocationEnabled` - Future feature (currently false)
+- `revocationEnabled` - Enable/disable revocation checks
+- `revocationUrl` - URL/path to `revoked.json`
+- `offlinePolicy` - Revocation fetch failure behavior (`soft-fail`)
+- `contactUrl` - Contact page URL used by invalid/revoked UI links
 - `branding` - UI colors
 
 ## Deployment
@@ -125,6 +133,7 @@ The app:
 - Verifies signature with EdDSA public key
 - Checks expiration date (with 120s clock skew)
 - Validates issuer matches config
+- Checks `revoked_jti` and `revoked_sub` in `revoked.json` when enabled
 
 ### 3. Display Result
 
@@ -140,6 +149,11 @@ The app:
 - Expandable technical details
 - Reasons: expired, tampered, wrong issuer, malformed
 
+**Revoked Card**:
+- ⛔ "Membership Revoked" heading
+- Member name shown on second line
+- Contact link points to `contactUrl`
+
 ## Error Codes
 
 - `NO_TOKEN` - No token in URL
@@ -147,6 +161,7 @@ The app:
 - `INVALID_SIGNATURE` - Signature verification failed (tampered or wrong key)
 - `EXPIRED` - Card past expiration date
 - `WRONG_ISSUER` - Issuer doesn't match config
+- `REVOKED` - Token/member found in revocation list
 
 ## Security
 
@@ -156,10 +171,10 @@ The app:
 ✅ Expiration date
 ✅ Issuer identity
 ✅ Token format & structure
+✅ Revocation list (`revoked_jti` and `revoked_sub`) when enabled
 
-### What's NOT Checked (MVP)
+### What's NOT Checked
 
-❌ Revocation status (future feature)
 ❌ Member ID uniqueness
 ❌ Online database lookup
 
@@ -245,7 +260,6 @@ Open browser console to see:
 
 ## Future Features (v2)
 
-- [ ] Revocation checking via API
 - [ ] PWA support for offline use
 - [ ] Internationalization (Spanish/English)
 - [ ] Analytics integration

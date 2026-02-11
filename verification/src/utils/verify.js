@@ -288,11 +288,9 @@ export async function checkRevocation(jti, sub, revocationConfig) {
   }
 
   try {
-    const response = await fetch(config.revocationUrl, {
+    const cacheBustedUrl = `${config.revocationUrl}${config.revocationUrl.includes('?') ? '&' : '?'}_ts=${Date.now()}`;
+    const response = await fetch(cacheBustedUrl, {
       cache: 'no-store',
-      headers: {
-        'cache-control': 'no-cache'
-      }
     });
 
     if (!response.ok) {
