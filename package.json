@@ -5,13 +5,8 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "workspaces": [
-    "verification",
-    "issuer"
-  ],
   "scripts": {
-    "pretest": "npm install",
-    "test": "npm -w verification test && npm -w issuer test",
+    "test": "cd verification && npm test && cd ../issuer && npm test",
     "prepare": "husky"
   },
   "devDependencies": {
