@@ -1,6 +1,18 @@
 # AMPA Digital Membership Card System
 
 [![CI](https://github.com/hhkaos/digital-membership-card-system/actions/workflows/ci.yml/badge.svg)](https://github.com/hhkaos/digital-membership-card-system/actions/workflows/ci.yml)
+[![Pages](https://github.com/hhkaos/digital-membership-card-system/actions/workflows/pages.yml/badge.svg)](https://github.com/hhkaos/digital-membership-card-system/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)
+![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-339933?logo=nodedotjs)
+![Vitest](https://img.shields.io/badge/Tested_with-Vitest-6E9F18?logo=vitest)
+![ESLint](https://img.shields.io/badge/Linter-ESLint-4B32C3?logo=eslint)
+![Husky](https://img.shields.io/badge/Git_Hooks-Husky-yellow)
+![Crypto](https://img.shields.io/badge/Crypto-EdDSA_Ed25519-green?logo=letsencrypt)
+![GitHub Pages](https://img.shields.io/badge/Deployed_on-GitHub_Pages-222?logo=githubpages)
+
 ![AI Assisted: Claude Code](https://img.shields.io/badge/AI_Assisted-Claude_Code-purple)
 ![AI Assisted: GitHub Copilot](https://img.shields.io/badge/AI_Assisted-GitHub_Copilot-blue)
 ![AI Assisted: OpenAI Codex](https://img.shields.io/badge/AI_Assisted-OpenAI_Codex-green)
