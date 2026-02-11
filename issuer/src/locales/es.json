@@ -232,5 +232,10 @@
         "copy": "Copiar JSON al portapapeles"
       }
     }
+  },
+  "consent": {
+    "message": "Usamos analíticas anónimas para mejorar esta aplicación. No se recopilan datos personales.",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
   }
 }

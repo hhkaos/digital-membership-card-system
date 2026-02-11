@@ -12,7 +12,8 @@ The format is intentionally simple and commit-driven:
 
 ### Added
 - `CLAUDE.md` project instructions file for Claude Code with architecture overview, commands, and conventions.
-- Optional Google Analytics (GA4) integration for verification app with privacy-respecting event tracking (`page_view`, `verification_result`), IP anonymization, and config-based opt-in (disabled by default).
+- Optional Google Analytics (GA4) integration for both verification and issuer apps with privacy-respecting event tracking, IP anonymization, and config-based opt-in.
+- GDPR-compliant analytics consent banner (localized in ES/EN) for both apps — analytics only loads after user accepts; choice is persisted in localStorage.
 - GitHub issue templates (bug report, feature request) and PR template for standardized contributions.
 - SECURITY.md with vulnerability reporting process and security model documentation.
 - CODE_OF_CONDUCT.md (Contributor Covenant v2.1).

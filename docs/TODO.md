@@ -497,8 +497,8 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ### Phase 12 Manual Verification
 
-- [ ] Default: no analytics scripts loaded
-- [ ] Enable in config → events tracked
+- [x] Default: no analytics scripts loaded (consent banner blocks loading)
+- [x] Enable in config → events tracked (after user accepts consent)
 - [x] All existing tests still pass
 
 ---

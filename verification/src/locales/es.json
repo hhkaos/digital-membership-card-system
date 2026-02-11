@@ -27,5 +27,10 @@
     "configMessage": "El sistema de verificación no está configurado",
     "configDetails": "No se ha configurado la clave pública.",
     "unknownMember": "Miembro desconocido"
+  },
+  "consent": {
+    "message": "Usamos analíticas anónimas para mejorar esta aplicación. No se recopilan datos personales.",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
   }
 }

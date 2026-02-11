@@ -27,5 +27,10 @@
     "configMessage": "Verification system not configured",
     "configDetails": "Public key not set in configuration.",
     "unknownMember": "Unknown member"
+  },
+  "consent": {
+    "message": "We use anonymous analytics to improve this app. No personal data is collected.",
+    "accept": "Accept",
+    "decline": "Decline"
   }
 }

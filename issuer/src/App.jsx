@@ -6,6 +6,9 @@ import RevocationManager from './components/RevocationManager';
 import InstallPrompt from './components/InstallPrompt';
 import { importPrivateKey } from './utils/crypto';
 import { useI18n } from './i18n';
+import { initAnalytics, trackPageView } from './utils/analytics';
+import { ConsentBanner, getAnalyticsConsent } from './components/ConsentBanner';
+import config from './config.json';
 
 const STORAGE_KEYS = {
   privateKeyPEM: 'ampa.issuer.privateKeyPEM',
@@ -83,6 +86,11 @@ const styles = {
   }
 };
 
+function startAnalytics() {
+  initAnalytics(config);
+  trackPageView();
+}
+
 function App() {
   const { t, language, setLanguage } = useI18n();
   const [activeTab, setActiveTab] = useState('keys'); // 'keys', 'generate', 'batch', or 'revocation'
@@ -90,6 +98,13 @@ function App() {
   const [publicKey, setPublicKey] = useState(null);
   const [privateKeyPEM, setPrivateKeyPEM] = useState('');
   const [publicKeyPEM, setPublicKeyPEM] = useState('');
+  const [consentPending, setConsentPending] = useState(() => getAnalyticsConsent() === null);
+
+  useEffect(() => {
+    if (getAnalyticsConsent() === 'accepted') {
+      startAnalytics();
+    }
+  }, []);
 
   useEffect(() => {
     const storedPrivateKeyPEM = localStorage.getItem(STORAGE_KEYS.privateKeyPEM);
@@ -224,6 +239,13 @@ function App() {
 
       {activeTab === 'revocation' && (
         <RevocationManager />
+      )}
+
+      {consentPending && (
+        <ConsentBanner onDecision={(decision) => {
+          setConsentPending(false);
+          if (decision === 'accepted') startAnalytics();
+        }} />
       )}
     </div>
   );

@@ -232,5 +232,10 @@
         "copy": "Copy JSON to Clipboard"
       }
     }
+  },
+  "consent": {
+    "message": "We use anonymous analytics to improve this app. No personal data is collected.",
+    "accept": "Accept",
+    "decline": "Decline"
   }
 }

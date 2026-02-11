@@ -4,6 +4,7 @@ import { LoadingState, ValidState, InvalidState } from './components/Verificatio
 import config from './config.json';
 import { useI18n } from './i18n';
 import { initAnalytics, trackPageView, trackVerificationResult } from './utils/analytics';
+import { ConsentBanner, getAnalyticsConsent } from './components/ConsentBanner';
 
 const ERROR_TYPE_TO_OUTCOME = {
   NO_TOKEN: 'invalid_no_token',
@@ -15,15 +16,22 @@ const ERROR_TYPE_TO_OUTCOME = {
   [VerificationError.MALFORMED]: 'invalid_signature',
 };
 
+function startAnalytics() {
+  initAnalytics(config);
+  trackPageView();
+}
+
 function App() {
   const { t } = useI18n();
   const [state, setState] = useState('loading'); // 'loading', 'valid', 'invalid'
   const [result, setResult] = useState(null);
   const [revocationWarning, setRevocationWarning] = useState(false);
+  const [consentPending, setConsentPending] = useState(() => getAnalyticsConsent() === null);
 
   useEffect(() => {
-    initAnalytics(config);
-    trackPageView();
+    if (getAnalyticsConsent() === 'accepted') {
+      startAnalytics();
+    }
   }, []);
 
   useEffect(() => {
@@ -105,22 +113,30 @@ function App() {
     return () => clearTimeout(timer);
   }, [t]);
 
+  const handleConsent = (decision) => {
+    setConsentPending(false);
+    if (decision === 'accepted') {
+      startAnalytics();
+    }
+  };
+
   // Render appropriate state
+  let content;
   switch (state) {
     case 'loading':
-      return <LoadingState />;
-    
+      content = <LoadingState />;
+      break;
     case 'valid':
-      return (
+      content = (
         <ValidState
           memberName={result.payload.name}
           expiryDate={result.payload.exp}
           revocationWarning={revocationWarning}
         />
       );
-    
+      break;
     case 'invalid':
-      return (
+      content = (
         <InvalidState
           errorType={result.error.type}
           errorMessage={result.error.message}
@@ -128,10 +144,17 @@ function App() {
           errorDetails={result.error.details}
         />
       );
-    
+      break;
     default:
-      return <LoadingState />;
+      content = <LoadingState />;
   }
+
+  return (
+    <>
+      {content}
+      {consentPending && <ConsentBanner onDecision={handleConsent} />}
+    </>
+  );
 }
 
 export default App;
