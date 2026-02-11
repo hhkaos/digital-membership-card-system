@@ -97,6 +97,7 @@ export function parseCSV(file) {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (header) => header.trim(),
       complete: (results) => {
         const valid = [];
         const errors = [];
