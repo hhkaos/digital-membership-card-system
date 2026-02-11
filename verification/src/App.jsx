@@ -3,6 +3,17 @@ import { parseTokenFromFragment, verifyToken, checkRevocation, VerificationError
 import { LoadingState, ValidState, InvalidState } from './components/VerificationResult';
 import config from './config.json';
 import { useI18n } from './i18n';
+import { initAnalytics, trackPageView, trackVerificationResult } from './utils/analytics';
+
+const ERROR_TYPE_TO_OUTCOME = {
+  NO_TOKEN: 'invalid_no_token',
+  CONFIG_ERROR: 'invalid_config_error',
+  [VerificationError.INVALID_SIGNATURE]: 'invalid_signature',
+  [VerificationError.EXPIRED]: 'invalid_expired',
+  [VerificationError.REVOKED]: 'invalid_revoked',
+  [VerificationError.WRONG_ISSUER]: 'invalid_signature',
+  [VerificationError.MALFORMED]: 'invalid_signature',
+};
 
 function App() {
   const { t } = useI18n();
@@ -11,10 +22,15 @@ function App() {
   const [revocationWarning, setRevocationWarning] = useState(false);
 
   useEffect(() => {
+    initAnalytics(config);
+    trackPageView();
+  }, []);
+
+  useEffect(() => {
     async function performVerification() {
       // Parse token from URL fragment
       const token = parseTokenFromFragment();
-      
+
       if (!token) {
         setState('invalid');
         setResult({
@@ -24,6 +40,7 @@ function App() {
             details: t('errors.noTokenDetails')
           }
         });
+        trackVerificationResult('invalid_no_token');
         return;
       }
 
@@ -37,6 +54,7 @@ function App() {
             details: t('errors.configDetails')
           }
         });
+        trackVerificationResult('invalid_config_error');
         return;
       }
 
@@ -66,9 +84,11 @@ function App() {
               details: `Token ID '${verificationResult.payload.jti}' found in revocation list`
             }
           });
+          trackVerificationResult('invalid_revoked');
         } else {
           setState('valid');
           setResult(verificationResult);
+          trackVerificationResult('valid');
           if (revocation.warning) {
             setRevocationWarning(true);
           }
@@ -76,6 +96,7 @@ function App() {
       } else {
         setState('invalid');
         setResult(verificationResult);
+        trackVerificationResult(ERROR_TYPE_TO_OUTCOME[verificationResult.error?.type] || 'invalid_signature');
       }
     }
 

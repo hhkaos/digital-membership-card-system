@@ -10,5 +10,9 @@
   "revocationEnabled": true,
   "revocationUrl": "/revoked.json",
   "offlinePolicy": "soft-fail",
-  "contactUrl": "https://www.ampanovaschoolalmeria.org/sobre-el-ampa/contacto"
+  "contactUrl": "https://www.ampanovaschoolalmeria.org/sobre-el-ampa/contacto",
+  "analytics": {
+    "enabled": true,
+    "measurementId": "G-ZQEE30JWG6"
+  }
 }

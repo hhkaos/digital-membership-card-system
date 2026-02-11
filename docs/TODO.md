@@ -477,29 +477,29 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Phase 12: Analytics (Optional) ⬜ TODO
+## Phase 12: Analytics (Optional) ✅ COMPLETE
 
 ### Analytics Module
 
-- [ ] Create `verification/src/utils/analytics.js`
-- [ ] `initAnalytics(config)` — only load if `analytics.enabled === true`
-- [ ] `trackPageView()` — track verification page loads
-- [ ] `trackVerificationResult(result)` — track success/failure/type
-- [ ] No PII tracking, IP anonymization enabled
-- [ ] Add analytics config to `verification/src/config.json` (disabled by default)
-- [ ] Integrate in `App.jsx`
+- [x] Create `verification/src/utils/analytics.js`
+- [x] `initAnalytics(config)` — only load if `analytics.enabled === true`
+- [x] `trackPageView()` — track verification page loads
+- [x] `trackVerificationResult(result)` — track success/failure/type
+- [x] No PII tracking, IP anonymization enabled
+- [x] Add analytics config to `verification/src/config.json` (disabled by default)
+- [x] Integrate in `App.jsx`
 
 ### Phase 12 Tests
 
-- [ ] Analytics not loaded when `enabled: false`
-- [ ] Analytics initializes when `enabled: true`
-- [ ] No PII in tracked events
+- [x] Analytics not loaded when `enabled: false`
+- [x] Analytics initializes when `enabled: true`
+- [x] No PII in tracked events
 
 ### Phase 12 Manual Verification
 
 - [ ] Default: no analytics scripts loaded
 - [ ] Enable in config → events tracked
-- [ ] All existing tests still pass
+- [x] All existing tests still pass
 
 ---
 
@@ -555,7 +555,7 @@ Building a cryptographically secure digital membership card system with QR codes
 **Phase 9**: ✅ COMPLETE — PWA features
 **Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)
 **Phase 11**: 🚧 IN PROGRESS — GitHub Pages deployment
-**Phase 12**: ⬜ TODO — Analytics (optional)
+**Phase 12**: ✅ COMPLETE — Analytics (optional)
 **Phase 13**: 🚧 IN PROGRESS — Desktop installer distribution scaffold + signing runbook
 
 **V2 Overall**: ~30% Complete (3 of 8 phases done or near-done)
