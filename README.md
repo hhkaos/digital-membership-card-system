@@ -14,6 +14,8 @@ A cryptographically secure digital membership card platform for AMPA Nova School
 ## Try the Live Apps
 
 - **Verifier (production domain):** https://verify.ampanovaschoolalmeria.org/
+  - [Verifier with a **valid** badge](https://verify.ampanovaschoolalmeria.org/#token=eyJhbGciOiJFZERTQSJ9.eyJ2IjoxLCJpc3MiOiJhbXBhOmFtcGEtbm92YS1zY2hvb2wtYWxtZXJpYSIsInN1YiI6IjAwMDAxIiwibmFtZSI6IlJhw7psIEppbcOpbmV6IE9ydGVnYSIsImlhdCI6MTc3MDc2OTcwMCwiZXhwIjoxNzkwNzI2NDAwLCJqdGkiOiI2OTI4MTJkNC1lMzljLTQwY2YtOGY0My1hMjE1YTg4ZjkzZjMifQ.wAU5-WNpgh0iIHR51rjZ05NV8GxO5voxqM2918wE2xs_0Nxm-zH0_nnNcMD7B6EfcddFXz3PJlMlwE8ANfOIAw)
+  - [Verifier with a **revoked** badge](https://verify.ampanovaschoolalmeria.org/#token=eyJhbGciOiJFZERTQSJ9.eyJ2IjoxLCJpc3MiOiJhbXBhOmFtcGEtbm92YS1zY2hvb2wtYWxtZXJpYSIsInN1YiI6IjAwMSIsIm5hbWUiOiJNYXLDrWEgR2FyY8OtYSBMw7NwZXoiLCJpYXQiOjE3NzA4MDIwMTYsImV4cCI6MTc4Mjc3MDQwMCwianRpIjoiZTM5Y2E2MzEtM2UwOC00YTIwLThlMjQtZDllMWU3NzE2ZjJmIn0.SaqhFb5jVSq5tA07vik--NcuBFuvsti3iFznrOMLJBgyu-DK6PFTy8EMe_IBcZm0-NC5KjtYdmp9TLOPnDHECQ)
 - **Issuer (production domain):** https://verify.ampanovaschoolalmeria.org/issuer/
 
 > Issuer link is useful for evaluation only. For real use, run issuer locally and never expose production private keys in a public environment.

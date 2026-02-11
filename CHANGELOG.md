@@ -22,6 +22,7 @@ The format is intentionally simple and commit-driven:
 - Moved SPEC.md, PLAN.md, TODO.md into `docs/` folder to reduce root clutter.
 - Updated all internal references to moved docs across README, CONTRIBUTING, skill files, and sub-app READMEs.
 - Refactored root README into a concise entry point and added one-click live app links for verifier and issuer.
+- Added direct README demo links for prefilled valid/revoked verification examples.
 - Expanded GitHub Pages workflow to build and publish both apps (verification at root and issuer at `/issuer/`).
 - Added browser-language detection coverage in both app i18n test suites.
 - Set `issuer/vite.config.js` base path to `/issuer/` for GitHub Pages subpath deployment.
