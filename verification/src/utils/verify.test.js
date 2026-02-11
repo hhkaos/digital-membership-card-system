@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { generateKeyPair, exportSPKI, SignJWT, exportPKCS8, importPKCS8 } from 'jose';
-import { validateExpiry, verifyToken, VerificationError } from './verify.js';
+import { validateExpiry, verifyToken, checkRevocation, VerificationError } from './verify.js';
 
 // Helper: generate a test Ed25519 keypair
 async function createTestKeypair() {
@@ -173,5 +173,106 @@ describe('verifyToken', () => {
     const result = await verifyToken(jwt, keypair.publicKeyPEM, issuer);
     expect(result.success).toBe(false);
     expect([VerificationError.INVALID_SIGNATURE, VerificationError.MALFORMED]).toContain(result.error.type);
+  });
+});
+
+describe('checkRevocation', () => {
+  const baseConfig = {
+    revocationEnabled: true,
+    revocationUrl: '/revoked.json',
+    offlinePolicy: 'soft-fail',
+  };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('returns revoked when jti is in revoked_jti list', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        updated_at: '2026-02-11T00:00:00Z',
+        revoked_jti: ['revoked-jti-1', 'revoked-jti-2'],
+        revoked_sub: [],
+      }),
+    }));
+
+    const result = await checkRevocation('revoked-jti-1', 'member-123', baseConfig);
+    expect(result.revoked).toBe(true);
+  });
+
+  it('returns revoked when sub is in revoked_sub list', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        updated_at: '2026-02-11T00:00:00Z',
+        revoked_jti: [],
+        revoked_sub: ['member-123', 'member-456'],
+      }),
+    }));
+
+    const result = await checkRevocation('some-jti', 'member-123', baseConfig);
+    expect(result.revoked).toBe(true);
+  });
+
+  it('returns not revoked when token is not in any list', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        updated_at: '2026-02-11T00:00:00Z',
+        revoked_jti: ['other-jti'],
+        revoked_sub: ['other-sub'],
+      }),
+    }));
+
+    const result = await checkRevocation('my-jti', 'my-sub', baseConfig);
+    expect(result.revoked).toBe(false);
+    expect(result.warning).toBeUndefined();
+  });
+
+  it('returns not revoked with warning on fetch failure (soft-fail)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')));
+
+    const result = await checkRevocation('any-jti', 'any-sub', baseConfig);
+    expect(result.revoked).toBe(false);
+    expect(result.warning).toBe(true);
+  });
+
+  it('returns not revoked with warning on non-ok HTTP response', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+    }));
+
+    const result = await checkRevocation('any-jti', 'any-sub', baseConfig);
+    expect(result.revoked).toBe(false);
+    expect(result.warning).toBe(true);
+  });
+
+  it('returns not revoked for empty revocation list', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        updated_at: '2026-02-11T00:00:00Z',
+        revoked_jti: [],
+        revoked_sub: [],
+      }),
+    }));
+
+    const result = await checkRevocation('my-jti', 'my-sub', baseConfig);
+    expect(result.revoked).toBe(false);
+  });
+
+  it('skips check entirely when revocationEnabled is false', async () => {
+    const mockFetch = vi.fn();
+    vi.stubGlobal('fetch', mockFetch);
+
+    const result = await checkRevocation('any-jti', 'any-sub', {
+      ...baseConfig,
+      revocationEnabled: false,
+    });
+
+    expect(result.revoked).toBe(false);
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

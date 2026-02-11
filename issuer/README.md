@@ -9,6 +9,7 @@ This application allows AMPA administrators to:
 2. Create individual membership cards manually
 3. Batch generate cards from CSV files
 4. Download cards as PNG images with embedded QR codes
+5. Manage revocations (by `jti` token ID or `sub` member ID), including QR PNG lookup
 
 **IMPORTANT**: This app should NEVER be deployed publicly. It runs locally only.
 
@@ -83,6 +84,25 @@ Tests cover: key generation, JWT signing, CSV parsing, date validation, metadata
 5. Click **"Generate All Cards"**
 6. Download ZIP file with all cards + metadata
 
+### Step 4: Revoke from QR PNG (or ID)
+
+1. Go to **🚫 Revocation** tab
+2. Load current `revoked.json` first:
+   - Default source: local verifier `http://localhost:5173/revoked.json`
+   - Alternative: deployed domain `https://verify.ampanovaschoolalmeria.org/revoked.json`
+   - Or import a local `revoked.json` file
+3. Upload a PNG file containing a member QR code (optional but recommended)
+4. The app decodes the QR locally and extracts token identifiers:
+   - `jti` (single-card revocation)
+   - `sub` (member-wide revocation)
+5. Click **"Revoke this token (jti)"** or **"Revoke this member (sub)"**
+6. Export and deploy `revoked.json` to `verification/public/revoked.json`
+
+Note:
+- Identifier extraction from JWT payload is for lookup convenience in issuer only.
+- Final trust/validity is still enforced by cryptographic verification in the verification app.
+- Loaded/imported revocation lists are merged (deduplicated), so existing revokes are preserved.
+
 ## CSV Format
 
 Create a CSV file with these columns:
@@ -147,7 +167,8 @@ issuer/
 │   ├── components/
 │   │   ├── KeyManagement.jsx    # Keypair generation UI
 │   │   ├── ManualEntry.jsx      # Single card form
-│   │   └── CSVUpload.jsx        # Batch upload UI
+│   │   ├── CSVUpload.jsx        # Batch upload UI
+│   │   └── RevocationManager.jsx # Revocation management + QR PNG lookup
 │   ├── utils/
 │   │   ├── crypto.js              # EdDSA keypair & JWT signing
 │   │   ├── crypto.test.js         # Unit tests
@@ -160,6 +181,8 @@ issuer/
 │   │   ├── batch.test.js          # Unit tests
 │   │   ├── metadata.js            # Metadata generation
 │   │   ├── metadata.test.js       # Unit tests
+│   │   ├── tokenLookup.js         # Decode QR text + extract token identifiers
+│   │   ├── tokenLookup.test.js    # Unit tests
 │   │   └── crypto-verify.test.js  # Cross-app integration tests
 │   └── App.jsx
 ├── examples/
@@ -311,11 +334,11 @@ The `metadata.json` file in batch ZIPs contains:
 - `papaparse` - CSV parsing
 - `date-fns` - Date formatting and parsing
 - `jszip` - ZIP file creation
+- Browser `BarcodeDetector` API - QR image decoding from uploaded PNGs (no server upload)
 - `vitest` (dev) - Unit testing framework
 
 ## Future Features (v2)
 
-- [ ] Revocation management UI
 - [ ] Card renewal workflow
 - [ ] Export history log
 - [ ] Multi-year support

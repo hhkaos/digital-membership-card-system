@@ -559,129 +559,570 @@ Include 5-10 sample rows for testing
 
 ---
 
-## Out of Scope for MVP
+## MVP Complete ✅
 
-These features from SPEC.md are **deferred to v2**:
-- ❌ Internationalization (i18n) - Spanish/English support
-- ❌ PWA features - Service workers, offline support, installable
-- ❌ Wallet-style cards - Fancy card design (using plain QR only)
-- ❌ Revocation UI - Revocation management interface
-- ❌ Analytics - Google Analytics integration
-- ❌ Advanced accessibility - WCAG 2.1 AA full compliance (basic only)
-- ❌ Advanced styling - CSS Modules, design system
-- ❌ GitHub Actions - CI/CD deployment automation
-- ❌ Documentation - Full user guides, merchant guide, security docs
-
-MVP focuses on **core functionality**: verify tokens + generate cards from CSV
+Phases 1-5 (Verification, Issuer, CSV Batch, Infrastructure, Testing & CI) are done.
+See TODO.md for the full MVP checklist.
 
 ---
 
-## Verification & Testing
+## V2 Implementation Plan
 
-### End-to-End Test Flow
+### Approach
 
-1. **Generate Test Keypair**
-   ```
-   Open issuer → Generate Keypair → Copy both keys
-   ```
-
-2. **Configure Verification**
-   ```
-   Paste public key into verification/src/config.json
-   ```
-
-3. **Start Both Apps**
-   ```bash
-   # Terminal 1
-   cd verification && npm run dev  # Port 5173
-
-   # Terminal 2
-   cd issuer && npm run dev        # Port 5174
-   ```
-
-4. **Generate Single Card**
-   ```
-   Issuer → Paste private key → Manual Entry
-   Name: "Test User"
-   ID: "12345"
-   Expiry: <date 1 year from now>
-   Generate Card → Download PNG
-   ```
-
-5. **Verify Card**
-   ```
-   Extract JWT from QR code (or copy from console log)
-   Open: http://localhost:5173/verify#token=<JWT>
-   Expected: ✅ Valid - Test User - Valid until DD/MM/YYYY
-   ```
-
-6. **Test CSV Batch**
-   ```
-   Issuer → CSV Upload → Select sample-members.csv
-   Review validation → Generate All Cards
-   Download ZIP → Extract
-   Verify multiple cards work
-   ```
-
-7. **Test Error Cases**
-   ```
-   - Tamper with JWT (change payload) → Should show "Invalid"
-   - Use expired date in past → Should show "Expired"
-   - Wrong issuer in config → Should show "Unrecognized issuer"
-   - No token in URL → Should show "No membership card detected"
-   ```
-
-### Browser Testing
-
-Test in these browsers (primary use cases):
-- ✅ Chrome Desktop (admin using issuer)
-- ✅ Safari iOS (merchant scanning QR)
-- ✅ Chrome Android (merchant scanning QR)
-
-### Performance Benchmarks
-
-- Verification: < 500ms per token
-- Single card generation: < 2 seconds
-- Batch 100 cards: < 3 minutes (< 2 seconds per card)
-- Page load (verification): < 2 seconds on 3G
-
-### Security Validation
-
-- ✅ Private key never in localStorage/sessionStorage
-- ✅ Private key not logged to console
-- ✅ Tampered tokens rejected (signature verification)
-- ✅ Expired tokens rejected
-- ✅ `.gitignore` blocks private keys
-- ✅ No sensitive data in JWT (only name, ID, expiry)
+Each V2 phase is **self-contained and testable**. Complete one phase, write tests, verify manually, then move to the next. Phases are ordered by user value and dependency.
 
 ---
 
-## Success Criteria
+## Phase 6: Revocation System
 
-MVP is complete when:
-1. ✅ Can generate Ed25519 keypair
-2. ✅ Can create single card manually
-3. ✅ Can verify card shows valid/invalid correctly
-4. ✅ Can upload CSV and generate batch of cards
-5. ✅ All generated cards verify successfully
-6. ✅ Error cases handled (invalid signature, expired, missing token)
-7. ✅ Basic UI works on mobile and desktop
-8. ✅ README documentation complete
-9. ✅ No private keys can be committed to Git
-10. ✅ End-to-end test flow passes
+**Goal**: Allow AMPA admins to revoke individual tokens or all tokens for a member, and have the verification app check the revocation list.
+
+**Why first**: Core security feature — without it, lost/stolen cards can't be invalidated.
+
+### Step 6.1: Revocation Checking in Verification App
+
+**File**: `verification/src/utils/verify.js` (modify existing)
+
+Add revocation checking to the verification flow:
+- `checkRevocation(jti, sub, revocationUrl)` — Fetch `revoked.json`, check both `revoked_jti` and `revoked_sub` arrays
+- Use `cache: "no-store"` header to always get fresh data
+- **Offline policy**: Soft-fail — if fetch fails, show warning "⚠️ Revocation status could not be checked" but still show valid result
+- New error type: `REVOKED` — "Membership revoked"
+
+**File**: `verification/src/config.json` (modify existing)
+
+Update config:
+```json
+{
+  "revocationEnabled": true,
+  "revocationUrl": "/revoked.json",
+  "offlinePolicy": "soft-fail"
+}
+```
+
+**File**: `verification/public/revoked.json` (new)
+
+Create empty revocation list:
+```json
+{
+  "updated_at": "2026-02-11T00:00:00Z",
+  "revoked_jti": [],
+  "revoked_sub": []
+}
+```
+
+**File**: `verification/src/components/VerificationResult.jsx` (modify existing)
+
+- Add "revoked" state UI (❌ red, "Membership revoked")
+- Add warning banner for soft-fail case (yellow ⚠️ on valid results)
+
+### Step 6.2: Revocation UI in Issuer App
+
+**File**: `issuer/src/components/RevocationManager.jsx` (new)
+
+Features:
+1. **Input section**: Text field for member ID or token ID (jti)
+2. **Revocation type dropdown**: "Revoke specific token (jti)" or "Revoke all tokens for member (sub)"
+3. **"Add to Revocation List" button**
+4. **Current revocation list table**: Editable, shows all revoked IDs with type and timestamp
+5. **"Remove from list" button** per row (undo mistakes)
+6. **Import existing revoked.json**: Upload/paste to continue from previous list
+7. **Export section**:
+   - "Download revoked.json" button
+   - "Copy to clipboard" button
+   - Display JSON preview
+   - Instructions text: "Upload this file to your GitHub Pages repository at verification/public/revoked.json"
+
+**File**: `issuer/src/utils/revocation.js` (new)
+
+Functions:
+- `createRevocationEntry(id, type)` — Create entry with timestamp
+- `addToRevocationList(list, id, type)` — Add jti or sub to appropriate array, update `updated_at`
+- `removeFromRevocationList(list, id, type)` — Remove entry
+- `exportRevocationJSON(list)` — Format as JSON string
+- `importRevocationJSON(jsonString)` — Parse and validate format
+- `validateRevocationList(list)` — Ensure correct structure
+
+### Step 6.3: Integrate Revocation UI into Issuer App
+
+**File**: `issuer/src/App.jsx` (modify existing)
+
+- Add "Revocation" tab/section to navigation
+- Render `RevocationManager` component
+- No private key needed for revocation management
+
+### Step 6.4: Tests
+
+**Unit tests** (`verification/src/utils/verify.test.js` — add tests):
+- Token with jti in `revoked_jti` → REVOKED
+- Token with sub in `revoked_sub` → REVOKED
+- Token not in revocation list → VALID
+- Revocation fetch fails (network error) → VALID with warning (soft-fail)
+- Empty revocation list → VALID
+- `revocationEnabled: false` → Skip revocation check entirely
+
+**Unit tests** (`issuer/src/utils/revocation.test.js` — new):
+- Add jti to revocation list
+- Add sub to revocation list
+- Remove entry from list
+- Import/export JSON roundtrip
+- Validate malformed JSON rejection
+- Duplicate entries handled (no duplicates added)
+- `updated_at` timestamp updates on changes
+
+### Milestone 6 ✓
+- Revoke a token by jti → verification shows ❌ "Membership revoked"
+- Revoke all tokens for member by sub → all that member's cards show revoked
+- Offline/network error → shows ✅ valid with ⚠️ warning banner
+- Export revoked.json → upload to verification/public/ → revocation works
+- All tests pass
 
 ---
 
-## Next Steps After MVP
+## Phase 7: Internationalization (i18n)
 
-Once MVP is working, iterate to add:
-1. **Revocation system** - UI + JSON export
-2. **i18n** - Spanish/English with react-i18next
-3. **PWA features** - Installable issuer with offline support
-4. **Wallet-style cards** - Fancy card design
-5. **GitHub Pages deployment** - Automated CI/CD
-6. **Full documentation** - User guides for admins and merchants
-7. **Accessibility audit** - WCAG 2.1 AA compliance
-8. **Analytics** - Optional Google Analytics integration
+**Goal**: Support Spanish (primary) and English (fallback) in both apps.
 
-But for now: **Focus on core functionality only**. Ship MVP, gather feedback, iterate.
+**Why second**: The AMPA is in Spain — Spanish should be the primary language. Most merchants and members will use Spanish.
+
+### Step 7.1: Setup i18n Framework
+
+Install in both apps:
+```bash
+cd verification && npm install react-i18next i18next i18next-browser-languagedetector
+cd ../issuer && npm install react-i18next i18next i18next-browser-languagedetector
+```
+
+### Step 7.2: Verification App i18n
+
+**File**: `verification/src/i18n.js` (new)
+
+i18next configuration:
+- Default language: `es` (Spanish)
+- Fallback: `en` (English)
+- Detection: Browser language preference
+- Namespace: `translation`
+
+**File**: `verification/src/locales/es.json` (new)
+
+Spanish translations for:
+- "Verificando socio..." (loading)
+- "Socio válido" / "Socio no válido" (valid/invalid)
+- "Válido hasta:" (valid until)
+- "Socio caducado" (expired)
+- "Socio revocado" (revoked)
+- "Tarjeta de socio no detectada" (no token)
+- "Emisor no reconocido" (wrong issuer)
+- "Formato de tarjeta no válido" (malformed)
+- "Detalles técnicos" (technical details)
+- "⚠️ No se pudo verificar el estado de revocación" (revocation warning)
+- "Esta membresía es válida para descuentos AMPA" (valid instruction)
+
+**File**: `verification/src/locales/en.json` (new)
+
+English translations (current hardcoded strings).
+
+**File**: `verification/src/components/VerificationResult.jsx` (modify)
+
+- Replace all hardcoded strings with `t('key')` calls
+- Add language toggle button (small flag or "ES | EN" in header)
+
+**File**: `verification/src/App.jsx` (modify)
+
+- Import and initialize i18n
+- Wrap app with I18nextProvider
+
+### Step 7.3: Issuer App i18n
+
+**File**: `issuer/src/i18n.js` (new)
+
+Same config as verification app.
+
+**File**: `issuer/src/locales/es.json` (new)
+
+Spanish translations for all issuer UI strings:
+- Key management labels and warnings
+- Manual entry form labels
+- CSV upload messages
+- Batch generation progress
+- Revocation manager labels
+- Error messages
+
+**File**: `issuer/src/locales/en.json` (new)
+
+English translations (current hardcoded strings).
+
+**Files**: All components in `issuer/src/components/` (modify)
+
+- Replace hardcoded strings with `t('key')` calls
+- Add language toggle
+
+### Step 7.4: Date Formatting Localization
+
+- Verification app: Format expiry dates using locale (`DD/MM/YYYY` for Spanish, `MM/DD/YYYY` for English)
+- Use `Intl.DateTimeFormat` or date-fns locale support
+
+### Step 7.5: Tests
+
+**Unit tests** (`verification/src/utils/i18n.test.js` — new):
+- Spanish translations load correctly
+- English translations load correctly
+- All translation keys exist in both languages (no missing keys)
+- Language switching works
+- Browser language detection selects correct language
+
+**Unit tests** (`issuer/src/utils/i18n.test.js` — new):
+- Same as verification tests
+- All issuer-specific keys present in both languages
+
+### Milestone 7 ✓
+- Verification app displays in Spanish by default
+- Language toggle switches between ES/EN
+- All UI text translated (no hardcoded strings remain)
+- Dates formatted per locale
+- All tests pass
+
+---
+
+## Phase 8: Wallet-Style Cards
+
+**Goal**: Generate professional-looking membership card images (not just plain QR).
+
+**Why third**: Visual improvement that makes cards feel more official and professional.
+
+### Step 8.1: Wallet-Style Card Renderer
+
+**File**: `issuer/src/utils/card.js` (modify existing)
+
+Add function: `generateWalletCard(memberData, qrDataUrl, logoImage)`
+
+Card layout (800x1200px portrait):
+```
+┌─────────────────────────────────────┐
+│  [AMPA Logo]    AMPA Nova School    │
+│                                     │
+│  Member Name: Raúl Jiménez          │
+│  Valid Until: 31/08/2027            │
+│                                     │
+│          [QR CODE]                  │
+│                                     │
+│  Member ID: 12345                   │
+└─────────────────────────────────────┘
+```
+
+Design specs (per SPEC):
+- Background: White with subtle primary color (#30414B) header bar
+- Primary color header with white text for organization name
+- Logo in top-left of header
+- Member name in large text
+- Expiry date formatted
+- QR code centered
+- Member ID in smaller text at bottom
+- Rounded corners (canvas clip path)
+- Colors: Primary (#30414B), Secondary (#52717B)
+
+### Step 8.2: Card Format Selection in UI
+
+**File**: `issuer/src/components/ManualEntry.jsx` (modify)
+
+- Add radio buttons: "Plain QR" / "Wallet-style card"
+- Default to "Wallet-style card"
+- Pass selection to card generation
+
+**File**: `issuer/src/components/CSVUpload.jsx` (modify)
+
+- Add card format selector before "Generate All Cards" button
+- Apply selection to batch generation
+
+### Step 8.3: Update Batch Generation
+
+**File**: `issuer/src/utils/batch.js` (modify)
+
+- Accept `cardFormat` parameter ("plain" | "wallet")
+- Use appropriate renderer based on selection
+
+### Step 8.4: Tests
+
+**Unit tests** (`issuer/src/utils/card.test.js` — add tests):
+- Wallet card generates canvas of correct dimensions (800x1200)
+- Card includes member name in output
+- Card includes expiry date in output
+- Card format selection works ("plain" vs "wallet")
+- Batch generation respects card format parameter
+
+### Milestone 8 ✓
+- Generate wallet-style card manually → download shows professional layout
+- Generate batch with wallet format → all cards in ZIP use wallet layout
+- Plain QR format still works when selected
+- All tests pass
+
+---
+
+## Phase 9: PWA Features (Issuer App)
+
+**Goal**: Make the issuer app installable and functional offline.
+
+**Why fourth**: Allows AMPA admins to install the issuer as a desktop/mobile app and use it without internet.
+
+### Step 9.1: PWA Plugin Setup
+
+```bash
+cd issuer && npm install vite-plugin-pwa
+```
+
+**File**: `issuer/vite.config.js` (modify)
+
+Add VitePWA plugin configuration:
+- Name: "AMPA Card Issuer"
+- Short name: "AMPA Issuer"
+- Description: "Generate digital membership cards for AMPA"
+- Theme color: #30414B
+- Register type: autoUpdate
+- Workbox: precache all assets
+- Icons: Generate from existing logo
+
+### Step 9.2: PWA Manifest & Icons
+
+**File**: `issuer/public/manifest.json` (new — auto-generated by plugin, but customize)
+
+```json
+{
+  "name": "AMPA Card Issuer",
+  "short_name": "AMPA Issuer",
+  "description": "Generate digital membership cards",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#30414B",
+  "icons": [...]
+}
+```
+
+### Step 9.3: PWA Icons
+
+Generate icon sizes from existing logo:
+- 192x192, 512x512 (minimum required)
+- Place in `issuer/public/icons/`
+
+### Step 9.4: Service Worker Strategy
+
+- **Precache**: All app assets (JS, CSS, HTML, images)
+- **Runtime cache**: Not needed (all crypto is client-side, no API calls except optional revocation)
+- **Offline**: Full functionality (key generation, card generation, CSV processing all work offline)
+
+### Step 9.5: Install Prompt UI
+
+**File**: `issuer/src/components/InstallPrompt.jsx` (new)
+
+- Detect if app can be installed (beforeinstallprompt event)
+- Show subtle banner: "Install AMPA Issuer for offline use"
+- "Install" button triggers native install prompt
+- Dismiss option
+- Hide after installation
+
+### Step 9.6: Tests
+
+**Unit tests** (`issuer/src/utils/pwa.test.js` — new):
+- Manifest is valid JSON with required fields
+- Service worker registers successfully
+- All required icon sizes present
+
+**Manual testing**:
+- Install on Chrome Desktop → app opens standalone
+- Install on Android Chrome → app icon on home screen
+- Go offline → all features still work (key gen, card gen, CSV)
+- Update app → service worker updates
+
+### Milestone 9 ✓
+- Issuer app installable from browser
+- Works fully offline after installation
+- Install prompt shown to users
+- Service worker caches all assets
+- All tests pass
+
+---
+
+## Phase 10: Accessibility (WCAG 2.1 AA)
+
+**Goal**: Full WCAG 2.1 AA compliance for both apps.
+
+### Step 10.1: Verification App Accessibility
+
+**Files**: `verification/src/components/VerificationResult.jsx`, `verification/src/App.jsx`
+
+Improvements:
+- Semantic HTML: Use `<main>`, `<header>`, `<section>`, proper heading hierarchy
+- Alt text: All images (logo, status icons) have descriptive alt attributes
+- ARIA labels: Status announcements with `role="status"` and `aria-live="polite"`
+- Focus management: Auto-focus on result after verification completes
+- Color contrast: Verify 4.5:1 ratio for all text (especially on colored backgrounds)
+- Keyboard navigation: Tab through all interactive elements (technical details toggle)
+- Touch targets: Minimum 44x44px for all interactive elements
+- Skip link: "Skip to verification result" for screen readers
+
+### Step 10.2: Issuer App Accessibility
+
+**Files**: All components in `issuer/src/components/`
+
+Improvements:
+- Form labels: All inputs have associated `<label>` elements
+- Error announcements: Form validation errors announced via `aria-live`
+- Focus management: Focus moves to error summary on validation failure
+- Tab order: Logical tab order through key management → form → actions
+- Semantic HTML: Proper heading hierarchy, landmarks
+- Color contrast: Check all text, buttons, status indicators
+- Touch targets: 44x44px minimum for buttons, inputs
+- Progress announcements: Batch generation progress announced to screen readers
+
+### Step 10.3: Tests
+
+**Unit tests** (add to existing component tests or new `accessibility.test.js`):
+- All images have alt attributes
+- All form inputs have associated labels
+- Interactive elements are keyboard-accessible (tabIndex, role)
+- Color contrast ratios meet 4.5:1 (can test with computed styles)
+- ARIA roles and attributes are correctly applied
+
+**Manual testing**:
+- Navigate both apps using keyboard only (Tab, Enter, Escape)
+- Test with screen reader (VoiceOver on macOS/iOS)
+- Verify focus indicators visible on all interactive elements
+
+### Milestone 10 ✓
+- Both apps navigable with keyboard only
+- Screen reader announces all states correctly
+- All contrast ratios pass WCAG 2.1 AA
+- All images have alt text
+- All forms have proper labels
+- Tests pass
+
+---
+
+## Phase 11: GitHub Pages Deployment
+
+**Goal**: Automated deployment of verification app to GitHub Pages with custom domain.
+
+### Step 11.1: Verification App Deployment Workflow
+
+**File**: `.github/workflows/deploy-verification.yml` (new)
+
+```yaml
+name: Deploy Verification App
+on:
+  push:
+    branches: [main]
+    paths: ['verification/**']
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: cd verification && npm ci && npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: verification/dist
+      - uses: actions/deploy-pages@v4
+```
+
+### Step 11.2: Vite Base Path Configuration
+
+**File**: `verification/vite.config.js` (modify)
+
+- Set `base` path for GitHub Pages deployment
+- Configure SPA fallback for hash-based routing
+
+### Step 11.3: Custom Domain
+
+**File**: `verification/public/CNAME` (new)
+
+```
+verify.ampanovaschoolalmeria.org
+```
+
+### Step 11.4: Tests
+
+- Verify build succeeds in CI
+- Verify deployed site loads correctly
+- Verify token verification works on deployed URL
+- Verify revoked.json is accessible at deployed URL
+
+### Milestone 11 ✓
+- Push to main auto-deploys verification app
+- Custom domain works with HTTPS
+- Verification works on production URL
+- revoked.json served correctly
+
+---
+
+## Phase 12: Analytics (Optional)
+
+**Goal**: Privacy-respecting analytics to track QR scan volume and error rates.
+
+### Step 12.1: Analytics Module
+
+**File**: `verification/src/utils/analytics.js` (new)
+
+Functions:
+- `initAnalytics(config)` — Only initialize if `analytics.enabled === true` in config
+- `trackPageView()` — Track verification page load
+- `trackVerificationResult(result)` — Track success/failure/error type
+- No PII tracking (no member names, no token contents)
+- IP anonymization enabled
+
+### Step 12.2: Configuration
+
+**File**: `verification/src/config.json` (modify)
+
+Add analytics config:
+```json
+{
+  "analytics": {
+    "enabled": false,
+    "provider": "google-analytics",
+    "trackingId": ""
+  }
+}
+```
+
+### Step 12.3: Integration
+
+**File**: `verification/src/App.jsx` (modify)
+
+- Import analytics module
+- Call `initAnalytics` on mount
+- Track verification results after each verification
+
+### Step 12.4: Tests
+
+**Unit tests** (`verification/src/utils/analytics.test.js` — new):
+- Analytics not loaded when `enabled: false`
+- Analytics initializes when `enabled: true` with valid trackingId
+- No PII in tracked events
+- Track events called with correct event names
+
+### Milestone 12 ✓
+- Analytics disabled by default (no tracking without explicit opt-in)
+- When enabled, tracks page views and verification results
+- No PII tracked
+- Tests pass
+
+---
+
+## V2 Success Criteria
+
+V2 is complete when:
+1. ✅ Revocation system works end-to-end (revoke → verify → rejected)
+2. ✅ Both apps available in Spanish and English
+3. ✅ Wallet-style cards generate professional-looking PNGs
+4. ✅ Issuer app installable as PWA, works offline
+5. ✅ WCAG 2.1 AA compliance in both apps
+6. ✅ Verification app auto-deploys to GitHub Pages
+7. ✅ Optional analytics working when enabled
+8. ✅ All new features have unit tests
+9. ✅ All existing tests still pass

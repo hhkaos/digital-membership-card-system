@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { parseTokenFromFragment, verifyToken } from './utils/verify';
+import { parseTokenFromFragment, verifyToken, checkRevocation, VerificationError } from './utils/verify';
 import { LoadingState, ValidState, InvalidState } from './components/VerificationResult';
 import config from './config.json';
 
 function App() {
   const [state, setState] = useState('loading'); // 'loading', 'valid', 'invalid'
   const [result, setResult] = useState(null);
+  const [revocationWarning, setRevocationWarning] = useState(false);
 
   useEffect(() => {
     async function performVerification() {
@@ -31,7 +32,7 @@ function App() {
           error: {
             type: 'CONFIG_ERROR',
             message: 'Verification system not configured',
-            details: 'Public key not set in configuration. Please contact AMPA admin.'
+            details: 'Public key not set in configuration.'
           }
         });
         return;
@@ -46,8 +47,30 @@ function App() {
       );
 
       if (verificationResult.success) {
-        setState('valid');
-        setResult(verificationResult);
+        // Check revocation status
+        const revocation = await checkRevocation(
+          verificationResult.payload.jti,
+          verificationResult.payload.sub,
+          config
+        );
+
+        if (revocation.revoked) {
+          setState('invalid');
+          setResult({
+            error: {
+              type: VerificationError.REVOKED,
+              message: verificationResult.payload.name || 'Unknown member',
+              memberName: verificationResult.payload.name || null,
+              details: `Token ID '${verificationResult.payload.jti}' found in revocation list`
+            }
+          });
+        } else {
+          setState('valid');
+          setResult(verificationResult);
+          if (revocation.warning) {
+            setRevocationWarning(true);
+          }
+        }
       } else {
         setState('invalid');
         setResult(verificationResult);
@@ -69,13 +92,16 @@ function App() {
         <ValidState
           memberName={result.payload.name}
           expiryDate={result.payload.exp}
+          revocationWarning={revocationWarning}
         />
       );
     
     case 'invalid':
       return (
         <InvalidState
+          errorType={result.error.type}
           errorMessage={result.error.message}
+          memberName={result.error.memberName}
           errorDetails={result.error.details}
         />
       );

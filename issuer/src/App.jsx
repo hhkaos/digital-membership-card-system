@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { KeyManagement } from './components/KeyManagement';
 import { ManualEntry } from './components/ManualEntry';
 import CSVUpload from './components/CSVUpload';
+import RevocationManager from './components/RevocationManager';
 import { importPrivateKey } from './utils/crypto';
 
 const STORAGE_KEYS = {
@@ -60,7 +61,7 @@ const styles = {
 };
 
 function App() {
-  const [activeTab, setActiveTab] = useState('keys'); // 'keys', 'generate', or 'batch'
+  const [activeTab, setActiveTab] = useState('keys'); // 'keys', 'generate', 'batch', or 'revocation'
   const [privateKey, setPrivateKey] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
   const [privateKeyPEM, setPrivateKeyPEM] = useState('');
@@ -143,6 +144,15 @@ function App() {
         >
           📦 Batch Upload
         </button>
+        <button
+          onClick={() => setActiveTab('revocation')}
+          style={{
+            ...styles.tab,
+            ...(activeTab === 'revocation' ? styles.tabActive : styles.tabInactive)
+          }}
+        >
+          🚫 Revocation
+        </button>
       </div>
 
       {activeTab === 'keys' && (
@@ -161,6 +171,10 @@ function App() {
 
       {activeTab === 'batch' && (
         <CSVUpload privateKey={privateKey} />
+      )}
+
+      {activeTab === 'revocation' && (
+        <RevocationManager />
       )}
     </div>
   );

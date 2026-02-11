@@ -151,11 +151,14 @@ A token is **VALID** if and only if:
 
 1. Admin opens Issuer PWA
 2. Navigates to "Revoke Membership" section
-3. Enters member ID or token ID to revoke
-4. Tool adds ID to appropriate array in revocation list
-5. Admin copies exported `revoked.json` content
-6. Manually uploads to GitHub Pages via web UI
-7. GitHub Pages auto-redeploys (usually < 1 minute)
+3. (Optional) Uploads QR PNG from a member card to auto-identify token/member
+4. Tool decodes QR locally and extracts unverified JWT identifiers (`jti`, `sub`) for quick action
+5. Before editing, admin loads existing `revoked.json` (default: local verifier URL, optional deployed URL)
+6. Admin confirms revoke by `jti` (single card) or `sub` (all cards for member)
+7. Tool merges (deduplicates) new revocations with existing list entries
+8. Admin copies exported `revoked.json` content
+9. Manually uploads to GitHub Pages via web UI
+10. GitHub Pages auto-redeploys (usually < 1 minute)
 
 ### 5.3 Verification Behavior
 
@@ -423,11 +426,15 @@ Embed in source code or `config.json`:
 **Interface**:
 
 - Section: "Revoke Membership"
+- Source selector: local verifier URL or deployed domain URL (default source: local verifier)
+- Upload: PNG file with card QR code (optional lookup path)
 - Input: Member ID or Token ID (jti)
 - Dropdown: "Revoke specific token (jti)" or "Revoke all tokens for member (sub)"
 - Button: "Add to Revocation List"
+- Button: "Load and Merge" existing revoked list from selected URL
 - Display: Current revocation list (editable table)
 - Button: "Export revoked.json"
+- Quick actions: "Revoke this token (jti)" and "Revoke this member (sub)" after PNG lookup
 
 **Export**:
 
@@ -438,9 +445,10 @@ Embed in source code or `config.json`:
 
 **Workflow**:
 
-1. Admin enters ID to revoke
-2. System adds to revocation list
-3. Admin clicks "Export revoked.json"
+1. Admin loads existing revoked list from local/deployed URL (or local file)
+2. Admin enters ID to revoke
+3. System merges new IDs into current revocation list (no overwrite)
+4. Admin clicks "Export revoked.json"
 4. Admin copies content or downloads file
 5. Admin manually uploads to GitHub web UI: `revoked.json`
 6. GitHub Pages redeploys automatically
@@ -673,7 +681,9 @@ socios-ampa/
 │   │   │   ├── crypto.js      # Key generation, JWT signing
 │   │   │   ├── qr.js          # QR code generation
 │   │   │   ├── card.js        # Card image generation
-│   │   │   └── csv.js         # CSV parsing
+│   │   │   ├── csv.js         # CSV parsing
+│   │   │   ├── revocation.js  # Revocation list helpers
+│   │   │   └── tokenLookup.js # QR PNG decode + JWT identifier extraction
 │   │   ├── App.jsx
 │   │   └── index.jsx
 │   ├── package.json
@@ -767,12 +777,13 @@ socios-ampa/
    - Member reports lost/stolen card
    - Or membership terminated
    - Find member ID or token ID from metadata.json
+   - Or upload card PNG in Issuer PWA to extract `jti`/`sub` automatically
 
 2. **Update revocation list**:
    - Open Issuer PWA
    - Navigate to "Revoke Membership" section
-   - Enter member ID or token ID
-   - Click "Add to Revocation List"
+   - Upload PNG (optional) or enter member ID/token ID manually
+   - Click "Revoke this token (jti)" / "Revoke this member (sub)" or "Add to Revocation List"
    - Click "Export revoked.json"
    - Copy JSON content
 

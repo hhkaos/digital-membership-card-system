@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import config from '../config.json';
+import { VerificationError } from '../utils/verify';
 
 const styles = {
   container: {
@@ -56,12 +57,13 @@ const styles = {
   },
   details: {
     marginTop: '24px',
-    textAlign: 'left'
+    textAlign: 'center'
   },
   detailsToggle: {
     background: 'none',
     border: 'none',
     color: config.branding.secondaryColor,
+    display: 'inline-block',
     cursor: 'pointer',
     fontSize: '16px',
     textDecoration: 'underline',
@@ -77,6 +79,11 @@ const styles = {
     fontFamily: 'monospace',
     textAlign: 'left',
     wordBreak: 'break-word'
+  },
+  contactLink: {
+    color: config.branding.secondaryColor,
+    textDecoration: 'underline',
+    fontWeight: 600
   },
   spinner: {
     border: `4px solid ${config.branding.secondaryColor}33`,
@@ -121,14 +128,14 @@ export const LoadingState = () => {
   );
 };
 
-export const ValidState = ({ memberName, expiryDate }) => {
+export const ValidState = ({ memberName, expiryDate, revocationWarning }) => {
   const formattedDate = new Date(expiryDate * 1000).toLocaleDateString('es-ES');
-  
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <img 
-          src="/ampa-logo.png" 
+        <img
+          src="/ampa-logo.png"
           alt={config.branding.organizationName}
           style={styles.logo}
         />
@@ -136,6 +143,20 @@ export const ValidState = ({ memberName, expiryDate }) => {
         <h1 style={{ ...styles.heading, color: '#28a745' }}>Valid Membership</h1>
         <p style={styles.memberName}>{memberName}</p>
         <p style={styles.expiryText}>Valid until: {formattedDate}</p>
+        {revocationWarning && (
+          <div style={{
+            marginTop: '16px',
+            padding: '12px 16px',
+            backgroundColor: '#fff3cd',
+            border: '1px solid #ffc107',
+            borderRadius: '6px',
+            color: '#856404',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            ⚠️ Revocation status could not be checked
+          </div>
+        )}
         <p style={{ marginTop: '24px', fontSize: '16px', color: '#666' }}>
           This membership is valid for AMPA discounts
         </p>
@@ -144,8 +165,13 @@ export const ValidState = ({ memberName, expiryDate }) => {
   );
 };
 
-export const InvalidState = ({ errorMessage, errorDetails }) => {
+export const InvalidState = ({ errorType, errorMessage, memberName, errorDetails }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const isRevoked = errorType === VerificationError.REVOKED;
+  const title = isRevoked ? 'Membership Revoked' : 'Invalid Membership';
+  const icon = isRevoked ? '⛔' : '✗';
+  const subtitle = isRevoked ? (memberName || errorMessage) : errorMessage;
+  const helper = isRevoked ? 'Contact AMPA to restore this membership' : 'Contact AMPA for support';
   
   return (
     <div style={styles.container}>
@@ -155,9 +181,9 @@ export const InvalidState = ({ errorMessage, errorDetails }) => {
           alt={config.branding.organizationName}
           style={styles.logo}
         />
-        <div style={{ ...styles.icon, color: '#dc3545' }}>✗</div>
-        <h1 style={{ ...styles.heading, color: '#dc3545' }}>Invalid Membership</h1>
-        <p style={styles.errorMessage}>{errorMessage}</p>
+        <div style={{ ...styles.icon, color: '#dc3545' }}>{icon}</div>
+        <h1 style={{ ...styles.heading, color: '#dc3545' }}>{title}</h1>
+        <p style={styles.errorMessage}>{subtitle}</p>
         
         {errorDetails && (
           <div style={styles.details}>
@@ -176,7 +202,14 @@ export const InvalidState = ({ errorMessage, errorDetails }) => {
         )}
         
         <p style={{ marginTop: '24px', fontSize: '14px', color: '#999' }}>
-          Contact AMPA for support
+          <a
+            href={config.contactUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={styles.contactLink}
+          >
+            {helper}
+          </a>
         </p>
       </div>
     </div>

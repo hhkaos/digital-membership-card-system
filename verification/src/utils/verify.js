@@ -12,6 +12,7 @@ export const VerificationError = {
   INVALID_SIGNATURE: 'INVALID_SIGNATURE',
   EXPIRED: 'EXPIRED',
   WRONG_ISSUER: 'WRONG_ISSUER',
+  REVOKED: 'REVOKED',
 };
 
 /**
@@ -267,5 +268,50 @@ export async function verifyToken(jwt, publicKeyPEM, expectedIssuer, clockSkew =
         details: error.message
       }
     };
+  }
+}
+
+/**
+ * Check if a token has been revoked
+ * @param {string} jti - Token ID
+ * @param {string} sub - Member ID
+ * @param {object|string} revocationConfig - Revocation URL string or config object
+ * @returns {Promise<{revoked: boolean, warning?: boolean}>}
+ */
+export async function checkRevocation(jti, sub, revocationConfig) {
+  const config = typeof revocationConfig === 'string'
+    ? { revocationEnabled: true, revocationUrl: revocationConfig }
+    : (revocationConfig || {});
+
+  if (!config.revocationEnabled) {
+    return { revoked: false };
+  }
+
+  try {
+    const response = await fetch(config.revocationUrl, {
+      cache: 'no-store',
+      headers: {
+        'cache-control': 'no-cache'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (Array.isArray(data.revoked_jti) && data.revoked_jti.includes(jti)) {
+      return { revoked: true };
+    }
+
+    if (Array.isArray(data.revoked_sub) && data.revoked_sub.includes(sub)) {
+      return { revoked: true };
+    }
+
+    return { revoked: false };
+  } catch {
+    // Soft-fail: allow with warning when revocation list can't be fetched
+    return { revoked: false, warning: true };
   }
 }

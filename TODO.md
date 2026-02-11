@@ -3,8 +3,8 @@
 ## Overview
 Building a cryptographically secure digital membership card system with QR codes for merchant verification.
 
-**Status**: ✅ Complete
-**Scope**: MVP (Minimal Viable Product) - Core features + testing + CI
+**Status**: 🚧 V2 In Progress (MVP Complete)
+**Scope**: V2 — Revocation, i18n, wallet cards, PWA, accessibility, deployment, analytics
 **Last Updated**: 2026-02-11
 
 ---
@@ -195,22 +195,6 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Out of Scope for MVP (v2 Features)
-
-The following features from SPEC.md are **deferred to version 2**:
-
-- ❌ Internationalization (i18n) - Spanish/English with react-i18next
-- ❌ PWA features - Service workers, offline support, installable
-- ❌ Wallet-style cards - Fancy card design (using plain QR only)
-- ❌ Revocation UI - Revocation management interface
-- ❌ Analytics - Google Analytics integration
-- ❌ Advanced accessibility - Full WCAG 2.1 AA compliance
-- ❌ Advanced styling - CSS Modules, design system
-- ~~❌ GitHub Actions - CI/CD deployment automation~~ ✅ Done (CI for tests)
-- ❌ Full documentation - User guides, merchant guide, security docs
-
----
-
 ## Phase 5: Testing & CI/CD ✅ COMPLETE
 
 ### Test Framework Setup
@@ -248,70 +232,276 @@ The following features from SPEC.md are **deferred to version 2**:
 
 ---
 
-## Testing Checklist
+# V2 Features
 
-### Automated Tests (Vitest) ✅
-- [x] Tamper with JWT → "Invalid" (verify.test.js)
-- [x] Expired date → "Expired" (verify.test.js)
-- [x] Wrong issuer → "Unrecognized issuer" (verify.test.js)
-- [x] No token → "No membership card detected" (verify.test.js)
-- [x] Cross-app: issuer sign → verification validate (crypto-verify.test.js)
-- [x] Cross-app: different keypair rejected (crypto-verify.test.js)
-
-### Manual End-to-End Test Flow
-- [ ] Generate keypair in issuer
-- [ ] Copy public key to verification config
-- [ ] Start both apps (verification on :5173, issuer on :5174)
-- [ ] Generate single card manually
-- [ ] Verify card → ✅ Valid
-- [ ] Upload CSV with 10 members
-- [ ] Generate batch
-- [ ] Verify multiple cards
-
-### Browser Testing
-- [ ] Chrome Desktop (admin using issuer)
-- [ ] Safari iOS (merchant scanning QR)
-- [ ] Chrome Android (merchant scanning QR)
-
-### Security Validation
-- [x] Private key never in localStorage/sessionStorage (by design, React state only)
-- [ ] Private key not logged to console
-- [x] Tampered tokens rejected (verify.test.js)
-- [x] Expired tokens rejected (verify.test.js)
-- [x] `.gitignore` blocks private keys
-- [x] No sensitive data in JWT (only name, ID, expiry)
+**Status**: 🚧 In Progress
+**Approach**: Each phase is self-contained. Implement → test → verify manually → move on.
+**Last Updated**: 2026-02-11
 
 ---
 
-## Success Criteria
+## Phase 6: Revocation System ⬜ TODO
 
-MVP is complete when all these are ✅:
+### Revocation Checking in Verification App
+- [x] Add `checkRevocation(jti, sub, revocationUrl)` to `verify.js`
+- [x] Fetch `revoked.json` with `cache: "no-store"` header
+- [x] Check both `revoked_jti` and `revoked_sub` arrays
+- [x] Soft-fail on network error (show warning, still display valid)
+- [x] Add `REVOKED` error type
+- [x] Update `config.json`: set `revocationEnabled: true`, add `revocationUrl`
+- [x] Create `verification/public/revoked.json` (empty initial list)
+- [x] Add revoked state UI to `VerificationResult.jsx` (❌ "Membership revoked")
+- [x] Add soft-fail warning banner to valid results (⚠️ yellow)
 
-1. [x] Can generate Ed25519 keypair
-2. [x] Can create single card manually
-3. [x] Can verify card shows valid/invalid correctly
-4. [x] Can upload CSV and generate batch of cards
-5. [x] All generated cards verify successfully
-6. [x] Error cases handled properly
-7. [x] Basic UI works on mobile and desktop
-8. [x] README documentation complete
-9. [x] No private keys can be committed to Git
-10. [x] End-to-end test flow passes
-11. [x] Unit tests passing (76 tests across 7 files)
-12. [x] CI/CD pipeline configured (GitHub Actions)
-13. [x] Pre-push git hook running tests (Husky)
+### Revocation UI in Issuer App
+- [x] Create `issuer/src/utils/revocation.js`:
+  - [x] `createRevocationEntry(id, type)` with timestamp
+  - [x] `addToRevocationList(list, id, type)`
+  - [x] `removeFromRevocationList(list, id, type)`
+  - [x] `exportRevocationJSON(list)`
+  - [x] `importRevocationJSON(jsonString)` with validation
+- [x] Create `issuer/src/components/RevocationManager.jsx`:
+  - [x] Input for member ID or token ID (jti)
+  - [x] Dropdown: revoke by jti or by sub
+  - [x] "Add to Revocation List" button
+  - [x] Current revocation list table with remove buttons
+  - [x] Import existing revoked.json
+  - [x] Export: download button + copy to clipboard + JSON preview
+  - [x] Instructions for uploading to GitHub Pages
+- [x] Add "Revocation" tab to `issuer/src/App.jsx`
+
+### Phase 6 Tests
+- [x] `verify.test.js` — Token with jti in `revoked_jti` → REVOKED
+- [x] `verify.test.js` — Token with sub in `revoked_sub` → REVOKED
+- [x] `verify.test.js` — Token not in list → VALID
+- [x] `verify.test.js` — Fetch fails → VALID with warning (soft-fail)
+- [x] `verify.test.js` — Empty revocation list → VALID
+- [x] `verify.test.js` — `revocationEnabled: false` → skip check
+- [x] `revocation.test.js` — Add jti to list
+- [x] `revocation.test.js` — Add sub to list
+- [x] `revocation.test.js` — Remove entry from list
+- [x] `revocation.test.js` — Import/export JSON roundtrip
+- [x] `revocation.test.js` — Reject malformed JSON
+- [x] `revocation.test.js` — No duplicate entries
+- [x] `revocation.test.js` — `updated_at` updates on changes
+
+### Phase 6 Manual Verification
+- [ ] Revoke token by jti → verification shows ❌ "Membership revoked"
+- [ ] Revoke by sub → all member's cards show revoked
+- [ ] Network error → shows ✅ valid with ⚠️ warning
+- [ ] Export revoked.json → place in verification/public/ → works
+- [ ] All existing tests still pass
 
 ---
 
-## Progress Tracking
+## Phase 7: Internationalization (i18n) ⬜ TODO
 
-**Phase 1**: ✅ COMPLETE — Verification app foundation
-**Phase 2**: ✅ COMPLETE — Issuer core (key management & manual cards)
-**Phase 3**: ✅ COMPLETE — CSV batch processing
-**Phase 4**: ✅ COMPLETE — Project infrastructure & documentation
-**Phase 5**: ✅ COMPLETE — Testing & CI/CD
+### Setup
+- [ ] Install `react-i18next`, `i18next`, `i18next-browser-languagedetector` in verification
+- [ ] Install `react-i18next`, `i18next`, `i18next-browser-languagedetector` in issuer
 
-**Overall**: 100% Complete
+### Verification App i18n
+- [ ] Create `verification/src/i18n.js` (config: default `es`, fallback `en`)
+- [ ] Create `verification/src/locales/es.json` (all UI strings in Spanish)
+- [ ] Create `verification/src/locales/en.json` (current English strings)
+- [ ] Replace hardcoded strings in `VerificationResult.jsx` with `t()` calls
+- [ ] Add language toggle (ES | EN) to header
+- [ ] Initialize i18n in `App.jsx`
+- [ ] Localize date formatting (DD/MM/YYYY for ES, MM/DD/YYYY for EN)
+
+### Issuer App i18n
+- [ ] Create `issuer/src/i18n.js`
+- [ ] Create `issuer/src/locales/es.json` (all UI strings in Spanish)
+- [ ] Create `issuer/src/locales/en.json` (current English strings)
+- [ ] Replace hardcoded strings in all components with `t()` calls:
+  - [ ] `KeyManagement.jsx`
+  - [ ] `ManualEntry.jsx`
+  - [ ] `CSVUpload.jsx`
+  - [ ] `RevocationManager.jsx`
+  - [ ] `App.jsx`
+- [ ] Add language toggle
+
+### Phase 7 Tests
+- [ ] Spanish translations load correctly
+- [ ] English translations load correctly
+- [ ] All keys exist in both language files (no missing translations)
+- [ ] Language switching works
+- [ ] Browser language detection selects correct language
+- [ ] Date formatting changes per locale
+
+### Phase 7 Manual Verification
+- [ ] Verification app displays in Spanish by default
+- [ ] Toggle to English → all strings change
+- [ ] Issuer app displays in Spanish by default
+- [ ] All UI text translated (no hardcoded English remains)
+- [ ] All existing tests still pass
+
+---
+
+## Phase 8: Wallet-Style Cards ⬜ TODO
+
+### Card Renderer
+- [ ] Add `generateWalletCard(memberData, qrDataUrl, logoImage)` to `card.js`
+- [ ] Layout: header bar with logo + org name, member name, expiry, QR code, member ID
+- [ ] Design: Primary color header (#30414B), white background, rounded corners
+- [ ] Size: 800x1200px portrait
+
+### UI Integration
+- [ ] Add card format selector to `ManualEntry.jsx` (radio: "Plain QR" / "Wallet-style")
+- [ ] Add card format selector to `CSVUpload.jsx`
+- [ ] Default to "Wallet-style card"
+- [ ] Update `batch.js` to accept `cardFormat` parameter
+
+### Phase 8 Tests
+- [ ] `card.test.js` — Wallet card generates correct dimensions
+- [ ] `card.test.js` — Card format selection works ("plain" vs "wallet")
+- [ ] `batch.test.js` — Batch respects card format parameter
+
+### Phase 8 Manual Verification
+- [ ] Generate wallet-style card manually → professional layout
+- [ ] Generate batch with wallet format → all cards use wallet layout
+- [ ] Plain QR format still works when selected
+- [ ] All existing tests still pass
+
+---
+
+## Phase 9: PWA Features (Issuer) ⬜ TODO
+
+### Setup
+- [ ] Install `vite-plugin-pwa` in issuer
+- [ ] Configure VitePWA in `issuer/vite.config.js`
+
+### PWA Assets
+- [ ] Create `issuer/public/manifest.json` (name, icons, theme, display: standalone)
+- [ ] Generate PWA icons from logo (192x192, 512x512) in `issuer/public/icons/`
+
+### Service Worker
+- [ ] Configure Workbox precaching for all app assets
+- [ ] Offline: full functionality (all crypto is client-side)
+
+### Install Prompt
+- [ ] Create `issuer/src/components/InstallPrompt.jsx`
+- [ ] Detect `beforeinstallprompt` event
+- [ ] Show install banner with dismiss option
+- [ ] Hide after installation
+
+### Phase 9 Tests
+- [ ] Manifest is valid JSON with required fields
+- [ ] All required icon sizes present
+- [ ] Service worker registers
+
+### Phase 9 Manual Verification
+- [ ] Install on Chrome Desktop → opens standalone
+- [ ] Go offline → all features still work
+- [ ] Install prompt appears for new visitors
+- [ ] All existing tests still pass
+
+---
+
+## Phase 10: Accessibility (WCAG 2.1 AA) ⬜ TODO
+
+### Verification App
+- [ ] Semantic HTML: `<main>`, `<header>`, `<section>`, proper headings
+- [ ] Alt text on all images (logo, status icons)
+- [ ] ARIA: `role="status"`, `aria-live="polite"` for results
+- [ ] Focus management: auto-focus result after verification
+- [ ] Color contrast: 4.5:1 ratio for all text
+- [ ] Keyboard: Tab through all interactive elements
+- [ ] Touch targets: minimum 44x44px
+- [ ] Skip link for screen readers
+
+### Issuer App
+- [ ] Form labels: all inputs have `<label>` elements
+- [ ] Error announcements via `aria-live`
+- [ ] Focus moves to error summary on validation failure
+- [ ] Logical tab order
+- [ ] Semantic HTML with heading hierarchy
+- [ ] Color contrast check
+- [ ] Touch targets: 44x44px minimum
+- [ ] Progress announcements for batch generation
+
+### Phase 10 Tests
+- [ ] All images have alt attributes
+- [ ] All form inputs have associated labels
+- [ ] ARIA roles correctly applied
+- [ ] Interactive elements keyboard-accessible
+
+### Phase 10 Manual Verification
+- [ ] Navigate both apps with keyboard only
+- [ ] Test with VoiceOver (macOS)
+- [ ] Focus indicators visible
+- [ ] All existing tests still pass
+
+---
+
+## Phase 11: GitHub Pages Deployment ⬜ TODO
+
+### Deployment Workflow
+- [ ] Create `.github/workflows/deploy-verification.yml`
+- [ ] Configure: trigger on push to main (verification/** paths)
+- [ ] Build and deploy to GitHub Pages
+- [ ] Set Vite `base` path in `verification/vite.config.js`
+- [ ] Create `verification/public/CNAME` for custom domain
+
+### Phase 11 Verification
+- [ ] Push to main → auto-deploys verification app
+- [ ] Custom domain works with HTTPS
+- [ ] Token verification works on production URL
+- [ ] `revoked.json` accessible at deployed URL
+- [ ] All existing tests still pass
+
+---
+
+## Phase 12: Analytics (Optional) ⬜ TODO
+
+### Analytics Module
+- [ ] Create `verification/src/utils/analytics.js`
+- [ ] `initAnalytics(config)` — only load if `analytics.enabled === true`
+- [ ] `trackPageView()` — track verification page loads
+- [ ] `trackVerificationResult(result)` — track success/failure/type
+- [ ] No PII tracking, IP anonymization enabled
+- [ ] Add analytics config to `verification/src/config.json` (disabled by default)
+- [ ] Integrate in `App.jsx`
+
+### Phase 12 Tests
+- [ ] Analytics not loaded when `enabled: false`
+- [ ] Analytics initializes when `enabled: true`
+- [ ] No PII in tracked events
+
+### Phase 12 Manual Verification
+- [ ] Default: no analytics scripts loaded
+- [ ] Enable in config → events tracked
+- [ ] All existing tests still pass
+
+---
+
+## V2 Progress Tracking
+
+**Phase 6**: ⬜ TODO — Revocation system
+**Phase 7**: ⬜ TODO — Internationalization (i18n)
+**Phase 8**: ⬜ TODO — Wallet-style cards
+**Phase 9**: ⬜ TODO — PWA features
+**Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)
+**Phase 11**: ⬜ TODO — GitHub Pages deployment
+**Phase 12**: ⬜ TODO — Analytics (optional)
+
+**V2 Overall**: 0% Complete
+
+---
+
+## V2 Success Criteria
+
+V2 is complete when all these are ✅:
+
+1. [ ] Revocation system works end-to-end
+2. [ ] Both apps available in Spanish and English
+3. [ ] Wallet-style cards generate professional PNGs
+4. [ ] Issuer app installable as PWA, works offline
+5. [ ] WCAG 2.1 AA compliance in both apps
+6. [ ] Verification app auto-deploys to GitHub Pages
+7. [ ] Optional analytics working when enabled
+8. [ ] All new features have unit tests
+9. [ ] All existing tests still pass (76+ tests)
 
 ---
 
@@ -325,3 +515,4 @@ MVP is complete when all these are ✅:
 - **Performance Target**: < 2 seconds per card generation
 - **Browser Support**: Chrome Desktop, Safari iOS, Chrome Android
 - **Testing**: Vitest (76 tests), pre-push hook (Husky), CI (GitHub Actions)
+- **V2 Approach**: Implement each phase incrementally, test and verify before moving on
