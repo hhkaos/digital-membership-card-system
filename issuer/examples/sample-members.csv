@@ -1,11 +1,11 @@
-full_name,member_id,expiry_date
-María García López,001,2026-06-30
-Juan Pérez Martínez,002,30/06/2026
-Ana Rodríguez Silva,003,30-06-2026
-Carlos González Ruiz,004,2026-12-31
-Laura Fernández Díaz,005,15/09/2026
-Pedro Sánchez Moreno,006,15-09-2026
-Isabel Martín Romero,007,2026-02-15
-Francisco López Navarro,008,31/12/2026
-Carmen Jiménez Torres,009,1/7/2026
-Miguel Álvarez Castro,010,2026-08-20
+full_name              , member_id, expiry_date
+María García López     ,       001, 2026-06-30
+Juan Pérez Martínez    ,       002, 30/06/2026
+Ana Rodríguez Silva    ,       003, 30-06-2026
+Carlos González Ruiz   ,       004, 2026-12-31
+Laura Fernández Díaz   ,       005, 15/09/2026
+Pedro Sánchez Moreno   ,       006, 15-09-2026
+Isabel Martín Romero   ,       007, 2026-02-15
+Francisco López Navarro,       008, 31/12/2026
+Carmen Jiménez Torres  ,       009, 1/7/2026
+Miguel Álvarez Castro  ,       010, 2026-08-20
