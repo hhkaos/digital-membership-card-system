@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { generateKeyPair, exportSPKI, SignJWT, exportPKCS8, importPKCS8 } from 'jose';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { generateKeyPair, exportSPKI, SignJWT } from 'jose';
 import { validateExpiry, verifyToken, VerificationError } from './verify.js';
 
 // Helper: generate a test Ed25519 keypair
