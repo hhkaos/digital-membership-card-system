@@ -10,11 +10,15 @@ Follow these steps to commit changes:
 
 Run `git status` (never use `-uall`) and `git diff` (both staged and unstaged) to understand all current changes.
 
-## 2. Stage files
+## 2. Update CHANGELOG.md
 
-Stage the relevant files by name. Never use `git add -A` or `git add .`. Never stage files that may contain secrets (`.env`, credentials, private keys, etc.) — warn the user if any are detected.
+Read `CHANGELOG.md` and add an entry under the `[Unreleased]` section describing the change. Place it under the appropriate subsection (`Added`, `Changed`, `Fixed`, `Removed`). Create the subsection if it doesn't exist. Keep entries concise (one bullet point per logical change).
 
-## 3. Generate a commit message
+## 3. Stage files
+
+Stage the relevant files by name, including the updated `CHANGELOG.md`. Never use `git add -A` or `git add .`. Never stage files that may contain secrets (`.env`, credentials, private keys, etc.) — warn the user if any are detected.
+
+## 4. Generate a commit message
 
 - Run `git log --oneline -10` to see recent commit style.
 - Analyze the staged diff and draft a concise conventional commit message (e.g. `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
@@ -22,19 +26,19 @@ Stage the relevant files by name. Never use `git add -A` or `git add .`. Never s
 - Keep it to 1-2 sentences.
 - Show the proposed message to the user before committing.
 
-## 4. Choose the git alias
+## 5. Choose the git alias
 
 Ask the user which alias to use:
 
 - **`git cai`** — AI-attributed commit (sets author to "AI Generated (hhkaos)" and prefixes the message with "AI: ")
 - **`git ch`** — Regular commit with the user's default git identity
 
-## 5. Commit
+## 6. Commit
 
 Run the chosen alias with the commit message. For example:
 - `git cai "feat: add dark mode toggle to settings page"`
 - `git ch "feat: add dark mode toggle to settings page"`
 
-## 6. Push
+## 7. Push
 
 Ask the user whether to push. If yes, run `git push`. If the branch has no upstream, use `git push -u origin <branch>`.

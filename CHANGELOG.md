@@ -13,6 +13,7 @@ The format is intentionally simple and commit-driven:
 ### Added
 - i18n foundation for `verification` and `issuer` apps with local language resources (`es`, `en`) and persistence of selected language.
 - Revocation management enhancements in issuer: load/merge existing `revoked.json`, URL source selection (local/deployed), QR PNG identifier lookup, and safer merge behavior to avoid overwriting prior revocations.
+- Claude Code `/ship` skill for automated commit workflow (stage, changelog, commit, push) with `git cai`/`git ch` alias support.
 
 ### Changed
 - Verification revoked state UI now shows "Membership Revoked" with member name on second line.
