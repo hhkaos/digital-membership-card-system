@@ -75,6 +75,17 @@ git config --global alias.ch "!f(){ git commit -m \"\$1\"; }; f"
 - Prefer small, focused commits.
 - Mention AI usage in PR description when relevant.
 
+## 🛠️ Claude Code `/ship` skill
+
+If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), this project includes a custom `/ship` skill that automates the commit workflow:
+
+1. Type `/ship` in the Claude Code chat.
+2. Claude reviews your changes, stages the relevant files, and generates a commit message following the project's conventional commit style.
+3. You choose the alias: **`git cai`** (AI-attributed) or **`git ch`** (regular).
+4. Claude commits and pushes for you.
+
+The skill definition lives in `.claude/skills/ship/SKILL.md`.
+
 ## 🔐 Security and data handling
 
 - **Never commit private keys** or unredacted member data.
