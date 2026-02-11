@@ -45,6 +45,9 @@ The format is intentionally simple and commit-driven:
 - Temporarily disabled installer generation in `.github/workflows/desktop.yml` to remove desktop installer distribution from the active build process.
 - Documentation map in `README.md` now points to the new manuals structure.
 - Generated `/docs` pages are now language-aware (`en`/`es`), with localized sticky back-to-app action and clearer help navigation styling.
+- Verification invalid-state footer now shows inline help/contact links (`ℹ️ Help | 📧 Contact`) with lighter, non-underlined link styling for better readability.
+- Both apps now honor URL language overrides (`?lang=en|es` and hash-based `lang`) before stored/browser defaults.
+- Issuer revocation loader now defaults source selection to deployed domain outside localhost, while keeping local default in development.
 
 ### Fixed
 - Issuer logo asset paths now use `import.meta.env.BASE_URL`, fixing missing logo rendering in local and `/issuer/` base-path environments.

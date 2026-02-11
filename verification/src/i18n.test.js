@@ -71,6 +71,22 @@ describe('browser language detection', () => {
     vi.stubGlobal('navigator', { language: 'en-US' });
     expect(_resolveLanguage('es')).toBe('es');
   });
+
+  it('prefers URL query language over stored/browser language', () => {
+    vi.stubGlobal('window', { location: { search: '?lang=en', hash: '' } });
+    vi.stubGlobal('navigator', { language: 'es-ES' });
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn(() => 'es'),
+      setItem: vi.fn(),
+    });
+    expect(_resolveLanguage()).toBe('en');
+  });
+
+  it('reads language from URL hash params', () => {
+    vi.stubGlobal('window', { location: { search: '', hash: '#token=abc&lang=es' } });
+    vi.stubGlobal('navigator', { language: 'en-US' });
+    expect(_resolveLanguage()).toBe('es');
+  });
 });
 
 describe('date formatting', () => {

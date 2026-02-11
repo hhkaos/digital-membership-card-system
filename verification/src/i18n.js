@@ -5,6 +5,22 @@ import en from './locales/en.json';
 const resources = { es, en };
 const LANGUAGE_STORAGE_KEY = 'ampa.verification.language';
 
+function getLanguageFromUrl() {
+  if (typeof window === 'undefined' || !window.location) return null;
+
+  const searchParams = new URLSearchParams(window.location.search || '');
+  const fromSearch = searchParams.get('lang');
+  if (fromSearch && resources[fromSearch]) return fromSearch;
+
+  const hash = window.location.hash || '';
+  const hashValue = hash.startsWith('#') ? hash.slice(1) : hash;
+  const hashParams = new URLSearchParams(hashValue);
+  const fromHash = hashParams.get('lang');
+  if (fromHash && resources[fromHash]) return fromHash;
+
+  return null;
+}
+
 export function formatDateForLocale(value, language) {
   const date = typeof value === 'number'
     ? new Date(value * 1000)
@@ -15,6 +31,9 @@ export function formatDateForLocale(value, language) {
 
 function resolveLanguage(explicit) {
   if (explicit && resources[explicit]) return explicit;
+
+  const fromUrl = getLanguageFromUrl();
+  if (fromUrl) return fromUrl;
 
   if (typeof localStorage !== 'undefined') {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);

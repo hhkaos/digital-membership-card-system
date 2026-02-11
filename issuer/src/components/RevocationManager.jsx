@@ -16,6 +16,16 @@ import { useI18n } from '../i18n';
 const DEFAULT_LOCAL_REVOKED_URL = 'http://localhost:5173/revoked.json';
 const DEFAULT_DEPLOYED_REVOKED_URL = 'https://verify.ampanovaschoolalmeria.org/revoked.json';
 
+function resolveDefaultLoadSource() {
+  if (typeof window === 'undefined' || !window.location) {
+    return 'local';
+  }
+
+  const host = window.location.hostname;
+  const isLocalHost = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '';
+  return isLocalHost ? 'local' : 'deployed';
+}
+
 const styles = {
   container: {
     maxWidth: '980px',
@@ -186,7 +196,7 @@ export function RevocationManager() {
   const [feedback, setFeedback] = useState({ kind: '', message: '' });
   const [lookupResult, setLookupResult] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
-  const [loadSource, setLoadSource] = useState('local');
+  const [loadSource, setLoadSource] = useState(resolveDefaultLoadSource);
   const [localRevokedUrl, setLocalRevokedUrl] = useState(DEFAULT_LOCAL_REVOKED_URL);
   const [deployedRevokedUrl, setDeployedRevokedUrl] = useState(DEFAULT_DEPLOYED_REVOKED_URL);
   const [loadBusy, setLoadBusy] = useState(false);
