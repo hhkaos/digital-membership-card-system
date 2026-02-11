@@ -5,7 +5,7 @@
 Building a cryptographically secure digital membership card system with QR codes for merchant verification.
 
 **Status**: 🚧 V2 In Progress (MVP Complete)
-**Scope**: V2 — Revocation, i18n, wallet cards, PWA, accessibility, deployment, analytics
+**Scope**: V2 — Revocation, i18n, wallet cards, PWA, accessibility, deployment, analytics, desktop installers
 **Last Updated**: 2026-02-11
 
 ---
@@ -377,7 +377,7 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
-## Phase 9: PWA Features (Issuer) 🚧 IN PROGRESS
+## Phase 9: PWA Features (Issuer) ✅ COMPLETE
 
 ### Setup
 
@@ -412,7 +412,7 @@ Building a cryptographically secure digital membership card system with QR codes
 - [x] Install on Chrome Desktop → opens standalone
 - [x] Go offline → all features still work
 - [x] Install prompt appears for new visitors
-- [ ] All existing tests still pass
+- [x] All existing tests still pass
 
 ---
 
@@ -503,16 +503,62 @@ Building a cryptographically secure digital membership card system with QR codes
 
 ---
 
+## Phase 13: Desktop Installer Distribution (Issuer) 🚧 IN PROGRESS
+
+### Packaging Strategy
+
+- [x] Add desktop wrapper for issuer app (recommended: Tauri)
+- [x] Reuse current issuer React/Vite build (no feature fork)
+- [ ] Produce installers for:
+  - [ ] Windows (`.exe` / MSI)
+  - [ ] macOS (`.dmg` + `.app`)
+  - [ ] Linux (`.AppImage` and/or `.deb`)
+
+### UX and Security
+
+- [ ] Add first-run checks (issuer version, build info, basic diagnostics)
+- [ ] Decide private key persistence mode for desktop app:
+  - [ ] Session-only mode (current behavior)
+  - [ ] Optional secure OS storage (keychain/credential vault)
+- [ ] Document update policy (manual download first, auto-update later)
+
+### Signing and Trust
+
+- [ ] Define certificate ownership model (organization-owned signing identities)
+- [ ] Windows: Authenticode signing configured in release pipeline
+- [ ] macOS: Developer ID signing + notarization + stapling configured
+- [ ] Linux: publish checksums + optional GPG signatures
+- [x] Create operator runbook: `docs/DESKTOP_SIGNING.md`
+
+### CI/CD and Release Assets
+
+- [x] Add GitHub Actions workflow to build desktop installers per OS
+- [x] Temporarily disable installer generation in CI build process
+- [ ] Upload all installers as GitHub Release assets
+- [ ] Include SHA-256 checksums for every artifact
+- [ ] Smoke test install/uninstall on clean VMs
+
+### Phase 13 Manual Verification
+
+- [ ] Non-technical user can install on Windows without terminal
+- [ ] Non-technical user can install on macOS without terminal
+- [ ] Non-technical user can install on Linux without terminal
+- [ ] App appears in OS launcher/search and opens standalone
+- [ ] Existing issuer/verifier tests still pass
+
+---
+
 ## V2 Progress Tracking
 
 **Phase 6**: 🚧 IN PROGRESS — Revocation system (code complete, manual verification pending)
 **Phase 7**: ✅ COMPLETE — Internationalization (i18n)
-**Phase 9**: 🚧 IN PROGRESS — PWA features (implementation complete, manual verification pending)
+**Phase 9**: ✅ COMPLETE — PWA features
 **Phase 10**: ⬜ TODO — Accessibility (WCAG 2.1 AA)
 **Phase 11**: 🚧 IN PROGRESS — GitHub Pages deployment
 **Phase 12**: ⬜ TODO — Analytics (optional)
+**Phase 13**: 🚧 IN PROGRESS — Desktop installer distribution scaffold + signing runbook
 
-**V2 Overall**: ~25% Complete (2 of 7 phases done or near-done)
+**V2 Overall**: ~30% Complete (3 of 8 phases done or near-done)
 
 ---
 
@@ -529,6 +575,7 @@ V2 is complete when all these are ✅:
 7. [ ] Optional analytics working when enabled
 8. [ ] All new features have unit tests
 9. [ ] All existing tests still pass (76+ tests)
+10. [ ] Issuer desktop installers available for Windows/macOS/Linux with trusted signing process
 
 ---
 

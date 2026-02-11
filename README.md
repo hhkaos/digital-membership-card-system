@@ -23,6 +23,7 @@ A cryptographically secure digital membership card platform for AMPA Nova School
 ## What This Repo Contains
 
 - **Issuer app** (`issuer/`): admin tool to create signed membership cards (PNG + QR)
+- **Issuer desktop scaffold** (`issuer/src-tauri/`): optional installer packaging path for Windows/macOS/Linux
 - **Verification app** (`verification/`): public app for merchants to validate cards
 - **Shared project docs** (`docs/`): technical spec, roadmap, and implementation notes
 
@@ -66,6 +67,7 @@ For full end-to-end setup (key generation, config wiring, card generation, verif
 - Verification details: [verification/README.md](verification/README.md)
 - Security policy and model: [SECURITY.md](SECURITY.md)
 - Technical specification: [docs/SPEC.md](docs/SPEC.md)
+- Desktop packaging/signing guide: [docs/DESKTOP_SIGNING.md](docs/DESKTOP_SIGNING.md)
 - Roadmap and status: [docs/TODO.md](docs/TODO.md)
 - Implementation plan/history: [docs/PLAN.md](docs/PLAN.md)
 - Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -1,0 +1,15 @@
+name: Desktop Installer Build (Disabled)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop-disabled:
+    name: Desktop installer generation disabled
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notice
+        run: echo "Desktop installer distribution is temporarily disabled."

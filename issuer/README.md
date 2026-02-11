@@ -16,6 +16,7 @@ This application allows AMPA administrators to:
 ## Prerequisites
 
 - **Node.js >= 20** (see `.nvmrc` — run `nvm use` if using nvm)
+- **Rust toolchain** (only needed for desktop installer builds)
 
 ## Installation
 
@@ -130,6 +131,61 @@ npm run test:watch
 ```
 
 Tests cover: key generation, JWT signing, CSV parsing, date validation, metadata generation, filename sanitization, and cross-app integration (issuer sign → verification validate).
+
+## Desktop App (Installer Scaffold)
+
+The issuer now includes a Tauri desktop wrapper scaffold in `issuer/src-tauri/`.
+
+### Local desktop development
+
+```bash
+npm run desktop:dev
+```
+
+### Build unsigned installers locally
+
+```bash
+npm run desktop:build
+```
+
+### Build signed/notarized macOS installer (one command)
+
+Set required non-secret variables in your shell:
+
+```bash
+export APPLE_SIGNING_IDENTITY='Developer ID Application: YOUR NAME (TEAMID)'
+export APPLE_ID='your-apple-id@example.com'
+export APPLE_TEAM_ID='YOURTEAMID'
+```
+
+Store your app-specific password in macOS Keychain (recommended):
+
+```bash
+security add-generic-password \
+  -a "$APPLE_ID" \
+  -s "ampa-issuer-notarytool" \
+  -w '<app-specific-password>' \
+  -U
+```
+
+Release command:
+
+```bash
+npm run desktop:release:mac
+```
+
+This command builds, signs, notarizes, staples, verifies, and writes checksums automatically.
+It reads password from:
+1. `APPLE_APP_SPECIFIC_PASSWORD` env var, or
+2. Keychain item `ampa-issuer-notarytool` (default).
+
+If neither is available, the script prompts securely in terminal.
+
+Artifacts are exported to `issuer/release/macos/`.
+
+Important:
+- Desktop build uses `npm run build:desktop` (`vite build --base ./`) so bundled assets resolve in app installers.
+- Signing/notarization steps are documented in [docs/DESKTOP_SIGNING.md](../docs/DESKTOP_SIGNING.md).
 
 ## Usage Guide
 

@@ -1,7 +1,7 @@
 {
   "name": "issuer",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
@@ -9,10 +9,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:desktop": "vite build --base ./",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "desktop:dev": "cargo tauri dev",
+    "desktop:build": "cargo tauri build",
+    "desktop:build:mac": "cargo tauri build --bundles dmg",
+    "desktop:checksums": "bash ./scripts/desktop/generate-checksums.sh",
+    "desktop:release:mac": "bash ./scripts/desktop/release-macos.sh"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
