@@ -674,6 +674,7 @@ downloads/
 
 ```
 socios-ampa/
+├── CHANGELOG.md              # Project change history (commit-driven)
 ├── README.md
 ├── SPEC.md (this file)
 ├── LICENSE
@@ -1050,6 +1051,15 @@ jobs:
 - Standard frameworks (React)
 - Config-driven (easy to customize)
 - No backend (reduces maintenance burden)
+- Commit-driven changelog updates in `CHANGELOG.md` for every functional commit
+
+### 15.7 Changelog Discipline
+
+- `CHANGELOG.md` at repository root is the canonical implementation progress log.
+- Every functional commit MUST include an update under `## [Unreleased]` in `CHANGELOG.md`.
+- Entries SHOULD use concise categories: `Added`, `Changed`, `Fixed`, `Removed`, `Docs`, `Tests`.
+- During release cut, all `Unreleased` items MUST be moved to a dated/versioned section.
+- Code changes without corresponding changelog updates are considered incomplete.
 
 ---
 
@@ -1188,8 +1198,8 @@ jobs:
 
 ## 20. Document Metadata
 
-- **Version**: 2.0
-- **Last Updated**: 2026-02-10
+- **Version**: 2.1
+- **Last Updated**: 2026-02-11
 - **Author**: Claude (based on user interview)
 - **Status**: Draft - Ready for Review
 - **Project**: AMPA Nova School Almeria - Digital Membership Cards
@@ -1197,7 +1207,15 @@ jobs:
 
 ---
 
-## 21. Change Log
+## 21. Specification Revision Notes
+
+Project-wide implementation progress and commit history MUST be tracked in `CHANGELOG.md`.
+This section tracks major revisions of this specification document only.
+
+### Version 2.1 (2026-02-11)
+
+- Added changelog governance requiring commit-by-commit updates in `CHANGELOG.md`
+- Declared `CHANGELOG.md` as canonical project history
 
 ### Version 2.0 (2026-02-10)
 
