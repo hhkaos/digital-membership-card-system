@@ -1,8 +1,5 @@
 {
-  "updated_at": "2026-02-12T11:46:24.800Z",
-  "revoked_jti": [
-    "e39ca631-3e08-4a20-8e24-d9e1e7716f2f",
-    "bbccdc95-176c-43a6-a013-b8b17077cf18"
-  ],
+  "updated_at": "2026-02-12T11:49:34.173Z",
+  "revoked_jti": ["f7c42067-88f1-4e13-a23d-05d83b7e7c08"],
   "revoked_sub": []
 }
