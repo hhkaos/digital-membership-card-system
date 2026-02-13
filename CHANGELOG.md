@@ -24,6 +24,7 @@ The format is intentionally simple and commit-driven:
 - Docs: HTML generator centers top layout and removes redundant h1 title from generated pages.
 - Issuer: Simplified private key label (removed "KEEP SECRET!" from label text).
 - Tooling: Release skill formatting improvements.
+- Both apps + Docs: Standardized Spanish terminology to use "carnet" (membership card) consistently instead of mixing "membresía", "tarjeta", and "socio" across UI strings and documentation.
 
 ### Added
 - `CLAUDE.md` project instructions file for Claude Code with architecture overview, commands, and conventions.

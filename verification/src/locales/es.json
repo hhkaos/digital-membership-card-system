@@ -8,24 +8,24 @@
     "label": "Ayuda"
   },
   "loading": {
-    "verifyingMembership": "Verificando membresía..."
+    "verifyingMembership": "Verificando carnet..."
   },
   "valid": {
-    "title": "Membresía válida",
+    "title": "Carnet en vigor",
     "validUntil": "Válida hasta: {{date}}",
-    "discounts": "Esta membresía es válida para descuentos AMPA",
+    "discounts": "Este carnet es válido para descuentos",
     "revocationUnknown": "⚠️ No se pudo comprobar el estado de revocación"
   },
   "invalid": {
-    "title": "Membresía no válida",
-    "revokedTitle": "Membresía revocada",
+    "title": "Carnet inválido",
+    "revokedTitle": "Carnet dado de baja",
     "showTechnicalDetails": "Mostrar detalles técnicos",
     "hideTechnicalDetails": "Ocultar detalles técnicos",
     "contactSupport": "Contacto",
-    "contactRestore": "Contactar con AMPA para restaurar esta membresía"
+    "contactRestore": "Contactar con AMPA para restaurar este carnet"
   },
   "errors": {
-    "noTokenMessage": "No se detectó una tarjeta de membresía",
+    "noTokenMessage": "No se detectó carnet de socio",
     "noTokenDetails": "La URL debe contener el parámetro #token=<JWT>",
     "configMessage": "El sistema de verificación no está configurado",
     "configDetails": "No se ha configurado la clave pública.",

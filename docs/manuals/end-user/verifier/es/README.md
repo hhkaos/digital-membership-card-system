@@ -23,7 +23,7 @@ Al escanear un QR, el verificador comprueba:
 
 ![Marcador - Carnet en vigor](../../assets/valida.png)
 
-### Membresía revocada
+### Carnet dado de baja
 
 - Dicha persona ya no forma parte del AMPA
 - La tarjeta/socio no debe aceptarse
@@ -31,7 +31,7 @@ Al escanear un QR, el verificador comprueba:
 
 ![Marcador - Resultado revocado](../../assets/revocada.png)
 
-### Membresía no válida
+### Carnet inválido
 
 Posibles motivos:
 

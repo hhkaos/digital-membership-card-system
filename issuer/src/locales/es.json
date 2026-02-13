@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Emisor de Tarjetas AMPA",
-    "subtitle": "Genera tarjetas digitales de membresía seguras",
+    "subtitle": "Genera tarjetas (carnet de soci@s) seguras",
     "tabs": {
       "keys": "🔑 Gestión de claves",
       "generate": "🎫 Generar tarjeta",
@@ -123,7 +123,7 @@
     },
     "generate": {
       "title": "Generar nuevo par de claves",
-      "description": "Crea un nuevo par de claves Ed25519 para firmar tarjetas de membresía.",
+      "description": "Crea un nuevo par de claves Ed25519 para firmar tarjetas digitales (carnets de socio)",
       "button": "Generar nuevo par de claves",
       "generating": "Generando..."
     },
