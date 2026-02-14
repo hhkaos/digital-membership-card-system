@@ -29,7 +29,15 @@
     "noTokenDetails": "URL must contain #token=<JWT> parameter",
     "configMessage": "Verification system not configured",
     "configDetails": "Public key not set in configuration.",
-    "unknownMember": "Unknown member"
+    "unknownMember": "Unknown member",
+    "invalidSignatureMessage": "Invalid membership card",
+    "invalidSignatureDetails": "Signature verification failed with public key",
+    "expiredMessage": "Membership expired",
+    "expiredDetails": "Token expired on {{date}}",
+    "wrongIssuerMessage": "Unrecognized issuer",
+    "wrongIssuerDetails": "Expected '{{expected}}', got '{{actual}}'",
+    "malformedMessage": "Invalid card format",
+    "malformedDetails": "The card does not have a valid format"
   },
   "consent": {
     "message": "We use anonymous analytics to improve this app. No personal data is collected.",

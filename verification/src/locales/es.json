@@ -29,7 +29,15 @@
     "noTokenDetails": "La URL debe contener el parámetro #token=<JWT>",
     "configMessage": "El sistema de verificación no está configurado",
     "configDetails": "No se ha configurado la clave pública.",
-    "unknownMember": "Miembro desconocido"
+    "unknownMember": "Miembro desconocido",
+    "invalidSignatureMessage": "Carnet inválido",
+    "invalidSignatureDetails": "La verificación de la firma falló con la clave pública",
+    "expiredMessage": "Carnet caducado",
+    "expiredDetails": "El carnet expiró el {{date}}",
+    "wrongIssuerMessage": "Emisor no reconocido",
+    "wrongIssuerDetails": "Se esperaba '{{expected}}', se recibió '{{actual}}'",
+    "malformedMessage": "Formato de carnet inválido",
+    "malformedDetails": "El carnet no tiene un formato válido"
   },
   "consent": {
     "message": "Usamos analíticas anónimas para mejorar esta aplicación. No se recopilan datos personales.",

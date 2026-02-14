@@ -10,6 +10,8 @@ The format is intentionally simple and commit-driven:
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-02-14
+
 ### Added
 - Issuer: Tailwind CSS integration, replacing all inline styles with utility classes.
 - Issuer: `ResponsiveTabs` component with automatic collapse to dropdown on narrow screens.
@@ -66,6 +68,7 @@ The format is intentionally simple and commit-driven:
 - Issuer revocation loader now defaults source selection to deployed domain outside localhost, while keeping local default in development.
 
 ### Fixed
+- Verification: Error messages now display correctly in Spanish when membership card is invalid.
 - Issuer logo asset paths now use `import.meta.env.BASE_URL`, fixing missing logo rendering in local and `/issuer/` base-path environments.
 
 ### Removed

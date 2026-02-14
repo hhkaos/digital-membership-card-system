@@ -8,27 +8,41 @@ AMPA Digital Membership Card System — a cryptographically secure digital membe
 
 ## Commands
 
+**⚠️ CRITICAL: Node Version Management**
+
+This project requires Node.js 25 (latest stable). `.nvmrc` files are present in root, verification, and issuer directories.
+
+**ALWAYS run this FIRST before any command:**
+```bash
+nvm use                              # switches to Node 25 (from .nvmrc)
+```
+
+If you encounter errors about old Node versions, it means `nvm use` was not run. The system may default to an older version (e.g., v22 or v20) which will cause compatibility issues.
+
 ```bash
 # Install (root + both apps)
+nvm use                              # ⚠️ ALWAYS run first!
 npm install && cd verification && npm install && cd ../issuer && npm install && cd ..
 
 # Dev servers (both apps in parallel)
-npm run dev                          # verification :5173, issuer :5174
+nvm use && npm run dev               # verification :5173, issuer :5174
 
 # Tests
-npm test                             # run both apps' tests sequentially
-cd verification && npm test          # verification only
-cd issuer && npm test                # issuer only
-cd issuer && npm run test:watch      # watch mode (works in either app)
+nvm use && npm test                  # run both apps' tests sequentially
+nvm use && cd verification && npm test          # verification only
+nvm use && cd issuer && npm test                # issuer only
+nvm use && cd issuer && npm run test:watch      # watch mode (works in either app)
 
 # Lint
-cd verification && npm run lint
-cd issuer && npm run lint
+nvm use && cd verification && npm run lint
+nvm use && cd issuer && npm run lint
 
 # Build
-cd verification && npm run build     # output: verification/dist/
-cd issuer && npm run build           # output: issuer/dist/
+nvm use && cd verification && npm run build     # output: verification/dist/
+nvm use && cd issuer && npm run build           # output: issuer/dist/
 ```
+
+**Node Version**: Requires Node.js 25 (specified in `.nvmrc` files). Always run `nvm use` before commands.
 
 A Husky pre-push hook runs `npm test` automatically.
 

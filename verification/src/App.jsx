@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { parseTokenFromFragment, verifyToken, checkRevocation, VerificationError } from './utils/verify';
 import { LoadingState, ValidState, InvalidState } from './components/VerificationResult';
 import config from './config.json';
@@ -27,6 +27,52 @@ function App() {
   const [result, setResult] = useState(null);
   const [revocationWarning, setRevocationWarning] = useState(false);
   const [consentPending, setConsentPending] = useState(() => getAnalyticsConsent() === null);
+
+  // Translate error messages based on error type
+  const translateError = useCallback((error) => {
+    switch (error.type) {
+      case VerificationError.INVALID_SIGNATURE:
+        return {
+          ...error,
+          message: t('errors.invalidSignatureMessage'),
+          details: t('errors.invalidSignatureDetails')
+        };
+      case VerificationError.EXPIRED: {
+        // Extract expiry date from payload if available, otherwise from details
+        const expiryDateMatch = error.details?.match(/\d{1,2}\/\d{1,2}\/\d{4}/);
+        const dateStr = expiryDateMatch ? expiryDateMatch[0] : '';
+        return {
+          ...error,
+          message: t('errors.expiredMessage'),
+          details: dateStr ? t('errors.expiredDetails', { date: dateStr }) : error.details
+        };
+      }
+      case VerificationError.WRONG_ISSUER: {
+        // Extract expected and actual issuer from details
+        const match = error.details?.match(/Expected '(.+?)', got '(.+?)'/);
+        if (match) {
+          return {
+            ...error,
+            message: t('errors.wrongIssuerMessage'),
+            details: t('errors.wrongIssuerDetails', { expected: match[1], actual: match[2] })
+          };
+        }
+        return {
+          ...error,
+          message: t('errors.wrongIssuerMessage'),
+          details: error.details
+        };
+      }
+      case VerificationError.MALFORMED:
+        return {
+          ...error,
+          message: t('errors.malformedMessage'),
+          details: t('errors.malformedDetails')
+        };
+      default:
+        return error;
+    }
+  }, [t]);
 
   useEffect(() => {
     if (getAnalyticsConsent() === 'accepted') {
@@ -103,7 +149,10 @@ function App() {
         }
       } else {
         setState('invalid');
-        setResult(verificationResult);
+        setResult({
+          ...verificationResult,
+          error: translateError(verificationResult.error)
+        });
         trackVerificationResult(ERROR_TYPE_TO_OUTCOME[verificationResult.error?.type] || 'invalid_signature');
       }
     }
@@ -111,7 +160,7 @@ function App() {
     // Small delay to show loading state (better UX)
     const timer = setTimeout(performVerification, 500);
     return () => clearTimeout(timer);
-  }, [t]);
+  }, [t, translateError]);
 
   const handleConsent = (decision) => {
     setConsentPending(false);

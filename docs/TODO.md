@@ -6,7 +6,7 @@ Building a cryptographically secure digital membership card system with QR codes
 
 **Status**: 🚧 V2 In Progress (MVP Complete)
 **Scope**: V2 — Revocation, i18n, wallet cards, PWA, accessibility, deployment, analytics, desktop installers
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-02-14
 
 ---
 
@@ -266,7 +266,7 @@ Building a cryptographically secure digital membership card system with QR codes
 
 **Status**: 🚧 In Progress
 **Approach**: Each phase is self-contained. Implement → test → verify manually → move on.
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-02-14
 
 ---
 
