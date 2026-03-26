@@ -39,11 +39,13 @@
     "title": "Generar tarjeta de socio",
     "fields": {
       "fullName": "Nombre completo",
+      "secondName": "Segundo nombre (opcional)",
       "memberId": "ID de socio",
       "expiryDate": "Fecha de caducidad"
     },
     "placeholders": {
       "fullName": "p. ej. María García López",
+      "secondName": "p. ej. José",
       "memberId": "p. ej. 12345"
     },
     "errors": {
@@ -71,6 +73,7 @@
       "title": "Requisitos del formato CSV",
       "requiredColumnsIntro": "Tu archivo CSV debe tener estas columnas:",
       "fullName": "Nombre completo del socio",
+      "secondNameOptional": "Segundo nombre (opcional)",
       "memberId": "Identificador único del socio",
       "expiryDate": "Fecha en formato AAAA-MM-DD"
     },
@@ -82,6 +85,7 @@
       "status": "Estado",
       "line": "Línea",
       "name": "Nombre",
+      "secondName": "Segundo nombre",
       "memberId": "ID de socio",
       "expiryDate": "Caducidad",
       "errorLabel": "Error:",

@@ -39,11 +39,13 @@
     "title": "Generate Membership Card",
     "fields": {
       "fullName": "Full Name",
+      "secondName": "Second Name (Optional)",
       "memberId": "Member ID",
       "expiryDate": "Expiry Date"
     },
     "placeholders": {
       "fullName": "e.g. Maria Garcia Lopez",
+      "secondName": "e.g. Jose",
       "memberId": "e.g. 12345"
     },
     "errors": {
@@ -71,6 +73,7 @@
       "title": "CSV Format Requirements",
       "requiredColumnsIntro": "Your CSV file must have these columns:",
       "fullName": "Member full name",
+      "secondNameOptional": "Second name (optional)",
       "memberId": "Unique member identifier",
       "expiryDate": "Date in YYYY-MM-DD format"
     },
@@ -82,6 +85,7 @@
       "status": "Status",
       "line": "Line",
       "name": "Name",
+      "secondName": "Second Name",
       "memberId": "Member ID",
       "expiryDate": "Expiry Date",
       "errorLabel": "Error:",

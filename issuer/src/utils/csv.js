@@ -81,6 +81,7 @@ export function validateRow(row, lineNumber) {
     lineNumber,
     data: {
       full_name: row.full_name.trim(),
+      second_name: (row.second_name || '').trim(),
       member_id: row.member_id.trim(),
       expiry_date: row.expiry_date.trim(),
       parsedExpiryDate: parseDateFlexible(row.expiry_date)

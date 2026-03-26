@@ -127,6 +127,17 @@ describe('createMemberPayload', () => {
     expect(payload.iat).toBeGreaterThanOrEqual(before);
     expect(payload.iat).toBeLessThanOrEqual(after);
   });
+
+  it('combines fullName and secondName when provided', () => {
+    const payload = createMemberPayload({
+      fullName: 'Maria',
+      secondName: 'Jose',
+      memberId: '123',
+      expiryDate: '2027-08-31',
+    });
+
+    expect(payload.name).toBe('Maria Jose');
+  });
 });
 
 describe('isValidPEMFormat', () => {

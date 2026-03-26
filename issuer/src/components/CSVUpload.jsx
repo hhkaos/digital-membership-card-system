@@ -77,6 +77,7 @@ export default function CSVUpload({ privateKey }) {
         <p className="mb-2 text-gray-700">{t('csv.format.requiredColumnsIntro')}</p>
         <ul className="list-disc pl-5 space-y-1 text-gray-700">
           <li><strong>full_name</strong> — {t('csv.format.fullName')}</li>
+          <li><strong>second_name</strong> — {t('csv.format.secondNameOptional')}</li>
           <li><strong>member_id</strong> — {t('csv.format.memberId')}</li>
           <li><strong>expiry_date</strong> — {t('csv.format.expiryDate')}</li>
         </ul>
@@ -121,6 +122,7 @@ export default function CSVUpload({ privateKey }) {
                   <th className="p-3 text-left font-semibold">{t('csv.table.status')}</th>
                   <th className="p-3 text-left font-semibold">{t('csv.table.line')}</th>
                   <th className="p-3 text-left font-semibold">{t('csv.table.name')}</th>
+                  <th className="p-3 text-left font-semibold">{t('csv.table.secondName')}</th>
                   <th className="p-3 text-left font-semibold">{t('csv.table.memberId')}</th>
                   <th className="p-3 text-left font-semibold">{t('csv.table.expiryDate')}</th>
                 </tr>
@@ -131,6 +133,7 @@ export default function CSVUpload({ privateKey }) {
                     <td className="p-3">✅</td>
                     <td className="p-3">{entry.lineNumber}</td>
                     <td className="p-3">{entry.data.full_name}</td>
+                    <td className="p-3">{entry.data.second_name || '—'}</td>
                     <td className="p-3">{entry.data.member_id}</td>
                     <td className="p-3">{entry.data.expiry_date}</td>
                   </tr>
@@ -140,12 +143,13 @@ export default function CSVUpload({ privateKey }) {
                   <tr key={`error-${idx}`} className="border-b border-gray-200 bg-red-50">
                     <td className="p-3">❌</td>
                     <td className="p-3">{entry.lineNumber}</td>
-                    <td className="p-3" colSpan="3">
+                    <td className="p-3" colSpan="4">
                       <div>
                         <strong>{t('csv.table.errorLabel')}</strong> {entry.error}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {entry.data.full_name && `${t('csv.table.name')}: ${entry.data.full_name} | `}
+                        {entry.data.second_name && `${t('csv.table.secondName')}: ${entry.data.second_name} | `}
                         {entry.data.member_id && `${t('csv.table.memberIdShort')}: ${entry.data.member_id} | `}
                         {entry.data.expiry_date && `${t('csv.table.expiryShort')}: ${entry.data.expiry_date}`}
                       </div>

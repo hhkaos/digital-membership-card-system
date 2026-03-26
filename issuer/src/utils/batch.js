@@ -37,13 +37,14 @@ function generateFilename(memberId, fullName) {
 async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-school-almeria", options = {}) {
   const jti = uuidv4();
   const expiryDate = member.parsedExpiryDate;
+  const displayName = [member.full_name, member.second_name].filter(Boolean).join(' ');
 
   // Create JWT payload
   const payload = {
     v: 1,
     iss: issuer,
     sub: member.member_id,
-    name: member.full_name,
+    name: displayName,
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(expiryDate.getTime() / 1000),
     jti
@@ -55,21 +56,22 @@ async function generateSingleCard(member, privateKey, issuer = "ampa:ampa-nova-s
   // Generate card image as blob
   const cardBlob = await generatePlainQRCard({
     jwt,
-    memberName: member.full_name,
+    memberNameLine1: member.full_name,
+    memberNameLine2: member.second_name || '',
     memberId: member.member_id,
     expiryDate: format(expiryDate, 'yyyy-MM-dd'),
     locale: options.locale,
     labels: options.cardLabels,
   });
 
-  const filename = generateFilename(member.member_id, member.full_name);
+  const filename = generateFilename(member.member_id, displayName);
 
   return {
     blob: cardBlob,
     filename,
     metadata: {
       member_id: member.member_id,
-      name: member.full_name,
+      name: displayName,
       jti,
       expiry: expiryDate.toISOString(),
       filename

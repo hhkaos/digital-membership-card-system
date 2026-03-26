@@ -25,6 +25,7 @@ function getDefaultExpiryDate() {
 export function ManualEntry({ privateKey }) {
   const { t, language } = useI18n();
   const [fullName, setFullName] = useState('');
+  const [secondName, setSecondName] = useState('');
   const [memberId, setMemberId] = useState('');
   const [expiryDate, setExpiryDate] = useState(getDefaultExpiryDate);
   const [errors, setErrors] = useState({});
@@ -76,6 +77,7 @@ export function ManualEntry({ privateKey }) {
     try {
       const payload = createMemberPayload({
         fullName: fullName.trim(),
+        secondName: secondName.trim(),
         memberId: memberId.trim(),
         expiryDate
       });
@@ -84,7 +86,8 @@ export function ManualEntry({ privateKey }) {
 
       const cardBlob = await generatePlainQRCard({
         jwt,
-        memberName: fullName.trim(),
+        memberNameLine1: fullName.trim(),
+        memberNameLine2: secondName.trim(),
         memberId: memberId.trim(),
         expiryDate,
         locale: language === 'es' ? 'es-ES' : 'en-US',
@@ -94,13 +97,15 @@ export function ManualEntry({ privateKey }) {
         },
       });
 
-      const filename = generateCardFilename(memberId.trim(), fullName.trim());
+      const combinedName = [fullName.trim(), secondName.trim()].filter(Boolean).join(' ');
+      const filename = generateCardFilename(memberId.trim(), combinedName);
       downloadCard(cardBlob, filename);
 
       setSuccess(true);
 
       setTimeout(() => {
         setFullName('');
+        setSecondName('');
         setMemberId('');
         setExpiryDate(getDefaultExpiryDate());
         setSuccess(false);
@@ -126,6 +131,17 @@ export function ManualEntry({ privateKey }) {
             placeholder={t('manual.placeholders.fullName')}
           />
           {errors.fullName && <div className="text-red-700 text-sm mt-1">{errors.fullName}</div>}
+        </div>
+
+        <div className="mb-5">
+          <label className="block font-semibold mb-2 text-gray-800">{t('manual.fields.secondName')}</label>
+          <input
+            type="text"
+            value={secondName}
+            onChange={(e) => setSecondName(e.target.value)}
+            className="w-full p-3 text-base border border-gray-300 rounded-lg box-border focus:outline-none focus:ring-2 focus:ring-[#30414B]/30 focus:border-[#30414B]"
+            placeholder={t('manual.placeholders.secondName')}
+          />
         </div>
 
         <div className="mb-5">

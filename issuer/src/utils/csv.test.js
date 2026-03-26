@@ -120,12 +120,14 @@ describe('validateRow', () => {
   it('trims whitespace from valid fields', () => {
     const row = {
       full_name: '  Test User  ',
+      second_name: '  Middle  ',
       member_id: '  12345  ',
       expiry_date: futureDate,
     };
     const result = validateRow(row, 9);
     expect(result.valid).toBe(true);
     expect(result.data.full_name).toBe('Test User');
+    expect(result.data.second_name).toBe('Middle');
     expect(result.data.member_id).toBe('12345');
   });
 

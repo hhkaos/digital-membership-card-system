@@ -75,11 +75,12 @@ export async function signJWT(payload, privateKey) {
 
 /**
  * Create JWT payload for a member
- * @param {object} memberData - {fullName, memberId, expiryDate}
+ * @param {object} memberData - {fullName, secondName?, memberId, expiryDate}
  * @returns {object} JWT payload per SPEC
  */
 export function createMemberPayload(memberData) {
-  const { fullName, memberId, expiryDate } = memberData;
+  const { fullName, secondName, memberId, expiryDate } = memberData;
+  const displayName = [fullName, secondName].filter((value) => value && value.trim()).join(' ');
   
   // Convert expiry date to Unix timestamp
   const expiryTimestamp = Math.floor(new Date(expiryDate).getTime() / 1000);
@@ -88,7 +89,7 @@ export function createMemberPayload(memberData) {
     v: 1,  // Token schema version
     iss: 'ampa:ampa-nova-school-almeria',  // Issuer identifier
     sub: memberId,  // Member ID
-    name: fullName,  // Full member name
+    name: displayName,  // Full member name
     iat: Math.floor(Date.now() / 1000),  // Issued-at timestamp
     exp: expiryTimestamp,  // Expiration timestamp
     jti: uuidv4()  // Unique token ID for revocation

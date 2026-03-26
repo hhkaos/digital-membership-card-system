@@ -45,6 +45,8 @@ async function generateQRCanvas(jwt) {
 export async function generatePlainQRCard(memberData) {
   const {
     jwt,
+    memberNameLine1,
+    memberNameLine2,
     memberName,
     memberId,
     expiryDate,
@@ -79,7 +81,7 @@ export async function generatePlainQRCard(memberData) {
     logo.onload = () => {
       try {
         // Draw QR code (as large as possible, centered at top)
-        const qrSize = 700;
+        const qrSize = 680;
         const qrX = (width - qrSize) / 2;
         const qrY = 20;
         ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
@@ -118,17 +120,23 @@ export async function generatePlainQRCard(memberData) {
         // Text centered below QR
         const textY = qrY + qrSize + 35;
         ctx.textAlign = 'center';
+        const firstLineName = (memberNameLine1 || memberName || '').trim();
+        const secondLineName = (memberNameLine2 || '').trim();
+        const nameBlockHeight = secondLineName ? 70 : 35;
 
-        // Member name
+        // Member name (one line or two lines when second name is present)
         ctx.fillStyle = '#30414B';
         ctx.font = 'bold 36px Arial, sans-serif';
-        ctx.fillText(memberName, width / 2, textY);
+        ctx.fillText(firstLineName, width / 2, textY, width - 80);
+        if (secondLineName) {
+          ctx.fillText(secondLineName, width / 2, textY + 35, width - 80);
+        }
 
         // Valid until + Member ID
         const expiryFormatted = new Date(expiryDate).toLocaleDateString(locale);
         ctx.fillStyle = '#52717B';
         ctx.font = '24px Arial, sans-serif';
-        ctx.fillText(`${validUntilLabel}: ${expiryFormatted}  ·  ${memberIdLabel}: ${memberId}`, width / 2, textY + 35);
+        ctx.fillText(`${validUntilLabel}: ${expiryFormatted}  ·  ${memberIdLabel}: ${memberId}`, width / 2, textY + nameBlockHeight, width - 80);
 
         // Convert to blob
         canvas.toBlob((blob) => {
